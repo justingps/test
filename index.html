@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>GPS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://justingps.github.io/dpr/favicon.png">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .logo {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        .btn {
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 180px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .btn-add {
+            background-color: #4CAF50;
+        }
+        .btn-add:hover {
+            background-color: #45a049;
+        }
+        .btn-remove {
+            background-color: #f44336;
+        }
+        .btn-remove:hover {
+            background-color: #d32f2f;
+        }
+        .resource-entry {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .resource-entry input {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 350px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .modal-content label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .modal-content input,
+        .modal-content select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .modal-buttons button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .modal-buttons .btn-confirm {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .modal-buttons .btn-confirm:hover {
+            background-color: #45a049;
+        }
+        .modal-buttons .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+        .modal-buttons .btn-cancel:hover {
+            background-color: #d32f2f;
+        }
+        #submitButton {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+        .section-title {
+            font-size: 18px;
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #4CAF50;
+            color: #333;
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+            padding: 5px;
+        }
+        .edit-btn {
+            color: #2196F3;
+        }
+        .delete-btn {
+            color: #f44336;
+        }
+        .form-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="logo.png" alt="Company Logo" class="logo">
+            <div>
+                <h2>DAILY SITE REPORT</h2>
+                <p style="color: #666; margin-top: 5px;">Complete your daily work report</p>
+            </div>
+        </div>
+
+        <form id="reportForm">
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <div class="form-group">
+                <label>Permit No, Validation & Suspension Time :</label>
+                <div class="resource-entry">
+                    <input type="text" id="permitNumber" placeholder="Permit Number" required>
+                    <input type="time" id="validationTime" placeholder="Validation Time" required>
+                    <input type="time" id="suspensionTime" placeholder="Suspension Time" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="foremanID">Foreman ID:</label>
+                <input type="text" id="foremanID" name="foremanID" placeholder="Enter Foreman ID" required>
+            </div>
+
+            <div class="form-group">
+                <label for="wiReference">Work Instruction No:</label>
+                <input type="text" id="wiReference" name="wiReference" placeholder="Enter WI Number" required>
+            </div>
+
+            <div class="form-group">
+                <label for="discipline">Area / Block:</label>
+                <select id="discipline" name="discipline" required>
+                    <option value="" disabled selected>Select Area / Block</option>
+                    <option value="Safha (Block-9)">Safah (Block-9)</option>
+                    <option value="Wadi Latham (Block-9)">Wadi Latham (Block-9)</option>
+                    <option value="Khamila (Bock-27)">Khamila (Bock-27)</option>
+                    <option value="Block-62">Block-62</option>
+                    <option value="FRT Project">FRT Project</option>
+                    <option value="Power Project">Power Project</option>
+                    <option value="Infrastructure Project">Infrastructure Project</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="section-title">Manpower & Plant Equipment Details</div>
+            <div class="form-group">
+                <table id="personnelTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Time-In</th>
+                            <th>Time-Out</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Resources will be added here dynamically -->
+                    </tbody>
+                </table>
+                <div class="button-container">
+                    <button type="button" class="btn btn-add" onclick="openResourceModal()">Add Resource</button>
+                </div>
+            </div>
+
+            <div class="section-title">Progress Details</div>
+            <div class="form-group">
+                <table id="progressTable">
+                    <thead>
+                        <tr>
+                            <th>Discipline</th>
+                            <th>Activity</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Progress entries will be added here dynamically -->
+                    </tbody>
+                </table>
+                <div class="button-container">
+                    <button type="button" class="btn btn-add" onclick="openProgressModal()">Add Progress</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description of Work:</label>
+                <textarea id="description" name="description" placeholder="Describe the work performed today" required></textarea>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" class="btn btn-add" id="submitButton">Submit</button>
+                <button type="button" class="btn btn-remove" id="clearStorageButton">Clear Stored Data</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Resource Entry Modal -->
+    <div id="resourceModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top: 0; margin-bottom: 20px;">Add Resource</h3>
+            
+            <label for="modalResourceID">Resource ID:</label>
+            <input type="text" id="modalResourceID" placeholder="Enter employee ID or equipment ID" required>
+
+            <label for="modalTimeIn">Time-in:</label>
+            <input type="time" id="modalTimeIn" required>
+
+            <label for="modalTimeOut">Time-out:</label>
+            <input type="time" id="modalTimeOut" required>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" onclick="closeResourceModal()">Cancel</button>
+                <button type="button" class="btn-confirm" onclick="addResource()">Add Resource</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Entry Modal -->
+    <div id="progressModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top: 0; margin-bottom: 20px;">Add Progress Entry</h3>
+            
+            <label for="modalProgressDiscipline">Discipline:</label>
+            <select id="modalProgressDiscipline" onchange="updateActivityDropdown()" required>
+                <option value="" disabled selected>Select Discipline</option>
+                <option value="Civil">Civil</option>
+                <option value="Piping &amp; Mechanical">Piping &amp; Mechanical</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Instrumentation">Instrumentation</option>
+                <option value="Commissioning">Commissioning</option>
+                <option value="Scaffolding">Scaffolding</option>
+                <option value="Demolition/Shutdown">Demolition/Shutdown</option>
+                <option value="Shop">Shop</option>
+            </select>
+
+            <label for="modalActivity">Activity:</label>
+            <select id="modalActivity" onchange="toggleCustomActivityInput()" required>
+                <option value="">Select Activity</option>
+                <!-- Activities will be populated dynamically based on discipline -->
+                <option value="Other">Other</option>
+            </select>
+            <input type="text" id="customActivity" placeholder="Enter Custom Activity" style="display: none; margin-top: 5px;">
+
+            <label for="modalQuantity">Quantity:</label>
+            <input type="number" id="modalQuantity" placeholder="Enter Quantity" required>
+
+            <label for="modalUnit">Unit:</label>
+            <select id="modalUnit" required>
+                <option value="" disabled selected>Select Unit</option>
+                <option value="Meter">Meter</option>
+                <option value="M2">M2</option>
+                <option value="M3">M3</option>
+                <option value="No">No</option>
+                <option value="Ton">Ton</option>
+                <option value="Kg">Kg</option>
+                <option value="In. Dia">In. Dia</option>
+            </select>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" onclick="closeProgressModal()">Cancel</button>
+                <button type="button" class="btn-confirm" onclick="addProgressEntry()">Add Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store resource and progress entries
+        let personnelEntries = [];
+        let progressEntries = [];
+        let defaultTimeIn = null;
+        let defaultTimeOut = null;
+        let editingIndex = -1;
+        let editingType = null; // 'personnel' or 'progress'
+
+        // Activity lists based on discipline
+        const activities = {
+            "Civil": [
+                "Survey & Marking",
+                "Trial Pit Excavation",
+                "Excavation (Manual)",
+                "Excavation (Mechanical)",
+                "Trench Excavation (Manual)",
+                "Trench Excavation (Mechanical)",
+                "PCC",
+                "Foundation Installation",
+                "In-Situ Casting",
+                "Protective Coating",
+                "Backfilling",
+                "Compaction"
+            ],
+            "Piping & Mechanical": [
+                "Piping Spool Erection",
+                "Piping Field Welding",
+                "Valve Erection",
+                "Flowline/Pipeline Stringing",
+                "Flowline/Pipeline Erection",
+                "Flowline/Pipeline Welding",
+                "Valve Hydrotesting",
+                "Field Hydrotesting",
+                "Flange Torquing",
+                "Support Structure Installation"
+            ],
+            "Electrical": [
+                "HV Cable Laying",
+                "LV Cable Laying",
+                "HV Glanding & Termination",
+                "LV Glanding & Termination",
+                "Straight Through Joints",
+                "Earth Pits",
+                "Earth Bus Bar",
+                "Earth Cables Laying ",
+                "Earth Cables Termination)",
+                "Branch Connectors",
+                "Flexible Braided Jumpers",
+                "PVC Pipe Installation",
+                "Concrete Duct Banks",
+                "Indoor Lighting",
+                "Outdoor Lighting",
+                "Exit Sign Lights",
+                "Power Receptacles & Sockets",
+                "Exhaust Fans",
+                "Air Conditioners",
+                "Disconnector with Support Structure",
+                "Lighting Poles ",
+                "JB Installation",
+                "DB Installation",
+                "VFD",
+                "Control Panels",
+                "Switchgear",
+                "Transformers",
+                "OHL Guard Poles",
+                "OHL Conductors",
+                "OHL Concrete Pole Installation",
+                "OHL Wooden Pole Installation",
+                "Perforated Trays with Cover",
+                "Ladder Trays with Cover",
+                "Cable Tray Supports",
+                "Nameplates",
+                "Kopex Conduit",
+                "Concrete Block Installation"
+            ],
+            "Instrumentation": [
+                "Cable Laying (Various types: power, control, fiber optic, communication)",
+                "Glanding & Termination (For different cable specifications)",
+                "Earth Cable Laying & Termination",
+                "Branch Connector Installation",
+                "Conduits & Pipes Installation",
+                "Junction Box (JB) Installation & Supports",
+                "Panel Installation (IFB, PLC, RTU, FO Patch, Telecom)",
+                "Concrete Duct & Block Installation",
+                "Name Plate Installation",
+                "Kopex Conduit Installation",
+                "Cable Tray & Supports Installation (Perforated, Ladder, Covers)",
+                "Instrument Installation (Transmitters, Gauges, Indicators)",
+                "Fire & Gas (F&G) Installation (Detectors, Sirens, Beacons)",
+                "Support Installations (For F&G equipment)",
+                "PLC Installation & Wiring (Relays, I/O Cards, Modules, Power Supply)",
+                "Tubing Installation (Connectors, Valves, Manifolds)",
+                "Function Testing & Calibration (Instruments, F&G, Valves)"
+            ],
+            "Commissioning": [
+                "Loop Testing",
+                "Function Test",
+                "Calibration"
+            ],
+            "Scaffolding": [
+                "Erection",
+                "Dismantling"
+            ],
+            "Demolition/Shutdown": [
+                "Foundation",
+                "Cables",
+                "Instruments"
+            ],
+            "Shop": [
+                "Piping Spool Fabrication",
+                "Hydrotesting Of Pipe Spools",
+                "Blasting & Painting Pipe Spools",
+                "Support Structure Fabrication",
+                "Blasting & Painting of Structures",
+                "Reinforcement Work for Foundations",
+                "Pres-Casting and Coating of Foundations"
+            ]
+        };
+
+        // Set today's date as default and load saved data
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("date").value = today;
+            
+            // Load saved data from local storage
+            loadSavedData();
+            
+            // Set up clear storage button
+            document.getElementById('clearStorageButton').addEventListener('click', clearStoredData);
+            
+            // Set up form submission handler
+            document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
+        });
+
+        // Load saved data from local storage
+        function loadSavedData() {
+            const savedData = localStorage.getItem('dailySiteReportData');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    
+                    // Fill form fields from saved data
+                    document.getElementById("permitNumber").value = data.permitNumber || '';
+                    document.getElementById("validationTime").value = data.validationTime || '';
+                    document.getElementById("suspensionTime").value = data.suspensionTime || '';
+                    document.getElementById("foremanID").value = data.foremanID || '';
+                    document.getElementById("wiReference").value = data.wiReference || '';
+                    document.getElementById("discipline").value = data.discipline || '';
+                    document.getElementById("description").value = data.description || '';
+                    
+                    // Load personnel entries
+                    if (data.personnelEntries && Array.isArray(data.personnelEntries)) {
+                        personnelEntries = data.personnelEntries;
+                        updatePersonnelTable();
+                        
+                        // Set default times if there are entries
+                        if (personnelEntries.length > 0) {
+                            defaultTimeIn = personnelEntries[0].timeIn;
+                            defaultTimeOut = personnelEntries[0].timeOut;
+                        }
+                    }
+                    
+                    // Load progress entries
+                    if (data.progressEntries && Array.isArray(data.progressEntries)) {
+                        progressEntries = data.progressEntries;
+                        updateProgressTable();
+                    }
+                } catch (e) {
+                    console.error("Error loading saved data:", e);
+                }
+            }
+        }
+
+        // Save form data to local storage
+        function saveFormData() {
+            const formData = {
+                date: document.getElementById("date").value,
+                permitNumber: document.getElementById("permitNumber").value,
+                validationTime: document.getElementById("validationTime").value,
+                suspensionTime: document.getElementById("suspensionTime").value,
+                foremanID: document.getElementById("foremanID").value,
+                wiReference: document.getElementById("wiReference").value,
+                discipline: document.getElementById("discipline").value,
+                description: document.getElementById("description").value,
+                personnelEntries: personnelEntries,
+                progressEntries: progressEntries,
+                lastSaved: new Date().getTime()
+            };
+            
+            localStorage.setItem('dailySiteReportData', JSON.stringify(formData));
+        }
+
+        // Clear stored data
+        function clearStoredData() {
+            if (confirm('Are you sure you want to clear all saved data? This cannot be undone.')) {
+                localStorage.removeItem('dailySiteReportData');
+                personnelEntries = [];
+                progressEntries = [];
+                defaultTimeIn = null;
+                defaultTimeOut = null;
+                updatePersonnelTable();
+                updateProgressTable();
+                document.getElementById("reportForm").reset();
+                // Set today's date again after reset
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById("date").value = today;
+                alert('All saved data has been cleared.');
+            }
+        }
+
+        // Resource Modal Functions
+        function openResourceModal(editIndex = -1) {
+            editingIndex = editIndex;
+            editingType = 'personnel';
+            
+            if (defaultTimeIn && defaultTimeOut) {
+                document.getElementById("modalTimeIn").value = defaultTimeIn;
+                document.getElementById("modalTimeOut").value = defaultTimeOut;
+            }
+            
+            if (editIndex >= 0) {
+                // Editing existing entry
+                const entry = personnelEntries[editIndex];
+                document.getElementById("modalResourceID").value = entry.id;
+                document.getElementById("modalTimeIn").value = entry.timeIn;
+                document.getElementById("modalTimeOut").value = entry.timeOut;
+                document.querySelector(".modal-content h3").textContent = "Edit Resource";
+            } else {
+                // Adding new entry
+                document.getElementById("modalResourceID").value = "";
+                document.getElementById("modalTimeIn").value = "";
+                document.getElementById("modalTimeOut").value = "";
+                document.querySelector(".modal-content h3").textContent = "Add Resource";
+            }
+            
+            document.getElementById("resourceModal").style.display = "flex";
+            document.getElementById("modalResourceID").focus();
+        }
+
+        function closeResourceModal() {
+            document.getElementById("resourceModal").style.display = "none";
+            document.getElementById("modalResourceID").value = "";
+            document.getElementById("modalTimeIn").value = "";
+            document.getElementById("modalTimeOut").value = "";
+            editingIndex = -1;
+            editingType = null;
+        }
+
+        function addResource() {
+            const resourceID = document.getElementById("modalResourceID").value.trim();
+            const timeIn = document.getElementById("modalTimeIn").value;
+            const timeOut = document.getElementById("modalTimeOut").value;
+
+            if (!resourceID) {
+                alert("Please enter a Resource ID");
+                return;
+            }
+            if (!timeIn || !timeOut) {
+                alert("Please enter both Time-in and Time-out");
+                return;
+            }
+
+            if (personnelEntries.length === 0) {
+                defaultTimeIn = timeIn;
+                defaultTimeOut = timeOut;
+            }
+
+            if (editingIndex >= 0 && editingType === 'personnel') {
+                // Update existing entry
+                personnelEntries[editingIndex] = {
+                    id: resourceID,
+                    timeIn: timeIn,
+                    timeOut: timeOut
+                };
+            } else {
+                // Add new entry
+                personnelEntries.push({
+                    id: resourceID,
+                    timeIn: timeIn,
+                    timeOut: timeOut
+                });
+            }
+
+            updatePersonnelTable();
+            closeResourceModal();
+            saveFormData();
+        }
+
+        function removePersonnel(index) {
+            if (confirm('Are you sure you want to remove this resource?')) {
+                personnelEntries.splice(index, 1);
+                updatePersonnelTable();
+                
+                if (personnelEntries.length === 0) {
+                    defaultTimeIn = null;
+                    defaultTimeOut = null;
+                }
+                saveFormData();
+            }
+        }
+
+        function updatePersonnelTable() {
+            const tbody = document.querySelector("#personnelTable tbody");
+            tbody.innerHTML = personnelEntries.map((entry, index) => `
+                <tr>
+                    <td>${entry.id}</td>
+                    <td>${entry.timeIn}</td>
+                    <td>${entry.timeOut}</td>
+                    <td>
+                        <button type="button" class="action-btn edit-btn" onclick="openResourceModal(${index})">✏️</button>
+                        <button type="button" class="action-btn delete-btn" onclick="removePersonnel(${index})">🗑️</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        // Progress Modal Functions
+        function openProgressModal(editIndex = -1) {
+            editingIndex = editIndex;
+            editingType = 'progress';
+            
+            document.getElementById("progressModal").style.display = "flex";
+            
+            if (editIndex >= 0) {
+                // Editing existing entry
+                const entry = progressEntries[editIndex];
+                document.getElementById("modalProgressDiscipline").value = entry.discipline;
+                updateActivityDropdown();
+                
+                // Need to wait for the dropdown to update
+                setTimeout(() => {
+                    if (entry.activity === "Other" || !activities[entry.discipline]?.includes(entry.activity)) {
+                        document.getElementById("modalActivity").value = "Other";
+                        document.getElementById("customActivity").value = entry.activity;
+                        document.getElementById("customActivity").style.display = "block";
+                    } else {
+                        document.getElementById("modalActivity").value = entry.activity;
+                        document.getElementById("customActivity").style.display = "none";
+                    }
+                    
+                    document.getElementById("modalQuantity").value = entry.quantity;
+                    document.getElementById("modalUnit").value = entry.unit;
+                    document.querySelector(".modal-content h3").textContent = "Edit Progress Entry";
+                }, 50);
+            } else {
+                // Adding new entry
+                document.getElementById("modalProgressDiscipline").value = "";
+                document.getElementById("modalActivity").innerHTML = '<option value="">Select Activity</option>';
+                document.getElementById("modalQuantity").value = "";
+                document.getElementById("modalUnit").value = "";
+                document.getElementById("customActivity").value = "";
+                document.getElementById("customActivity").style.display = "none";
+                document.querySelector(".modal-content h3").textContent = "Add Progress Entry";
+            }
+            
+            document.getElementById("modalProgressDiscipline").focus();
+        }
+
+        function closeProgressModal() {
+            document.getElementById("progressModal").style.display = "none";
+            document.getElementById("modalProgressDiscipline").value = "";
+            document.getElementById("modalActivity").innerHTML = '<option value="">Select Activity</option>';
+            document.getElementById("modalQuantity").value = "";
+            document.getElementById("modalUnit").value = "";
+            document.getElementById("customActivity").value = "";
+            document.getElementById("customActivity").style.display = "none";
+            editingIndex = -1;
+            editingType = null;
+        }
+
+        function updateActivityDropdown() {
+            const discipline = document.getElementById("modalProgressDiscipline").value;
+            const activityDropdown = document.getElementById("modalActivity");
+            activityDropdown.innerHTML = '<option value="">Select Activity</option>';
+
+            if (discipline && activities[discipline]) {
+                activities[discipline].forEach(activity => {
+                    const option = document.createElement("option");
+                    option.value = activity;
+                    option.textContent = activity;
+                    activityDropdown.appendChild(option);
+                });
+                const otherOption = document.createElement("option");
+                otherOption.value = "Other";
+                otherOption.textContent = "Other";
+                activityDropdown.appendChild(otherOption);
+            }
+        }
+
+        function toggleCustomActivityInput() {
+            const activityDropdown = document.getElementById("modalActivity");
+            const customActivityInput = document.getElementById("customActivity");
+            if (activityDropdown.value === "Other") {
+                customActivityInput.style.display = "block";
+                customActivityInput.required = true;
+            } else {
+                customActivityInput.style.display = "none";
+                customActivityInput.required = false;
+            }
+        }
+
+        function addProgressEntry() {
+            const discipline = document.getElementById("modalProgressDiscipline").value;
+            let activity = document.getElementById("modalActivity").value;
+            const quantity = document.getElementById("modalQuantity").value;
+            const unit = document.getElementById("modalUnit").value;
+
+            if (activity === "Other") {
+                activity = document.getElementById("customActivity").value;
+            }
+
+            if (!discipline || !activity || !quantity || !unit) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            if (editingIndex >= 0 && editingType === 'progress') {
+                // Update existing entry
+                progressEntries[editingIndex] = {
+                    discipline: discipline,
+                    activity: activity,
+                    quantity: quantity,
+                    unit: unit
+                };
+            } else {
+                // Add new entry
+                progressEntries.push({
+                    discipline: discipline,
+                    activity: activity,
+                    quantity: quantity,
+                    unit: unit
+                });
+            }
+
+            updateProgressTable();
+            closeProgressModal();
+            saveFormData();
+        }
+
+        function removeProgress(index) {
+            if (confirm('Are you sure you want to remove this progress entry?')) {
+                progressEntries.splice(index, 1);
+                updateProgressTable();
+                saveFormData();
+            }
+        }
+
+        function updateProgressTable() {
+            const tbody = document.querySelector("#progressTable tbody");
+            tbody.innerHTML = progressEntries.map((entry, index) => `
+                <tr>
+                    <td>${entry.discipline}</td>
+                    <td>${entry.activity}</td>
+                    <td>${entry.quantity}</td>
+                    <td>${entry.unit}</td>
+                    <td>
+                        <button type="button" class="action-btn edit-btn" onclick="openProgressModal(${index})">✏️</button>
+                        <button type="button" class="action-btn delete-btn" onclick="removeProgress(${index})">🗑️</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        // Form submission handler
+        function handleFormSubmission(e) {
+            e.preventDefault();
+
+            // Validate at least one resource entry
+            if (personnelEntries.length === 0) {
+                alert("Please add at least one Resource Entry.");
+                return;
+            }
+
+            const submitButton = document.getElementById("submitButton");
+            submitButton.disabled = true;
+            submitButton.innerText = "Submitting...";
+
+            // Create timestamp for submission
+            const postingDateTime = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+            // Prepare form data (now includes progress entries)
+            const formData = {
+                date: document.getElementById("date").value,
+                foremanID: document.getElementById("foremanID").value,
+                wiReference: document.getElementById("wiReference").value,
+                discipline: document.getElementById("discipline").value,
+                description: document.getElementById("description").value,
+                personnel: JSON.stringify(personnelEntries),
+                progressEntries: JSON.stringify(progressEntries),
+                permitNumber: document.getElementById("permitNumber").value,
+                validationTime: document.getElementById("validationTime").value,
+                suspensionTime: document.getElementById("suspensionTime").value,
+                postingDateTime: postingDateTime,
+                deviceDetails: JSON.stringify({
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    screenResolution: `${window.screen.width}x${window.screen.height}`
+                })
+            };
+
+            // Convert to URL parameters
+            const queryParams = new URLSearchParams();
+            for (const [key, value] of Object.entries(formData)) {
+                queryParams.append(key, value);
+            }
+
+            // Submit to Google Apps Script endpoint
+            fetch(`https://script.google.com/macros/s/AKfycbxO0pWIOFOwLOnTHd7FtrGNItxDI_VWOuv01o1c2wdxSTXdTDz3NNEkeFwQJikqHCNyNA/exec?${queryParams.toString()}`, {
+                method: "GET",
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert("Report submitted successfully!");
+                
+                // Save the submitted data for next day
+                const dataToSave = {
+                    permitNumber: document.getElementById("permitNumber").value,
+                    validationTime: document.getElementById("validationTime").value,
+                    suspensionTime: document.getElementById("suspensionTime").value,
+                    foremanID: document.getElementById("foremanID").value,
+                    wiReference: document.getElementById("wiReference").value,
+                    discipline: document.getElementById("discipline").value,
+                    description: document.getElementById("description").value,
+                    personnelEntries: personnelEntries,
+                    progressEntries: progressEntries,
+                    lastSaved: new Date().getTime()
+                };
+                localStorage.setItem('dailySiteReportData', JSON.stringify(dataToSave));
+                
+                // Clear only the entries for fresh start next day
+                personnelEntries = [];
+                progressEntries = [];
+                defaultTimeIn = null;
+                defaultTimeOut = null;
+                updatePersonnelTable();
+                updateProgressTable();
+                
+                // Reset form but keep other data
+                document.getElementById("date").value = new Date().toISOString().split('T')[0];
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Submission failed: " + error.message);
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.innerText = "Submit";
+            });
+        }
+    </script>
+</body>
+</html>
