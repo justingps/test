@@ -327,6 +327,7 @@
                 <div class="button-container">
                     <button type="button" class="btn btn-add" onclick="openProgressModal()">Add Progress</button>
                 </div>
+                <div class="error-message" id="progressEntries-error">Please complete all fields for progress entries</div>
             </div>
 
             <div class="form-group">
@@ -383,17 +384,21 @@
                 <option value="Demolition/Shutdown">Demolition/Shutdown</option>
                 <option value="Shop">Shop</option>
             </select>
+            <div class="error-message" id="modalProgressDiscipline-error">Please select discipline</div>
 
             <label for="modalActivity">Activity:</label>
-            <select id="modalActivity" onchange="toggleCustomActivityInput()">
+            <select id="modalActivity" onchange="toggleCustomActivityInput(); autoSelectUnit()">
                 <option value="">Select Activity</option>
                 <!-- Activities will be populated dynamically based on discipline -->
                 <option value="Other">Other</option>
             </select>
+            <div class="error-message" id="modalActivity-error">Please select activity</div>
             <input type="text" id="customActivity" placeholder="Enter Custom Activity" style="display: none; margin-top: 5px;">
+            <div class="error-message" id="customActivity-error" style="display: none;">Please enter activity</div>
 
             <label for="modalQuantity">Quantity:</label>
             <input type="number" id="modalQuantity" placeholder="Enter Quantity">
+            <div class="error-message" id="modalQuantity-error">Please enter quantity</div>
 
             <label for="modalUnit">Unit:</label>
             <select id="modalUnit">
@@ -406,6 +411,7 @@
                 <option value="Kg">Kg</option>
                 <option value="In. Dia">In. Dia</option>
             </select>
+            <div class="error-message" id="modalUnit-error">Please select unit</div>
 
             <div class="modal-buttons">
                 <button type="button" class="btn-cancel" onclick="closeProgressModal()">Cancel</button>
@@ -534,6 +540,116 @@
             ]
         };
 
+        // Activity to Unit mapping
+        const activityUnitMap = {
+            // Civil activities
+            "Survey & Marking": "Meter",
+            "Trial Pit Excavation": "No",
+            "Excavation (Manual)": "M3",
+            "Excavation (Mechanical)": "M3",
+            "Trench Excavation (Manual)": "Meter",
+            "Trench Excavation (Mechanical)": "Meter",
+            "PCC": "M3",
+            "Foundation Installation": "No",
+            "In-Situ Casting": "M3",
+            "Protective Coating": "M2",
+            "Backfilling": "M3",
+            "Compaction": "M2",
+            
+            // Piping & Mechanical activities
+            "Piping Spool Erection": "No",
+            "Piping Field Welding": "In. Dia",
+            "Valve Erection": "No",
+            "Flowline/Pipeline Stringing": "Meter",
+            "Flowline/Pipeline Erection": "Meter",
+            "Flowline/Pipeline Welding": "In. Dia",
+            "Valve Hydrotesting": "No",
+            "Field Hydrotesting": "No",
+            "Flange Torquing": "No",
+            "Support Structure Installation": "No",
+            
+            // Electrical activities
+            "HV Cable Laying": "Meter",
+            "LV Cable Laying": "Meter",
+            "HV Glanding & Termination": "No",
+            "LV Glanding & Termination": "No",
+            "Straight Through Joints": "No",
+            "Earth Pits": "No",
+            "Earth Bus Bar": "Meter",
+            "Earth Cables Laying ": "Meter",
+            "Earth Cables Termination)": "No",
+            "Branch Connectors": "No",
+            "Flexible Braided Jumpers": "No",
+            "PVC Pipe Installation": "Meter",
+            "Concrete Duct Banks": "Meter",
+            "Indoor Lighting": "No",
+            "Outdoor Lighting": "No",
+            "Exit Sign Lights": "No",
+            "Power Receptacles & Sockets": "No",
+            "Exhaust Fans": "No",
+            "Air Conditioners": "No",
+            "Disconnector with Support Structure": "No",
+            "Lighting Poles ": "No",
+            "JB Installation": "No",
+            "DB Installation": "No",
+            "VFD": "No",
+            "Control Panels": "No",
+            "Switchgear": "No",
+            "Transformers": "No",
+            "OHL Guard Poles": "No",
+            "OHL Conductors": "Meter",
+            "OHL Concrete Pole Installation": "No",
+            "OHL Wooden Pole Installation": "No",
+            "Perforated Trays with Cover": "Meter",
+            "Ladder Trays with Cover": "Meter",
+            "Cable Tray Supports": "No",
+            "Nameplates": "No",
+            "Kopex Conduit": "Meter",
+            "Concrete Block Installation": "No",
+            
+            // Instrumentation activities
+            "Cable Laying (Various types: power, control, fiber optic, communication)": "Meter",
+            "Glanding & Termination (For different cable specifications)": "No",
+            "Earth Cable Laying & Termination": "Meter",
+            "Branch Connector Installation": "No",
+            "Conduits & Pipes Installation": "Meter",
+            "Junction Box (JB) Installation & Supports": "No",
+            "Panel Installation (IFB, PLC, RTU, FO Patch, Telecom)": "No",
+            "Concrete Duct & Block Installation": "No",
+            "Name Plate Installation": "No",
+            "Kopex Conduit Installation": "Meter",
+            "Cable Tray & Supports Installation (Perforated, Ladder, Covers)": "Meter",
+            "Instrument Installation (Transmitters, Gauges, Indicators)": "No",
+            "Fire & Gas (F&G) Installation (Detectors, Sirens, Beacons)": "No",
+            "Support Installations (For F&G equipment)": "No",
+            "PLC Installation & Wiring (Relays, I/O Cards, Modules, Power Supply)": "No",
+            "Tubing Installation (Connectors, Valves, Manifolds)": "Meter",
+            "Function Testing & Calibration (Instruments, F&G, Valves)": "No",
+            
+            // Commissioning activities
+            "Loop Testing": "No",
+            "Function Test": "No",
+            "Calibration": "No",
+            
+            // Scaffolding activities
+            "Erection": "No",
+            "Dismantling": "No",
+            
+            // Demolition/Shutdown activities
+            "Foundation": "No",
+            "Cables": "Meter",
+            "Instruments": "No",
+            
+            // Shop activities
+            "Piping Spool Fabrication": "No",
+            "Hydrotesting Of Pipe Spools": "No",
+            "Blasting & Painting Pipe Spools": "No",
+            "Support Structure Fabrication": "No",
+            "Blasting & Painting of Structures": "No",
+            "Reinforcement Work for Foundations": "Ton",
+            "Pres-Casting and Coating of Foundations": "No"
+        };
+
         // Set today's date as default and load saved data
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];
@@ -591,10 +707,10 @@
             
             if (isValid) {
                 field.classList.remove('error-field');
-                errorElement.style.display = 'none';
+                if (errorElement) errorElement.style.display = 'none';
             } else {
                 field.classList.add('error-field');
-                errorElement.style.display = 'block';
+                if (errorElement) errorElement.style.display = 'block';
             }
             
             return isValid;
@@ -622,6 +738,26 @@
                 isValid = false;
             } else {
                 personnelError.style.display = 'none';
+            }
+            
+            // Validate progress entries (if any exist)
+            const progressError = document.getElementById('progressEntries-error');
+            if (progressEntries.length > 0) {
+                // Check each progress entry for completeness
+                const incompleteEntries = progressEntries.some(entry => {
+                    return !entry.discipline || !entry.activity || 
+                           entry.quantity === undefined || entry.quantity === '' || 
+                           !entry.unit;
+                });
+                
+                if (incompleteEntries) {
+                    progressError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    progressError.style.display = 'none';
+                }
+            } else {
+                progressError.style.display = 'none';
             }
             
             return isValid;
@@ -970,6 +1106,13 @@
                 document.querySelector(".modal-content h3").textContent = "Add Progress Entry";
             }
             
+            // Clear any previous error messages
+            document.getElementById("modalProgressDiscipline-error").style.display = "none";
+            document.getElementById("modalActivity-error").style.display = "none";
+            document.getElementById("customActivity-error").style.display = "none";
+            document.getElementById("modalQuantity-error").style.display = "none";
+            document.getElementById("modalUnit-error").style.display = "none";
+            
             document.getElementById("modalProgressDiscipline").focus();
         }
 
@@ -1007,12 +1150,25 @@
         function toggleCustomActivityInput() {
             const activityDropdown = document.getElementById("modalActivity");
             const customActivityInput = document.getElementById("customActivity");
+            const customActivityError = document.getElementById("customActivity-error");
+            
             if (activityDropdown.value === "Other") {
                 customActivityInput.style.display = "block";
                 customActivityInput.required = true;
             } else {
                 customActivityInput.style.display = "none";
                 customActivityInput.required = false;
+                customActivityError.style.display = "none";
+            }
+        }
+
+        // Auto-select unit based on activity
+        function autoSelectUnit() {
+            const activity = document.getElementById("modalActivity").value;
+            const unitDropdown = document.getElementById("modalUnit");
+            
+            if (activity && activityUnitMap[activity]) {
+                unitDropdown.value = activityUnitMap[activity];
             }
         }
 
@@ -1022,11 +1178,61 @@
             const quantity = document.getElementById("modalQuantity").value;
             const unit = document.getElementById("modalUnit").value;
 
+            // Validate modal fields
+            let isValid = true;
+            
+            if (!discipline) {
+                document.getElementById("modalProgressDiscipline-error").style.display = "block";
+                document.getElementById("modalProgressDiscipline").classList.add("error-field");
+                isValid = false;
+            } else {
+                document.getElementById("modalProgressDiscipline-error").style.display = "none";
+                document.getElementById("modalProgressDiscipline").classList.remove("error-field");
+            }
+            
+            if (!activity) {
+                document.getElementById("modalActivity-error").style.display = "block";
+                document.getElementById("modalActivity").classList.add("error-field");
+                isValid = false;
+            } else {
+                document.getElementById("modalActivity-error").style.display = "none";
+                document.getElementById("modalActivity").classList.remove("error-field");
+            }
+            
             if (activity === "Other") {
                 activity = document.getElementById("customActivity").value;
+                if (!activity) {
+                    document.getElementById("customActivity-error").style.display = "block";
+                    document.getElementById("customActivity").classList.add("error-field");
+                    isValid = false;
+                } else {
+                    document.getElementById("customActivity-error").style.display = "none";
+                    document.getElementById("customActivity").classList.remove("error-field");
+                }
+            }
+            
+            if (!quantity) {
+                document.getElementById("modalQuantity-error").style.display = "block";
+                document.getElementById("modalQuantity").classList.add("error-field");
+                isValid = false;
+            } else {
+                document.getElementById("modalQuantity-error").style.display = "none";
+                document.getElementById("modalQuantity").classList.remove("error-field");
+            }
+            
+            if (!unit) {
+                document.getElementById("modalUnit-error").style.display = "block";
+                document.getElementById("modalUnit").classList.add("error-field");
+                isValid = false;
+            } else {
+                document.getElementById("modalUnit-error").style.display = "none";
+                document.getElementById("modalUnit").classList.remove("error-field");
+            }
+            
+            if (!isValid) {
+                return;
             }
 
-            // Progress entries are optional, so no validation needed
             if (editingIndex >= 0 && editingType === 'progress') {
                 // Update existing entry
                 progressEntries[editingIndex] = {
