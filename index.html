@@ -213,6 +213,15 @@
             gap: 10px;
             margin-top: 20px;
         }
+        .error-message {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .error-field {
+            border-color: #f44336 !important;
+        }
     </style>
 </head>
 <body>
@@ -229,25 +238,37 @@
             <div class="form-group">
                 <label for="date">Date:</label>
                 <input type="date" id="date" name="date" required>
+                <div class="error-message" id="date-error">Please select a date</div>
             </div>
 
             <div class="form-group">
                 <label>Permit No, Validation & Suspension Time :</label>
                 <div class="resource-entry">
-                    <input type="text" id="permitNumber" placeholder="Permit Number" required>
-                    <input type="time" id="validationTime" placeholder="Validation Time" required>
-                    <input type="time" id="suspensionTime" placeholder="Suspension Time" required>
+                    <div style="flex: 1;">
+                        <input type="text" id="permitNumber" placeholder="Permit Number" required>
+                        <div class="error-message" id="permitNumber-error">Please enter permit number</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <input type="time" id="validationTime" placeholder="Validation Time" required>
+                        <div class="error-message" id="validationTime-error">Please enter validation time</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <input type="time" id="suspensionTime" placeholder="Suspension Time" required>
+                        <div class="error-message" id="suspensionTime-error">Please enter suspension time</div>
+                    </div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="foremanID">Foreman ID:</label>
                 <input type="text" id="foremanID" name="foremanID" placeholder="Enter Foreman ID" required>
+                <div class="error-message" id="foremanID-error">Please enter foreman ID</div>
             </div>
 
             <div class="form-group">
                 <label for="wiReference">Work Instruction No:</label>
                 <input type="text" id="wiReference" name="wiReference" placeholder="Enter WI Number" required>
+                <div class="error-message" id="wiReference-error">Please enter work instruction number</div>
             </div>
 
             <div class="form-group">
@@ -263,6 +284,7 @@
                     <option value="Infrastructure Project">Infrastructure Project</option>
                     <option value="Other">Other</option>
                 </select>
+                <div class="error-message" id="discipline-error">Please select area/block</div>
             </div>
 
             <div class="section-title">Manpower & Plant Equipment Details</div>
@@ -283,6 +305,7 @@
                 <div class="button-container">
                     <button type="button" class="btn btn-add" onclick="openResourceModal()">Add Resource</button>
                 </div>
+                <div class="error-message" id="personnelEntries-error">Please add at least one resource entry</div>
             </div>
 
             <div class="section-title">Progress Details</div>
@@ -309,10 +332,11 @@
             <div class="form-group">
                 <label for="description">Description of Work:</label>
                 <textarea id="description" name="description" placeholder="Describe the work performed today" required></textarea>
+                <div class="error-message" id="description-error">Please enter description of work</div>
             </div>
 
             <div class="form-footer">
-                <button type="submit" class="btn btn-add" id="submitButton">Submit</button>
+                <button type="button" class="btn btn-add" id="submitButton">Submit</button>
                 <button type="button" class="btn btn-remove" id="clearStorageButton">Clear Stored Data</button>
             </div>
         </form>
@@ -325,12 +349,15 @@
             
             <label for="modalResourceID">Resource ID:</label>
             <input type="text" id="modalResourceID" placeholder="Enter employee ID or equipment ID" required>
+            <div class="error-message" id="modalResourceID-error">Please enter resource ID</div>
 
             <label for="modalTimeIn">Time-in:</label>
             <input type="time" id="modalTimeIn" required>
+            <div class="error-message" id="modalTimeIn-error">Please enter time-in</div>
 
             <label for="modalTimeOut">Time-out:</label>
             <input type="time" id="modalTimeOut" required>
+            <div class="error-message" id="modalTimeOut-error">Please enter time-out</div>
 
             <div class="modal-buttons">
                 <button type="button" class="btn-cancel" onclick="closeResourceModal()">Cancel</button>
@@ -345,7 +372,7 @@
             <h3 style="margin-top: 0; margin-bottom: 20px;">Add Progress Entry</h3>
             
             <label for="modalProgressDiscipline">Discipline:</label>
-            <select id="modalProgressDiscipline" onchange="updateActivityDropdown()" required>
+            <select id="modalProgressDiscipline" onchange="updateActivityDropdown()">
                 <option value="" disabled selected>Select Discipline</option>
                 <option value="Civil">Civil</option>
                 <option value="Piping &amp; Mechanical">Piping &amp; Mechanical</option>
@@ -358,7 +385,7 @@
             </select>
 
             <label for="modalActivity">Activity:</label>
-            <select id="modalActivity" onchange="toggleCustomActivityInput()" required>
+            <select id="modalActivity" onchange="toggleCustomActivityInput()">
                 <option value="">Select Activity</option>
                 <!-- Activities will be populated dynamically based on discipline -->
                 <option value="Other">Other</option>
@@ -366,10 +393,10 @@
             <input type="text" id="customActivity" placeholder="Enter Custom Activity" style="display: none; margin-top: 5px;">
 
             <label for="modalQuantity">Quantity:</label>
-            <input type="number" id="modalQuantity" placeholder="Enter Quantity" required>
+            <input type="number" id="modalQuantity" placeholder="Enter Quantity">
 
             <label for="modalUnit">Unit:</label>
-            <select id="modalUnit" required>
+            <select id="modalUnit">
                 <option value="" disabled selected>Select Unit</option>
                 <option value="Meter">Meter</option>
                 <option value="M2">M2</option>
@@ -519,8 +546,172 @@
             document.getElementById('clearStorageButton').addEventListener('click', clearStoredData);
             
             // Set up form submission handler
-            document.getElementById('submitButton').addEventListener('click', handleFormSubmission);
+            document.getElementById('submitButton').addEventListener('click', validateAndSubmitForm);
+            
+            // Set up input validation for required fields
+            setupFieldValidation();
         });
+
+        // Set up field validation
+        function setupFieldValidation() {
+            const requiredFields = [
+                'date', 'permitNumber', 'validationTime', 'suspensionTime',
+                'foremanID', 'wiReference', 'discipline', 'description'
+            ];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', function() {
+                        validateField(fieldId);
+                    });
+                    field.addEventListener('change', function() {
+                        validateField(fieldId);
+                    });
+                }
+            });
+        }
+
+        // Validate a single field
+        function validateField(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            
+            if (!field) return true;
+            
+            let isValid = true;
+            
+            if (field.required) {
+                if (field.type === 'select-one') {
+                    isValid = field.value !== '';
+                } else {
+                    isValid = field.value.trim() !== '';
+                }
+            }
+            
+            if (isValid) {
+                field.classList.remove('error-field');
+                errorElement.style.display = 'none';
+            } else {
+                field.classList.add('error-field');
+                errorElement.style.display = 'block';
+            }
+            
+            return isValid;
+        }
+
+        // Validate all required fields
+        function validateAllFields() {
+            let isValid = true;
+            
+            const requiredFields = [
+                'date', 'permitNumber', 'validationTime', 'suspensionTime',
+                'foremanID', 'wiReference', 'discipline', 'description'
+            ];
+            
+            requiredFields.forEach(fieldId => {
+                if (!validateField(fieldId)) {
+                    isValid = false;
+                }
+            });
+            
+            // Validate at least one personnel entry
+            const personnelError = document.getElementById('personnelEntries-error');
+            if (personnelEntries.length === 0) {
+                personnelError.style.display = 'block';
+                isValid = false;
+            } else {
+                personnelError.style.display = 'none';
+            }
+            
+            return isValid;
+        }
+
+        // Validate and submit form
+        function validateAndSubmitForm(e) {
+            e.preventDefault();
+            
+            if (!validateAllFields()) {
+                alert('Please fill in all required fields correctly.');
+                return;
+            }
+            
+            const submitButton = document.getElementById("submitButton");
+            submitButton.disabled = true;
+            submitButton.innerText = "Submitting...";
+
+            // Create timestamp for submission
+            const postingDateTime = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+            // Prepare form data (now includes progress entries)
+            const formData = {
+                date: document.getElementById("date").value,
+                foremanID: document.getElementById("foremanID").value,
+                wiReference: document.getElementById("wiReference").value,
+                discipline: document.getElementById("discipline").value,
+                description: document.getElementById("description").value,
+                personnel: JSON.stringify(personnelEntries),
+                progressEntries: JSON.stringify(progressEntries),
+                permitNumber: document.getElementById("permitNumber").value,
+                validationTime: document.getElementById("validationTime").value,
+                suspensionTime: document.getElementById("suspensionTime").value,
+                postingDateTime: postingDateTime,
+                deviceDetails: JSON.stringify({
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    screenResolution: `${window.screen.width}x${window.screen.height}`
+                })
+            };
+
+            // Convert to URL parameters
+            const queryParams = new URLSearchParams();
+            for (const [key, value] of Object.entries(formData)) {
+                queryParams.append(key, value);
+            }
+
+            // Submit to Google Apps Script endpoint
+            fetch(`https://script.google.com/macros/s/AKfycbxO0pWIOFOwLOnTHd7FtrGNItxDI_VWOuv01o1c2wdxSTXdTDz3NNEkeFwQJikqHCNyNA/exec?${queryParams.toString()}`, {
+                method: "GET",
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert("Report submitted successfully!");
+                
+                // Save the submitted data for next day
+                const dataToSave = {
+                    permitNumber: document.getElementById("permitNumber").value,
+                    validationTime: document.getElementById("validationTime").value,
+                    suspensionTime: document.getElementById("suspensionTime").value,
+                    foremanID: document.getElementById("foremanID").value,
+                    wiReference: document.getElementById("wiReference").value,
+                    discipline: document.getElementById("discipline").value,
+                    description: document.getElementById("description").value,
+                    personnelEntries: personnelEntries,
+                    progressEntries: progressEntries,
+                    lastSaved: new Date().getTime()
+                };
+                localStorage.setItem('dailySiteReportData', JSON.stringify(dataToSave));
+                
+                // Clear only the entries for fresh start next day
+                personnelEntries = [];
+                progressEntries = [];
+                defaultTimeIn = null;
+                defaultTimeOut = null;
+                updatePersonnelTable();
+                updateProgressTable();
+                
+                // Reset form but keep other data
+                document.getElementById("date").value = new Date().toISOString().split('T')[0];
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Submission failed: " + error.message);
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.innerText = "Submit";
+            });
+        }
 
         // Load saved data from local storage
         function loadSavedData() {
@@ -545,8 +736,8 @@
                         
                         // Set default times if there are entries
                         if (personnelEntries.length > 0) {
-                            defaultTimeIn = personnelEntries[0].timeIn;
-                            defaultTimeOut = personnelEntries[0].timeOut;
+                            defaultTimeIn = personnelEntries[personnelEntries.length - 1].timeIn;
+                            defaultTimeOut = personnelEntries[personnelEntries.length - 1].timeOut;
                         }
                     }
                     
@@ -603,7 +794,12 @@
             editingIndex = editIndex;
             editingType = 'personnel';
             
-            if (defaultTimeIn && defaultTimeOut) {
+            // Auto-fill time-in and time-out from last entry if available
+            if (personnelEntries.length > 0) {
+                const lastEntry = personnelEntries[personnelEntries.length - 1];
+                document.getElementById("modalTimeIn").value = lastEntry.timeIn;
+                document.getElementById("modalTimeOut").value = lastEntry.timeOut;
+            } else if (defaultTimeIn && defaultTimeOut) {
                 document.getElementById("modalTimeIn").value = defaultTimeIn;
                 document.getElementById("modalTimeOut").value = defaultTimeOut;
             }
@@ -618,10 +814,16 @@
             } else {
                 // Adding new entry
                 document.getElementById("modalResourceID").value = "";
-                document.getElementById("modalTimeIn").value = "";
-                document.getElementById("modalTimeOut").value = "";
                 document.querySelector(".modal-content h3").textContent = "Add Resource";
             }
+            
+            // Clear any previous error messages
+            document.getElementById("modalResourceID-error").style.display = "none";
+            document.getElementById("modalTimeIn-error").style.display = "none";
+            document.getElementById("modalTimeOut-error").style.display = "none";
+            document.getElementById("modalResourceID").classList.remove("error-field");
+            document.getElementById("modalTimeIn").classList.remove("error-field");
+            document.getElementById("modalTimeOut").classList.remove("error-field");
             
             document.getElementById("resourceModal").style.display = "flex";
             document.getElementById("modalResourceID").focus();
@@ -641,12 +843,37 @@
             const timeIn = document.getElementById("modalTimeIn").value;
             const timeOut = document.getElementById("modalTimeOut").value;
 
+            // Validate modal fields
+            let isValid = true;
+            
             if (!resourceID) {
-                alert("Please enter a Resource ID");
-                return;
+                document.getElementById("modalResourceID-error").style.display = "block";
+                document.getElementById("modalResourceID").classList.add("error-field");
+                isValid = false;
+            } else {
+                document.getElementById("modalResourceID-error").style.display = "none";
+                document.getElementById("modalResourceID").classList.remove("error-field");
             }
-            if (!timeIn || !timeOut) {
-                alert("Please enter both Time-in and Time-out");
+            
+            if (!timeIn) {
+                document.getElementById("modalTimeIn-error").style.display = "block";
+                document.getElementById("modalTimeIn").classList.add("error-field");
+                isValid = false;
+            } else {
+                document.getElementById("modalTimeIn-error").style.display = "none";
+                document.getElementById("modalTimeIn").classList.remove("error-field");
+            }
+            
+            if (!timeOut) {
+                document.getElementById("modalTimeOut-error").style.display = "block";
+                document.getElementById("modalTimeOut").classList.add("error-field");
+                isValid = false;
+            } else {
+                document.getElementById("modalTimeOut-error").style.display = "none";
+                document.getElementById("modalTimeOut").classList.remove("error-field");
+            }
+            
+            if (!isValid) {
                 return;
             }
 
@@ -799,11 +1026,7 @@
                 activity = document.getElementById("customActivity").value;
             }
 
-            if (!discipline || !activity || !quantity || !unit) {
-                alert("Please fill in all fields.");
-                return;
-            }
-
+            // Progress entries are optional, so no validation needed
             if (editingIndex >= 0 && editingType === 'progress') {
                 // Update existing entry
                 progressEntries[editingIndex] = {
@@ -849,93 +1072,6 @@
                     </td>
                 </tr>
             `).join("");
-        }
-
-        // Form submission handler
-        function handleFormSubmission(e) {
-            e.preventDefault();
-
-            // Validate at least one resource entry
-            if (personnelEntries.length === 0) {
-                alert("Please add at least one Resource Entry.");
-                return;
-            }
-
-            const submitButton = document.getElementById("submitButton");
-            submitButton.disabled = true;
-            submitButton.innerText = "Submitting...";
-
-            // Create timestamp for submission
-            const postingDateTime = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-            // Prepare form data (now includes progress entries)
-            const formData = {
-                date: document.getElementById("date").value,
-                foremanID: document.getElementById("foremanID").value,
-                wiReference: document.getElementById("wiReference").value,
-                discipline: document.getElementById("discipline").value,
-                description: document.getElementById("description").value,
-                personnel: JSON.stringify(personnelEntries),
-                progressEntries: JSON.stringify(progressEntries),
-                permitNumber: document.getElementById("permitNumber").value,
-                validationTime: document.getElementById("validationTime").value,
-                suspensionTime: document.getElementById("suspensionTime").value,
-                postingDateTime: postingDateTime,
-                deviceDetails: JSON.stringify({
-                    userAgent: navigator.userAgent,
-                    platform: navigator.platform,
-                    screenResolution: `${window.screen.width}x${window.screen.height}`
-                })
-            };
-
-            // Convert to URL parameters
-            const queryParams = new URLSearchParams();
-            for (const [key, value] of Object.entries(formData)) {
-                queryParams.append(key, value);
-            }
-
-            // Submit to Google Apps Script endpoint
-            fetch(`https://script.google.com/macros/s/AKfycbxO0pWIOFOwLOnTHd7FtrGNItxDI_VWOuv01o1c2wdxSTXdTDz3NNEkeFwQJikqHCNyNA/exec?${queryParams.toString()}`, {
-                method: "GET",
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert("Report submitted successfully!");
-                
-                // Save the submitted data for next day
-                const dataToSave = {
-                    permitNumber: document.getElementById("permitNumber").value,
-                    validationTime: document.getElementById("validationTime").value,
-                    suspensionTime: document.getElementById("suspensionTime").value,
-                    foremanID: document.getElementById("foremanID").value,
-                    wiReference: document.getElementById("wiReference").value,
-                    discipline: document.getElementById("discipline").value,
-                    description: document.getElementById("description").value,
-                    personnelEntries: personnelEntries,
-                    progressEntries: progressEntries,
-                    lastSaved: new Date().getTime()
-                };
-                localStorage.setItem('dailySiteReportData', JSON.stringify(dataToSave));
-                
-                // Clear only the entries for fresh start next day
-                personnelEntries = [];
-                progressEntries = [];
-                defaultTimeIn = null;
-                defaultTimeOut = null;
-                updatePersonnelTable();
-                updateProgressTable();
-                
-                // Reset form but keep other data
-                document.getElementById("date").value = new Date().toISOString().split('T')[0];
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Submission failed: " + error.message);
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.innerText = "Submit";
-            });
         }
     </script>
 </body>
