@@ -1,1410 +1,729 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>GPS</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://justingps.github.io/dpr/favicon.png">
+    <title>Oil & Gas Daily Progress Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
-        body {
-            font-family: sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            min-height: 100vh;
         }
+
         .header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid #ff6b35;
         }
-        .logo {
-            max-width: 100px;
-            margin-right: 20px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        input[type="text"],
-        input[type="date"],
-        input[type="time"],
-        input[type="number"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-            background-color: white;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: 600;
-        }
-        .btn {
-            border: none;
-            color: white;
-            padding: 10px 20px;
+
+        .header h1 {
+            color: #1e3c72;
+            font-size: 2.5rem;
+            font-weight: 700;
             text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 4px;
-            width: 180px;
-            font-weight: 600;
-            transition: background-color 0.3s;
+            margin-bottom: 10px;
         }
-        .btn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        .btn-add {
-            background-color: #4CAF50;
-        }
-        .btn-add:hover {
-            background-color: #45a049;
-        }
-        .btn-remove {
-            background-color: #f44336;
-        }
-        .btn-remove:hover {
-            background-color: #d32f2f;
-        }
-        .resource-entry {
+
+        .controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .resource-entry input {
-            flex: 1;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .button-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            width: 350px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-        .modal-content label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        .modal-content input,
-        .modal-content select {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        .modal-buttons button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-        .modal-buttons .btn-confirm {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .modal-buttons .btn-confirm:hover {
-            background-color: #45a049;
-        }
-        .modal-buttons .btn-cancel {
-            background-color: #f44336;
-            color: white;
-        }
-        .modal-buttons .btn-cancel:hover {
-            background-color: #d32f2f;
-        }
-        #submitButton {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-        }
-        .section-title {
-            font-size: 18px;
-            margin: 25px 0 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #4CAF50;
-            color: #333;
-        }
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 0 5px;
-            padding: 5px;
-        }
-        .edit-btn {
-            color: #2196F3;
-        }
-        .delete-btn {
-            color: #f44336;
-        }
-        .form-footer {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            gap: 20px;
+            flex-wrap: wrap;
             margin-top: 20px;
         }
-        .error-message {
-            color: #f44336;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
-        .error-field {
-            border-color: #f44336 !important;
+
+        .control-group label {
+            font-weight: 600;
+            color: #1e3c72;
+            font-size: 0.9rem;
         }
-        
-        /* Autocomplete styles */
-        .autocomplete {
-            position: relative;
-            display: inline-block;
-            width: 100%;
+
+        input, select, button {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
-        .autocomplete-items {
-            position: absolute;
-            border: 1px solid #d4d4d4;
-            border-bottom: none;
-            border-top: none;
-            z-index: 99;
-            top: 100%;
-            left: 0;
-            right: 0;
-            max-height: 200px;
-            overflow-y: auto;
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
         }
-        .autocomplete-items div {
-            padding: 10px;
+
+        button {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            border: none;
             cursor: pointer;
-            background-color: #fff;
-            border-bottom: 1px solid #d4d4d4;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 120px;
         }
-        .autocomplete-items div:hover {
-            background-color: #e9e9e9;
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
         }
-        .autocomplete-active {
-            background-color: #4CAF50 !important;
-            color: #ffffff;
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 82, 152, 0.3);
+        }
+
+        .main-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #1e3c72;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            border-bottom: 3px solid #ff6b35;
+            padding-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .data-table tr:hover {
+            background: #e3f2fd;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #c62828;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <img src="logo.png" alt="Company Logo" class="logo">
-            <div>
-                <h2>DAILY SITE REPORT</h2>
-                <p style="color: #666; margin-top: 5px;">Complete your daily work report</p>
-            </div>
-        </div>
-
-        <form id="reportForm">
-            <div class="form-group">
-                <label for="date">Date:</label>
-                <input type="date" id="date" name="date" required>
-                <div class="error-message" id="date-error">Please select a date</div>
-            </div>
-
-            <div class="form-group">
-                <label>Permit No, Validation & Suspension Time :</label>
-                <div class="resource-entry">
-                    <div style="flex: 1;">
-                        <input type="text" id="permitNumber" placeholder="Permit Number" required>
-                        <div class="error-message" id="permitNumber-error">Please enter permit number</div>
-                    </div>
-                    <div style="flex: 1;">
-                        <input type="time" id="validationTime" placeholder="Validation Time" required>
-                        <div class="error-message" id="validationTime-error">Please enter validation time</div>
-                    </div>
-                    <div style="flex: 1;">
-                        <input type="time" id="suspensionTime" placeholder="Suspension Time" required>
-                        <div class="error-message" id="suspensionTime-error">Please enter suspension time</div>
-                    </div>
+    <div class="header">
+        <h1>🛢️ Oil & Gas Daily Progress Dashboard</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Upload CSV Data</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="csvFile" accept=".csv" />
+                    <label for="csvFile" class="file-input-label">Choose CSV File</label>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label for="foremanID">Foreman ID:</label>
-                <input type="text" id="foremanID" name="foremanID" placeholder="Enter Foreman ID" required>
-                <div class="error-message" id="foremanID-error">Please enter foreman ID</div>
+            
+            <div class="control-group">
+                <label>Select Date</label>
+                <input type="date" id="selectedDate">
             </div>
-
-            <div class="form-group">
-                <label for="wiReference">Work Instruction No:</label>
-                <input type="text" id="wiReference" name="wiReference" placeholder="Enter WI Number" required>
-                <div class="error-message" id="wiReference-error">Please enter work instruction number</div>
-            </div>
-
-            <div class="form-group">
-                <label for="discipline">Area / Block:</label>
-                <select id="discipline" name="discipline" required>
-                    <option value="" disabled selected>Select Area / Block</option>
-                    <option value="Safha (Block-9)">Safah (Block-9)</option>
-                    <option value="Wadi Latham (Block-9)">Wadi Latham (Block-9)</option>
-                    <option value="Khamila (Bock-27)">Khamila (Bock-27)</option>
-                    <option value="Block-62">Block-62</option>
-                    <option value="FRT Project">FRT Project</option>
-                    <option value="Power Project">Power Project</option>
-                    <option value="Infrastructure Project">Infrastructure Project</option>
-                    <option value="Other">Other</option>
+            
+            <div class="control-group">
+                <label>Date Range</label>
+                <select id="dateRange">
+                    <option value="single">Single Date</option>
+                    <option value="week">Past Week</option>
+                    <option value="month">Past Month</option>
+                    <option value="quarter">Past Quarter</option>
                 </select>
-                <div class="error-message" id="discipline-error">Please select area/block</div>
             </div>
-
-            <div class="section-title">Manpower & Plant Equipment Details</div>
-            <div class="form-group">
-                <table id="personnelTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Time-In</th>
-                            <th>Time-Out</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Resources will be added here dynamically -->
-                    </tbody>
-                </table>
-                <div class="button-container">
-                    <button type="button" class="btn btn-add" onclick="openResourceModal()">Add Resource</button>
-                </div>
-                <div class="error-message" id="personnelEntries-error">Please add at least one resource entry</div>
-            </div>
-
-            <div class="section-title">Progress Details</div>
-            <div class="form-group">
-                <table id="progressTable">
-                    <thead>
-                        <tr>
-                            <th>Discipline</th>
-                            <th>Activity</th>
-                            <th>Quantity</th>
-                            <th>Unit</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Progress entries will be added here dynamically -->
-                    </tbody>
-                </table>
-                <div class="button-container">
-                    <button type="button" class="btn btn-add" onclick="openProgressModal()">Add Progress</button>
-                </div>
-                <div class="error-message" id="progressEntries-error">Please complete all fields for progress entries</div>
-            </div>
-
-            <div class="form-group">
-                <label for="description">Description of Work:</label>
-                <textarea id="description" name="description" placeholder="Describe the work performed today" required></textarea>
-                <div class="error-message" id="description-error">Please enter description of work</div>
-            </div>
-
-            <div class="form-footer">
-                <button type="button" class="btn btn-add" id="submitButton">Submit</button>
-                <button type="button" class="btn btn-remove" id="clearStorageButton">Clear Stored Data</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Resource Entry Modal -->
-    <div id="resourceModal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top: 0; margin-bottom: 20px;">Add Resource</h3>
             
-            <label for="modalResourceID">Resource ID:</label>
-            <input type="text" id="modalResourceID" placeholder="Enter employee ID or equipment ID" required>
-            <div class="error-message" id="modalResourceID-error">Please enter resource ID</div>
-
-            <label for="modalTimeIn">Time-in:</label>
-            <input type="time" id="modalTimeIn" required>
-            <div class="error-message" id="modalTimeIn-error">Please enter time-in</div>
-
-            <label for="modalTimeOut">Time-out:</label>
-            <input type="time" id="modalTimeOut" required>
-            <div class="error-message" id="modalTimeOut-error">Please enter time-out</div>
-
-            <div class="modal-buttons">
-                <button type="button" class="btn-cancel" onclick="closeResourceModal()">Cancel</button>
-                <button type="button" class="btn-confirm" onclick="addResource()">Add Resource</button>
+            <div class="control-group">
+                <label>Action</label>
+                <button onclick="loadData()">Load Data</button>
             </div>
         </div>
     </div>
 
-    <!-- Progress Entry Modal -->
-    <div id="progressModal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top: 0; margin-bottom: 20px;">Add Progress Entry</h3>
-            
-            <label for="modalProgressDiscipline">Discipline:</label>
-            <select id="modalProgressDiscipline" onchange="updateActivityDropdown()">
-                <option value="" disabled selected>Select Discipline</option>
-                <option value="Civil">Civil</option>
-                <option value="Piping &amp; Mechanical">Piping &amp; Mechanical</option>
-                <option value="Electrical">Electrical</option>
-                <option value="Instrumentation">Instrumentation</option>
-                <option value="Commissioning">Commissioning</option>
-                <option value="Scaffolding">Scaffolding</option>
-                <option value="Demolition/Shutdown">Demolition/Shutdown</option>
-                <option value="Shop">Shop</option>
-            </select>
-            <div class="error-message" id="modalProgressDiscipline-error">Please select discipline</div>
-
-            <label for="modalActivity">Activity:</label>
-            <div class="autocomplete">
-                <input type="text" id="modalActivityInput" placeholder="Type to search activities" oninput="filterActivities()" onfocus="showAllActivities()">
-                <div id="autocompleteList" class="autocomplete-items" style="display: none;"></div>
+    <div class="main-content">
+        <div id="loadingDiv" class="loading">Loading data...</div>
+        <div id="errorDiv" class="error" style="display: none;"></div>
+        <div id="successDiv" class="success" style="display: none;"></div>
+        
+        <div id="dashboardContent" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalProduction">0</div>
+                    <div class="stat-label">Total Production</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeWells">0</div>
+                    <div class="stat-label">Active Wells</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="efficiency">0%</div>
+                    <div class="stat-label">Efficiency</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="downtime">0h</div>
+                    <div class="stat-label">Downtime</div>
+                </div>
             </div>
-            <div class="error-message" id="modalActivity-error">Please select activity</div>
-            <input type="hidden" id="modalActivity" value="">
-            <input type="text" id="customActivity" placeholder="Enter Custom Activity" style="display: none; margin-top: 5px;">
-            <div class="error-message" id="customActivity-error" style="display: none;">Please enter activity</div>
 
-            <label for="modalQuantity">Quantity:</label>
-            <input type="number" id="modalQuantity" placeholder="Enter Quantity">
-            <div class="error-message" id="modalQuantity-error">Please enter quantity</div>
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>📊 Production Trends</h3>
+                    <div class="chart-container">
+                        <canvas id="productionChart"></canvas>
+                    </div>
+                </div>
 
-            <label for="modalUnit">Unit:</label>
-            <select id="modalUnit">
-                <option value="" disabled selected>Select Unit</option>
-                <option value="Meter">Meter</option>
-                <option value="M2">M2</option>
-                <option value="M3">M3</option>
-                <option value="No">No</option>
-                <option value="Ton">Ton</option>
-                <option value="Kg">Kg</option>
-                <option value="In. Dia">In. Dia</option>
-            </select>
-            <div class="error-message" id="modalUnit-error">Please select unit</div>
+                <div class="card">
+                    <h3>⚡ Performance Metrics</h3>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
 
-            <div class="modal-buttons">
-                <button type="button" class="btn-cancel" onclick="closeProgressModal()">Cancel</button>
-                <button type="button" class="btn-confirm" onclick="addProgressEntry()">Add Entry</button>
+                <div class="card">
+                    <h3>🔧 Equipment Status</h3>
+                    <div class="chart-container">
+                        <canvas id="equipmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📈 Daily Summary</h3>
+                    <div id="summaryTable"></div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 25px;">
+                <h3>📋 Detailed Data View</h3>
+                <div id="dataTableContainer"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Store resource and progress entries
-        let personnelEntries = [];
-        let progressEntries = [];
-        let defaultTimeIn = null;
-        let defaultTimeOut = null;
-        let editingIndex = -1;
-        let editingType = null; // 'personnel' or 'progress'
-        let currentActivities = [];
-        let allActivities = [];
+        let rawData = [];
+        let filteredData = [];
+        let charts = {};
 
-        // Activity lists based on discipline
-        const activities = {
-            "Civil": [
-                "Survey & Marking",
-                "Trial Pit Excavation",
-                "Excavation (Manual)",
-                "Excavation (Mechanical)",
-                "Trench Excavation (Manual)",
-                "Trench Excavation (Mechanical)",
-                "PCC",
-                "Foundation Installation",
-                "In-Situ Casting",
-                "Protective Coating",
-                "Backfilling",
-                "Compaction"
-            ],
-            "Piping & Mechanical": [
-                "Piping Spool Erection",
-                "Piping Field Welding",
-                "Valve Erection",
-                "Flowline/Pipeline Stringing",
-                "Flowline/Pipeline Erection",
-                "Flowline/Pipeline Welding",
-                "Valve Hydrotesting",
-                "Field Hydrotesting",
-                "Flange Torquing",
-                "Support Structure Installation"
-            ],
-            "Electrical": [
-                "HV Cable Laying",
-                "LV Cable Laying",
-                "HV Glanding & Termination",
-                "LV Glanding & Termination",
-                "Straight Through Joints",
-                "Earth Pits",
-                "Earth Bus Bar",
-                "Earth Cables Laying ",
-                "Earth Cables Termination)",
-                "Branch Connectors",
-                "Flexible Braided Jumpers",
-                "PVC Pipe Installation",
-                "Concrete Duct Banks",
-                "Indoor Lighting",
-                "Outdoor Lighting",
-                "Exit Sign Lights",
-                "Power Receptacles & Sockets",
-                "Exhaust Fans",
-                "Air Conditioners",
-                "Disconnector with Support Structure",
-                "Lighting Poles ",
-                "JB Installation",
-                "DB Installation",
-                "VFD",
-                "Control Panels",
-                "Switchgear",
-                "Transformers",
-                "OHL Guard Poles",
-                "OHL Conductors",
-                "OHL Concrete Pole Installation",
-                "OHL Wooden Pole Installation",
-                "Perforated Trays with Cover",
-                "Ladder Trays with Cover",
-                "Cable Tray Supports",
-                "Nameplates",
-                "Kopex Conduit",
-                "Concrete Block Installation"
-            ],
-            "Instrumentation": [
-                "Cable Laying (Various types: power, control, fiber optic, communication)",
-                "Glanding & Termination (For different cable specifications)",
-                "Earth Cable Laying & Termination",
-                "Branch Connector Installation",
-                "Conduits & Pipes Installation",
-                "Junction Box (JB) Installation & Supports",
-                "Panel Installation (IFB, PLC, RTU, FO Patch, Telecom)",
-                "Concrete Duct & Block Installation",
-                "Name Plate Installation",
-                "Kopex Conduit Installation",
-                "Cable Tray & Supports Installation (Perforated, Ladder, Covers)",
-                "Instrument Installation (Transmitters, Gauges, Indicators)",
-                "Fire & Gas (F&G) Installation (Detectors, Sirens, Beacons)",
-                "Support Installations (For F&G equipment)",
-                "PLC Installation & Wiring (Relays, I/O Cards, Modules, Power Supply)",
-                "Tubing Installation (Connectors, Valves, Manifolds)",
-                "Function Testing & Calibration (Instruments, F&G, Valves)"
-            ],
-            "Commissioning": [
-                "Loop Testing",
-                "Function Test",
-                "Calibration"
-            ],
-            "Scaffolding": [
-                "Erection",
-                "Dismantling"
-            ],
-            "Demolition/Shutdown": [
-                "Foundation",
-                "Cables",
-                "Instruments"
-            ],
-            "Shop": [
-                "Piping Spool Fabrication",
-                "Hydrotesting Of Pipe Spools",
-                "Blasting & Painting Pipe Spools",
-                "Support Structure Fabrication",
-                "Blasting & Painting of Structures",
-                "Reinforcement Work for Foundations",
-                "Pres-Casting and Coating of Foundations"
-            ]
-        };
+        // Set today's date as default
+        document.getElementById('selectedDate').valueAsDate = new Date();
 
-        // Activity to Unit mapping
-        const activityUnitMap = {
-            // Civil activities
-            "Survey & Marking": "Meter",
-            "Trial Pit Excavation": "No",
-            "Excavation (Manual)": "M3",
-            "Excavation (Mechanical)": "M3",
-            "Trench Excavation (Manual)": "Meter",
-            "Trench Excavation (Mechanical)": "Meter",
-            "PCC": "M3",
-            "Foundation Installation": "No",
-            "In-Situ Casting": "M3",
-            "Protective Coating": "M2",
-            "Backfilling": "M3",
-            "Compaction": "M2",
-            
-            // Piping & Mechanical activities
-            "Piping Spool Erection": "No",
-            "Piping Field Welding": "In. Dia",
-            "Valve Erection": "No",
-            "Flowline/Pipeline Stringing": "Meter",
-            "Flowline/Pipeline Erection": "Meter",
-            "Flowline/Pipeline Welding": "In. Dia",
-            "Valve Hydrotesting": "No",
-            "Field Hydrotesting": "No",
-            "Flange Torquing": "No",
-            "Support Structure Installation": "No",
-            
-            // Electrical activities
-            "HV Cable Laying": "Meter",
-            "LV Cable Laying": "Meter",
-            "HV Glanding & Termination": "No",
-            "LV Glanding & Termination": "No",
-            "Straight Through Joints": "No",
-            "Earth Pits": "No",
-            "Earth Bus Bar": "Meter",
-            "Earth Cables Laying ": "Meter",
-            "Earth Cables Termination)": "No",
-            "Branch Connectors": "No",
-            "Flexible Braided Jumpers": "No",
-            "PVC Pipe Installation": "Meter",
-            "Concrete Duct Banks": "Meter",
-            "Indoor Lighting": "No",
-            "Outdoor Lighting": "No",
-            "Exit Sign Lights": "No",
-            "Power Receptacles & Sockets": "No",
-            "Exhaust Fans": "No",
-            "Air Conditioners": "No",
-            "Disconnector with Support Structure": "No",
-            "Lighting Poles ": "No",
-            "JB Installation": "No",
-            "DB Installation": "No",
-            "VFD": "No",
-            "Control Panels": "No",
-            "Switchgear": "No",
-            "Transformers": "No",
-            "OHL Guard Poles": "No",
-            "OHL Conductors": "Meter",
-            "OHL Concrete Pole Installation": "No",
-            "OHL Wooden Pole Installation": "No",
-            "Perforated Trays with Cover": "Meter",
-            "Ladder Trays with Cover": "Meter",
-            "Cable Tray Supports": "No",
-            "Nameplates": "No",
-            "Kopex Conduit": "Meter",
-            "Concrete Block Installation": "No",
-            
-            // Instrumentation activities
-            "Cable Laying (Various types: power, control, fiber optic, communication)": "Meter",
-            "Glanding & Termination (For different cable specifications)": "No",
-            "Earth Cable Laying & Termination": "Meter",
-            "Branch Connector Installation": "No",
-            "Conduits & Pipes Installation": "Meter",
-            "Junction Box (JB) Installation & Supports": "No",
-            "Panel Installation (IFB, PLC, RTU, FO Patch, Telecom)": "No",
-            "Concrete Duct & Block Installation": "No",
-            "Name Plate Installation": "No",
-            "Kopex Conduit Installation": "Meter",
-            "Cable Tray & Supports Installation (Perforated, Ladder, Covers)": "Meter",
-            "Instrument Installation (Transmitters, Gauges, Indicators)": "No",
-            "Fire & Gas (F&G) Installation (Detectors, Sirens, Beacons)": "No",
-            "Support Installations (For F&G equipment)": "No",
-            "PLC Installation & Wiring (Relays, I/O Cards, Modules, Power Supply)": "No",
-            "Tubing Installation (Connectors, Valves, Manifolds)": "Meter",
-            "Function Testing & Calibration (Instruments, F&G, Valves)": "No",
-            
-            // Commissioning activities
-            "Loop Testing": "No",
-            "Function Test": "No",
-            "Calibration": "No",
-            
-            // Scaffolding activities
-            "Erection": "No",
-            "Dismantling": "No",
-            
-            // Demolition/Shutdown activities
-            "Foundation": "No",
-            "Cables": "Meter",
-            "Instruments": "No",
-            
-            // Shop activities
-            "Piping Spool Fabrication": "No",
-            "Hydrotesting Of Pipe Spools": "No",
-            "Blasting & Painting Pipe Spools": "No",
-            "Support Structure Fabrication": "No",
-            "Blasting & Painting of Structures": "No",
-            "Reinforcement Work for Foundations": "Ton",
-            "Pres-Casting and Coating of Foundations": "No"
-        };
-
-        // Set today's date as default and load saved data
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById("date").value = today;
-            
-            // Load saved data from local storage
-            loadSavedData();
-            
-            // Set up clear storage button
-            document.getElementById('clearStorageButton').addEventListener('click', clearStoredData);
-            
-            // Set up form submission handler
-            document.getElementById('submitButton').addEventListener('click', validateAndSubmitForm);
-            
-            // Set up input validation for required fields
-            setupFieldValidation();
-            
-            // Initialize all activities list
-            for (const discipline in activities) {
-                allActivities = allActivities.concat(activities[discipline]);
+        // File upload handler
+        document.getElementById('csvFile').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        rawData = results.data;
+                        showSuccess(`Loaded ${rawData.length} records from CSV file`);
+                        filterAndDisplayData();
+                    },
+                    error: function(error) {
+                        showError(`Error parsing CSV: ${error.message}`);
+                    }
+                });
             }
-            allActivities = [...new Set(allActivities)]; // Remove duplicates
-            allActivities.push("Other"); // Add "Other" option
-            
-            // Close autocomplete when clicking outside
-            document.addEventListener('click', function(e) {
-                if (e.target.id !== 'modalActivityInput') {
-                    closeAllAutocompleteLists();
-                }
-            });
         });
 
-        // Set up field validation
-        function setupFieldValidation() {
-            const requiredFields = [
-                'date', 'permitNumber', 'validationTime', 'suspensionTime',
-                'foremanID', 'wiReference', 'discipline', 'description'
-            ];
+        // Load data from the public Google Sheets URL
+        function loadData() {
+            const publicSheetsUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4gLqzfOxQybJBYdtMmtBJdYWb1EPkUcC7p-py4kiEaFO0Yre3gCtpetkg7X-XY19dVI-6dTydkJYm/pub?output=csv';
             
-            requiredFields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    field.addEventListener('input', function() {
-                        validateField(fieldId);
-                    });
-                    field.addEventListener('change', function() {
-                        validateField(fieldId);
-                    });
+            showLoading(true);
+            
+            Papa.parse(publicSheetsUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    showLoading(false);
+                    rawData = results.data;
+                    showSuccess(`Successfully loaded ${rawData.length} records from Google Sheets`);
+                    filterAndDisplayData();
+                },
+                error: function(error) {
+                    showLoading(false);
+                    showError(`Error loading data from Google Sheets: ${error.message}`);
                 }
             });
         }
 
-        // Validate a single field
-        function validateField(fieldId) {
-            const field = document.getElementById(fieldId);
-            const errorElement = document.getElementById(`${fieldId}-error`);
-            
-            if (!field) return true;
-            
-            let isValid = true;
-            
-            if (field.required) {
-                if (field.type === 'select-one') {
-                    isValid = field.value !== '';
-                } else {
-                    isValid = field.value.trim() !== '';
-                }
-            }
-            
-            if (isValid) {
-                field.classList.remove('error-field');
-                if (errorElement) errorElement.style.display = 'none';
-            } else {
-                field.classList.add('error-field');
-                if (errorElement) errorElement.style.display = 'block';
-            }
-            
-            return isValid;
-        }
+        function filterAndDisplayData() {
+            const selectedDate = document.getElementById('selectedDate').value;
+            const dateRange = document.getElementById('dateRange').value;
 
-        // Validate all required fields
-        function validateAllFields() {
-            let isValid = true;
-            
-            const requiredFields = [
-                'date', 'permitNumber', 'validationTime', 'suspensionTime',
-                'foremanID', 'wiReference', 'discipline', 'description'
-            ];
-            
-            requiredFields.forEach(fieldId => {
-                if (!validateField(fieldId)) {
-                    isValid = false;
-                }
-            });
-            
-            // Validate at least one personnel entry
-            const personnelError = document.getElementById('personnelEntries-error');
-            if (personnelEntries.length === 0) {
-                personnelError.style.display = 'block';
-                isValid = false;
-            } else {
-                personnelError.style.display = 'none';
-            }
-            
-            // Validate progress entries (if any exist)
-            const progressError = document.getElementById('progressEntries-error');
-            if (progressEntries.length > 0) {
-                // Check each progress entry for completeness
-                const incompleteEntries = progressEntries.some(entry => {
-                    return !entry.discipline || !entry.activity || 
-                           entry.quantity === undefined || entry.quantity === '' || 
-                           !entry.unit;
-                });
-                
-                if (incompleteEntries) {
-                    progressError.style.display = 'block';
-                    isValid = false;
-                } else {
-                    progressError.style.display = 'none';
-                }
-            } else {
-                progressError.style.display = 'none';
-            }
-            
-            return isValid;
-        }
-
-        // Validate and submit form
-        function validateAndSubmitForm(e) {
-            e.preventDefault();
-            
-            if (!validateAllFields()) {
-                alert('Please fill in all required fields correctly.');
+            if (!rawData.length) {
+                showError('No data loaded. Please load data first.');
                 return;
             }
+
+            // Filter data based on selected criteria
+            filteredData = filterDataByDate(rawData, selectedDate, dateRange);
             
-            const submitButton = document.getElementById("submitButton");
-            submitButton.disabled = true;
-            submitButton.innerText = "Submitting...";
-
-            // Create timestamp for submission
-            const postingDateTime = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-            // Prepare form data (now includes progress entries)
-            const formData = {
-                date: document.getElementById("date").value,
-                foremanID: document.getElementById("foremanID").value,
-                wiReference: document.getElementById("wiReference").value,
-                discipline: document.getElementById("discipline").value,
-                description: document.getElementById("description").value,
-                personnel: JSON.stringify(personnelEntries),
-                progressEntries: JSON.stringify(progressEntries),
-                permitNumber: document.getElementById("permitNumber").value,
-                validationTime: document.getElementById("validationTime").value,
-                suspensionTime: document.getElementById("suspensionTime").value,
-                postingDateTime: postingDateTime,
-                deviceDetails: JSON.stringify({
-                    userAgent: navigator.userAgent,
-                    platform: navigator.platform,
-                    screenResolution: `${window.screen.width}x${window.screen.height}`
-                })
-            };
-
-            // Convert to URL parameters
-            const queryParams = new URLSearchParams();
-            for (const [key, value] of Object.entries(formData)) {
-                queryParams.append(key, value);
+            if (filteredData.length === 0) {
+                showError('No data found for the selected date/range.');
+                return;
             }
 
-            // Submit to Google Apps Script endpoint
-            fetch(`https://script.google.com/macros/s/AKfycbxO0pWIOFOwLOnTHd7FtrGNItxDI_VWOuv01o1c2wdxSTXdTDz3NNEkeFwQJikqHCNyNA/exec?${queryParams.toString()}`, {
-                method: "GET",
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert("Report submitted successfully!");
-                
-                // Save the submitted data for next day
-                const dataToSave = {
-                    permitNumber: document.getElementById("permitNumber").value,
-                    validationTime: document.getElementById("validationTime").value,
-                    suspensionTime: document.getElementById("suspensionTime").value,
-                    foremanID: document.getElementById("foremanID").value,
-                    wiReference: document.getElementById("wiReference").value,
-                    discipline: document.getElementById("discipline").value,
-                    description: document.getElementById("description").value,
-                    personnelEntries: personnelEntries,
-                    progressEntries: progressEntries,
-                    lastSaved: new Date().getTime()
-                };
-                localStorage.setItem('dailySiteReportData', JSON.stringify(dataToSave));
-                
-                // Clear only the entries for fresh start next day
-                personnelEntries = [];
-                progressEntries = [];
-                defaultTimeIn = null;
-                defaultTimeOut = null;
-                updatePersonnelTable();
-                updateProgressTable();
-                
-                // Reset form but keep other data
-                document.getElementById("date").value = new Date().toISOString().split('T')[0];
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Submission failed: " + error.message);
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.innerText = "Submit";
+            displayDashboard();
+        }
+
+        function filterDataByDate(data, selectedDate, range) {
+            if (!selectedDate) return data;
+
+            const selected = new Date(selectedDate);
+            
+            return data.filter(row => {
+                // Try to find date column (common names)
+                const dateField = findDateField(row);
+                if (!dateField) return true;
+
+                const rowDate = new Date(row[dateField]);
+                if (isNaN(rowDate)) return false;
+
+                switch (range) {
+                    case 'single':
+                        return rowDate.toDateString() === selected.toDateString();
+                    case 'week':
+                        const weekAgo = new Date(selected);
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        return rowDate >= weekAgo && rowDate <= selected;
+                    case 'month':
+                        const monthAgo = new Date(selected);
+                        monthAgo.setMonth(monthAgo.getMonth() - 1);
+                        return rowDate >= monthAgo && rowDate <= selected;
+                    case 'quarter':
+                        const quarterAgo = new Date(selected);
+                        quarterAgo.setMonth(quarterAgo.getMonth() - 3);
+                        return rowDate >= quarterAgo && rowDate <= selected;
+                    default:
+                        return true;
+                }
             });
         }
 
-        // Load saved data from local storage
-        function loadSavedData() {
-            const savedData = localStorage.getItem('dailySiteReportData');
-            if (savedData) {
-                try {
-                    const data = JSON.parse(savedData);
-                    
-                    // Fill form fields from saved data
-                    document.getElementById("permitNumber").value = data.permitNumber || '';
-                    document.getElementById("validationTime").value = data.validationTime || '';
-                    document.getElementById("suspensionTime").value = data.suspensionTime || '';
-                    document.getElementById("foremanID").value = data.foremanID || '';
-                    document.getElementById("wiReference").value = data.wiReference || '';
-                    document.getElementById("discipline").value = data.discipline || '';
-                    document.getElementById("description").value = data.description || '';
-                    
-                    // Load personnel entries
-                    if (data.personnelEntries && Array.isArray(data.personnelEntries)) {
-                        personnelEntries = data.personnelEntries;
-                        updatePersonnelTable();
-                        
-                        // Set default times if there are entries
-                        if (personnelEntries.length > 0) {
-                            defaultTimeIn = personnelEntries[personnelEntries.length - 1].timeIn;
-                            defaultTimeOut = personnelEntries[personnelEntries.length - 1].timeOut;
-                        }
-                    }
-                    
-                    // Load progress entries
-                    if (data.progressEntries && Array.isArray(data.progressEntries)) {
-                        progressEntries = data.progressEntries;
-                        updateProgressTable();
-                    }
-                } catch (e) {
-                    console.error("Error loading saved data:", e);
-                }
+        function findDateField(row) {
+            const dateFields = ['date', 'Date', 'DATE', 'day', 'Day', 'timestamp', 'Timestamp', 'time', 'Time'];
+            for (let field of dateFields) {
+                if (row[field]) return field;
             }
+            return Object.keys(row)[0]; // Default to first column
         }
 
-        // Save form data to local storage
-        function saveFormData() {
-            const formData = {
-                date: document.getElementById("date").value,
-                permitNumber: document.getElementById("permitNumber").value,
-                validationTime: document.getElementById("validationTime").value,
-                suspensionTime: document.getElementById("suspensionTime").value,
-                foremanID: document.getElementById("foremanID").value,
-                wiReference: document.getElementById("wiReference").value,
-                discipline: document.getElementById("discipline").value,
-                description: document.getElementById("description").value,
-                personnelEntries: personnelEntries,
-                progressEntries: progressEntries,
-                lastSaved: new Date().getTime()
-            };
+        function displayDashboard() {
+            document.getElementById('dashboardContent').style.display = 'block';
             
-            localStorage.setItem('dailySiteReportData', JSON.stringify(formData));
+            // Calculate and display statistics
+            calculateStats();
+            
+            // Create charts
+            createCharts();
+            
+            // Display data table
+            displayDataTable();
         }
 
-        // Clear stored data
-        function clearStoredData() {
-            if (confirm('Are you sure you want to clear all saved data? This cannot be undone.')) {
-                localStorage.removeItem('dailySiteReportData');
-                personnelEntries = [];
-                progressEntries = [];
-                defaultTimeIn = null;
-                defaultTimeOut = null;
-                updatePersonnelTable();
-                updateProgressTable();
-                document.getElementById("reportForm").reset();
-                // Set today's date again after reset
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById("date").value = today;
-                alert('All saved data has been cleared.');
-            }
-        }
+        function calculateStats() {
+            if (!filteredData.length) return;
 
-        // Resource Modal Functions
-        function openResourceModal(editIndex = -1) {
-            editingIndex = editIndex;
-            editingType = 'personnel';
+            const keys = Object.keys(filteredData[0]);
             
-            // Auto-fill time-in and time-out from last entry if available
-            if (personnelEntries.length > 0) {
-                const lastEntry = personnelEntries[personnelEntries.length - 1];
-                document.getElementById("modalTimeIn").value = lastEntry.timeIn;
-                document.getElementById("modalTimeOut").value = lastEntry.timeOut;
-            } else if (defaultTimeIn && defaultTimeOut) {
-                document.getElementById("modalTimeIn").value = defaultTimeIn;
-                document.getElementById("modalTimeOut").value = defaultTimeOut;
-            }
-            
-            if (editIndex >= 0) {
-                // Editing existing entry
-                const entry = personnelEntries[editIndex];
-                document.getElementById("modalResourceID").value = entry.id;
-                document.getElementById("modalTimeIn").value = entry.timeIn;
-                document.getElementById("modalTimeOut").value = entry.timeOut;
-                document.querySelector(".modal-content h3").textContent = "Edit Resource";
-            } else {
-                // Adding new entry
-                document.getElementById("modalResourceID").value = "";
-                document.querySelector(".modal-content h3").textContent = "Add Resource";
-            }
-            
-            // Clear any previous error messages
-            document.getElementById("modalResourceID-error").style.display = "none";
-            document.getElementById("modalTimeIn-error").style.display = "none";
-            document.getElementById("modalTimeOut-error").style.display = "none";
-            document.getElementById("modalResourceID").classList.remove("error-field");
-            document.getElementById("modalTimeIn").classList.remove("error-field");
-            document.getElementById("modalTimeOut").classList.remove("error-field");
-            
-            document.getElementById("resourceModal").style.display = "flex";
-            document.getElementById("modalResourceID").focus();
-        }
-
-        function closeResourceModal() {
-            document.getElementById("resourceModal").style.display = "none";
-            document.getElementById("modalResourceID").value = "";
-            document.getElementById("modalTimeIn").value = "";
-            document.getElementById("modalTimeOut").value = "";
-            editingIndex = -1;
-            editingType = null;
-        }
-
-        function addResource() {
-            const resourceID = document.getElementById("modalResourceID").value.trim();
-            const timeIn = document.getElementById("modalTimeIn").value;
-            const timeOut = document.getElementById("modalTimeOut").value;
-
-            // Validate modal fields
-            let isValid = true;
-            
-            if (!resourceID) {
-                document.getElementById("modalResourceID-error").style.display = "block";
-                document.getElementById("modalResourceID").classList.add("error-field");
-                isValid = false;
-            } else {
-                document.getElementById("modalResourceID-error").style.display = "none";
-                document.getElementById("modalResourceID").classList.remove("error-field");
-            }
-            
-            if (!timeIn) {
-                document.getElementById("modalTimeIn-error").style.display = "block";
-                document.getElementById("modalTimeIn").classList.add("error-field");
-                isValid = false;
-            } else {
-                document.getElementById("modalTimeIn-error").style.display = "none";
-                document.getElementById("modalTimeIn").classList.remove("error-field");
-            }
-            
-            if (!timeOut) {
-                document.getElementById("modalTimeOut-error").style.display = "block";
-                document.getElementById("modalTimeOut").classList.add("error-field");
-                isValid = false;
-            } else {
-                document.getElementById("modalTimeOut-error").style.display = "none";
-                document.getElementById("modalTimeOut").classList.remove("error-field");
-            }
-            
-            if (!isValid) {
-                return;
-            }
-
-            if (personnelEntries.length === 0) {
-                defaultTimeIn = timeIn;
-                defaultTimeOut = timeOut;
-            }
-
-            if (editingIndex >= 0 && editingType === 'personnel') {
-                // Update existing entry
-                personnelEntries[editingIndex] = {
-                    id: resourceID,
-                    timeIn: timeIn,
-                    timeOut: timeOut
-                };
-            } else {
-                // Add new entry
-                personnelEntries.push({
-                    id: resourceID,
-                    timeIn: timeIn,
-                    timeOut: timeOut
-                });
-            }
-
-            updatePersonnelTable();
-            closeResourceModal();
-            saveFormData();
-        }
-
-        function removePersonnel(index) {
-            if (confirm('Are you sure you want to remove this resource?')) {
-                personnelEntries.splice(index, 1);
-                updatePersonnelTable();
-                
-                if (personnelEntries.length === 0) {
-                    defaultTimeIn = null;
-                    defaultTimeOut = null;
-                }
-                saveFormData();
-            }
-        }
-
-        function updatePersonnelTable() {
-            const tbody = document.querySelector("#personnelTable tbody");
-            tbody.innerHTML = personnelEntries.map((entry, index) => `
-                <tr>
-                    <td>${entry.id}</td>
-                    <td>${entry.timeIn}</td>
-                    <td>${entry.timeOut}</td>
-                    <td>
-                        <button type="button" class="action-btn edit-btn" onclick="openResourceModal(${index})">✏️</button>
-                        <button type="button" class="action-btn delete-btn" onclick="removePersonnel(${index})">🗑️</button>
-                    </td>
-                </tr>
-            `).join("");
-        }
-
-        // Progress Modal Functions
-        function openProgressModal(editIndex = -1) {
-            editingIndex = editIndex;
-            editingType = 'progress';
-            
-            document.getElementById("progressModal").style.display = "flex";
-            
-            if (editIndex >= 0) {
-                // Editing existing entry
-                const entry = progressEntries[editIndex];
-                document.getElementById("modalProgressDiscipline").value = entry.discipline;
-                updateActivityDropdown();
-                
-                // Need to wait for the dropdown to update
-                setTimeout(() => {
-                    if (entry.activity === "Other" || !activities[entry.discipline]?.includes(entry.activity)) {
-                        document.getElementById("modalActivityInput").value = "Other";
-                        document.getElementById("modalActivity").value = "Other";
-                        document.getElementById("customActivity").value = entry.activity;
-                        document.getElementById("customActivity").style.display = "block";
-                    } else {
-                        document.getElementById("modalActivityInput").value = entry.activity;
-                        document.getElementById("modalActivity").value = entry.activity;
-                        document.getElementById("customActivity").style.display = "none";
-                    }
-                    
-                    document.getElementById("modalQuantity").value = entry.quantity;
-                    document.getElementById("modalUnit").value = entry.unit;
-                    document.querySelector(".modal-content h3").textContent = "Edit Progress Entry";
-                }, 50);
-            } else {
-                // Adding new entry
-                document.getElementById("modalProgressDiscipline").value = "";
-                document.getElementById("modalActivityInput").value = "";
-                document.getElementById("modalActivity").value = "";
-                document.getElementById("modalQuantity").value = "";
-                document.getElementById("modalUnit").value = "";
-                document.getElementById("customActivity").value = "";
-                document.getElementById("customActivity").style.display = "none";
-                document.querySelector(".modal-content h3").textContent = "Add Progress Entry";
-            }
-            
-            // Clear any previous error messages
-            document.getElementById("modalProgressDiscipline-error").style.display = "none";
-            document.getElementById("modalActivity-error").style.display = "none";
-            document.getElementById("customActivity-error").style.display = "none";
-            document.getElementById("modalQuantity-error").style.display = "none";
-            document.getElementById("modalUnit-error").style.display = "none";
-            
-            document.getElementById("modalProgressDiscipline").focus();
-        }
-
-        function closeProgressModal() {
-            document.getElementById("progressModal").style.display = "none";
-            document.getElementById("modalProgressDiscipline").value = "";
-            document.getElementById("modalActivityInput").value = "";
-            document.getElementById("modalActivity").value = "";
-            document.getElementById("modalQuantity").value = "";
-            document.getElementById("modalUnit").value = "";
-            document.getElementById("customActivity").value = "";
-            document.getElementById("customActivity").style.display = "none";
-            editingIndex = -1;
-            editingType = null;
-        }
-
-        function updateActivityDropdown() {
-            const discipline = document.getElementById("modalProgressDiscipline").value;
-            
-            if (discipline && activities[discipline]) {
-                currentActivities = [...activities[discipline], "Other"];
-            } else {
-                currentActivities = [];
-            }
-            
-            // Clear the activity input
-            document.getElementById("modalActivityInput").value = "";
-            document.getElementById("modalActivity").value = "";
-            document.getElementById("customActivity").value = "";
-            document.getElementById("customActivity").style.display = "none";
-        }
-
-        function showAllActivities() {
-            const input = document.getElementById("modalActivityInput");
-            const val = input.value.toLowerCase();
-            const autocompleteList = document.getElementById("autocompleteList");
-            
-            // Clear previous suggestions
-            autocompleteList.innerHTML = "";
-            
-            if (currentActivities.length === 0) {
-                autocompleteList.style.display = "none";
-                return;
-            }
-            
-            // Show all available activities for the selected discipline
-            currentActivities.forEach(activity => {
-                const item = document.createElement("div");
-                item.innerHTML = activity;
-                item.addEventListener("click", function() {
-                    input.value = activity;
-                    document.getElementById("modalActivity").value = activity;
-                    autocompleteList.style.display = "none";
-                    
-                    if (activity === "Other") {
-                        document.getElementById("customActivity").style.display = "block";
-                        document.getElementById("customActivity").focus();
-                    } else {
-                        document.getElementById("customActivity").style.display = "none";
-                        // Auto-select unit if available
-                        if (activityUnitMap[activity]) {
-                            document.getElementById("modalUnit").value = activityUnitMap[activity];
-                        }
-                    }
-                });
-                autocompleteList.appendChild(item);
-            });
-            
-            autocompleteList.style.display = "block";
-        }
-
-        function filterActivities() {
-            const input = document.getElementById("modalActivityInput");
-            const val = input.value.toLowerCase();
-            const autocompleteList = document.getElementById("autocompleteList");
-            
-            // Clear previous suggestions
-            autocompleteList.innerHTML = "";
-            
-            if (currentActivities.length === 0) {
-                autocompleteList.style.display = "none";
-                return;
-            }
-            
-            // Filter activities based on input
-            const filteredActivities = currentActivities.filter(activity => 
-                activity.toLowerCase().includes(val)
+            // Try to find production-related columns
+            const productionField = keys.find(k => 
+                k.toLowerCase().includes('production') || 
+                k.toLowerCase().includes('output') ||
+                k.toLowerCase().includes('volume')
             );
             
-            if (filteredActivities.length === 0) {
-                // If no matches, show "Other" option
-                const item = document.createElement("div");
-                item.innerHTML = "Other";
-                item.addEventListener("click", function() {
-                    input.value = "Other";
-                    document.getElementById("modalActivity").value = "Other";
-                    autocompleteList.style.display = "none";
-                    document.getElementById("customActivity").style.display = "block";
-                    document.getElementById("customActivity").focus();
-                });
-                autocompleteList.appendChild(item);
-            } else {
-                // Show matching activities
-                filteredActivities.forEach(activity => {
-                    const item = document.createElement("div");
-                    item.innerHTML = activity;
-                    item.addEventListener("click", function() {
-                        input.value = activity;
-                        document.getElementById("modalActivity").value = activity;
-                        autocompleteList.style.display = "none";
-                        
-                        if (activity === "Other") {
-                            document.getElementById("customActivity").style.display = "block";
-                            document.getElementById("customActivity").focus();
-                        } else {
-                            document.getElementById("customActivity").style.display = "none";
-                            // Auto-select unit if available
-                            if (activityUnitMap[activity]) {
-                                document.getElementById("modalUnit").value = activityUnitMap[activity];
-                            }
-                        }
-                    });
-                    autocompleteList.appendChild(item);
-                });
-            }
+            const wellsField = keys.find(k => 
+                k.toLowerCase().includes('well') || 
+                k.toLowerCase().includes('unit')
+            );
             
-            autocompleteList.style.display = "block";
-        }
+            const efficiencyField = keys.find(k => 
+                k.toLowerCase().includes('efficiency') || 
+                k.toLowerCase().includes('performance')
+            );
+            
+            const downtimeField = keys.find(k => 
+                k.toLowerCase().includes('downtime') || 
+                k.toLowerCase().includes('maintenance')
+            );
 
-        function closeAllAutocompleteLists() {
-            const autocompleteList = document.getElementById("autocompleteList");
-            autocompleteList.style.display = "none";
-        }
+            // Calculate totals
+            let totalProduction = 0;
+            let activeWells = 0;
+            let avgEfficiency = 0;
+            let totalDowntime = 0;
 
-        function addProgressEntry() {
-            const discipline = document.getElementById("modalProgressDiscipline").value;
-            let activity = document.getElementById("modalActivity").value;
-            const quantity = document.getElementById("modalQuantity").value;
-            const unit = document.getElementById("modalUnit").value;
-
-            // Validate modal fields
-            let isValid = true;
-            
-            if (!discipline) {
-                document.getElementById("modalProgressDiscipline-error").style.display = "block";
-                document.getElementById("modalProgressDiscipline").classList.add("error-field");
-                isValid = false;
-            } else {
-                document.getElementById("modalProgressDiscipline-error").style.display = "none";
-                document.getElementById("modalProgressDiscipline").classList.remove("error-field");
-            }
-            
-            if (!activity) {
-                document.getElementById("modalActivity-error").style.display = "block";
-                document.getElementById("modalActivityInput").classList.add("error-field");
-                isValid = false;
-            } else {
-                document.getElementById("modalActivity-error").style.display = "none";
-                document.getElementById("modalActivityInput").classList.remove("error-field");
-            }
-            
-            if (activity === "Other") {
-                activity = document.getElementById("customActivity").value;
-                if (!activity) {
-                    document.getElementById("customActivity-error").style.display = "block";
-                    document.getElementById("customActivity").classList.add("error-field");
-                    isValid = false;
-                } else {
-                    document.getElementById("customActivity-error").style.display = "none";
-                    document.getElementById("customActivity").classList.remove("error-field");
+            filteredData.forEach(row => {
+                if (productionField && !isNaN(parseFloat(row[productionField]))) {
+                    totalProduction += parseFloat(row[productionField]);
                 }
-            }
-            
-            if (!quantity) {
-                document.getElementById("modalQuantity-error").style.display = "block";
-                document.getElementById("modalQuantity").classList.add("error-field");
-                isValid = false;
-            } else {
-                document.getElementById("modalQuantity-error").style.display = "none";
-                document.getElementById("modalQuantity").classList.remove("error-field");
-            }
-            
-            if (!unit) {
-                document.getElementById("modalUnit-error").style.display = "block";
-                document.getElementById("modalUnit").classList.add("error-field");
-                isValid = false;
-            } else {
-                document.getElementById("modalUnit-error").style.display = "none";
-                document.getElementById("modalUnit").classList.remove("error-field");
-            }
-            
-            if (!isValid) {
+                if (wellsField && row[wellsField]) {
+                    activeWells++;
+                }
+                if (efficiencyField && !isNaN(parseFloat(row[efficiencyField]))) {
+                    avgEfficiency += parseFloat(row[efficiencyField]);
+                }
+                if (downtimeField && !isNaN(parseFloat(row[downtimeField]))) {
+                    totalDowntime += parseFloat(row[downtimeField]);
+                }
+            });
+
+            avgEfficiency = filteredData.length > 0 ? avgEfficiency / filteredData.length : 0;
+
+            document.getElementById('totalProduction').textContent = totalProduction.toLocaleString();
+            document.getElementById('activeWells').textContent = activeWells.toLocaleString();
+            document.getElementById('efficiency').textContent = avgEfficiency.toFixed(1) + '%';
+            document.getElementById('downtime').textContent = totalDowntime.toFixed(1) + 'h';
+        }
+
+        function createCharts() {
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => chart.destroy());
+            charts = {};
+
+            if (!filteredData.length) return;
+
+            const keys = Object.keys(filteredData[0]);
+            const labels = filteredData.map((row, index) => `Entry ${index + 1}`);
+
+            // Production Chart
+            const productionData = {
+                labels: labels,
+                datasets: [{
+                    label: 'Production',
+                    data: filteredData.map(row => {
+                        const productionField = keys.find(k => 
+                            k.toLowerCase().includes('production') || 
+                            k.toLowerCase().includes('output')
+                        );
+                        return productionField ? parseFloat(row[productionField]) || 0 : 0;
+                    }),
+                    borderColor: '#ff6b35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
+
+            charts.production = new Chart(document.getElementById('productionChart'), {
+                type: 'line',
+                data: productionData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Performance Chart (Doughnut)
+            const performanceData = {
+                labels: ['Operational', 'Maintenance', 'Downtime'],
+                datasets: [{
+                    data: [70, 20, 10], // Sample data - replace with actual calculations
+                    backgroundColor: ['#2a5298', '#ff6b35', '#f7931e'],
+                    borderWidth: 0
+                }]
+            };
+
+            charts.performance = new Chart(document.getElementById('performanceChart'), {
+                type: 'doughnut',
+                data: performanceData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Equipment Status Chart (Bar)
+            const equipmentData = {
+                labels: ['Online', 'Offline', 'Maintenance'],
+                datasets: [{
+                    data: [85, 10, 5], // Sample data
+                    backgroundColor: ['#2a5298', '#ff6b35', '#f7931e'],
+                    borderRadius: 8
+                }]
+            };
+
+            charts.equipment = new Chart(document.getElementById('equipmentChart'), {
+                type: 'bar',
+                data: equipmentData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function displayDataTable() {
+            if (!filteredData.length) {
+                document.getElementById('dataTableContainer').innerHTML = 
+                    '<div class="no-data">No data to display</div>';
                 return;
             }
 
-            if (editingIndex >= 0 && editingType === 'progress') {
-                // Update existing entry
-                progressEntries[editingIndex] = {
-                    discipline: discipline,
-                    activity: activity,
-                    quantity: quantity,
-                    unit: unit
-                };
-            } else {
-                // Add new entry
-                progressEntries.push({
-                    discipline: discipline,
-                    activity: activity,
-                    quantity: quantity,
-                    unit: unit
+            const keys = Object.keys(filteredData[0]);
+            
+            let tableHTML = '<table class="data-table"><thead><tr>';
+            keys.forEach(key => {
+                tableHTML += `<th>${key}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            filteredData.slice(0, 20).forEach(row => { // Show only first 20 rows
+                tableHTML += '<tr>';
+                keys.forEach(key => {
+                    tableHTML += `<td>${row[key] || '-'}</td>`;
                 });
+                tableHTML += '</tr>';
+            });
+
+            tableHTML += '</tbody></table>';
+            
+            if (filteredData.length > 20) {
+                tableHTML += `<p style="text-align: center; margin-top: 15px; color: #666;">
+                    Showing first 20 of ${filteredData.length} records</p>`;
             }
 
-            updateProgressTable();
-            closeProgressModal();
-            saveFormData();
+            document.getElementById('dataTableContainer').innerHTML = tableHTML;
+
+            // Create summary
+            const summaryHTML = `
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <h4 style="margin-bottom: 15px; color: #1e3c72;">📊 Data Summary</h4>
+                    <p><strong>Total Records:</strong> ${filteredData.length}</p>
+                    <p><strong>Date Range:</strong> ${document.getElementById('dateRange').value}</p>
+                    <p><strong>Selected Date:</strong> ${document.getElementById('selectedDate').value || 'All dates'}</p>
+                    <p><strong>Columns:</strong> ${keys.join(', ')}</p>
+                </div>
+            `;
+            document.getElementById('summaryTable').innerHTML = summaryHTML;
         }
 
-        function removeProgress(index) {
-            if (confirm('Are you sure you want to remove this progress entry?')) {
-                progressEntries.splice(index, 1);
-                updateProgressTable();
-                saveFormData();
-            }
+        function showLoading(show) {
+            document.getElementById('loadingDiv').style.display = show ? 'block' : 'none';
         }
 
-        function updateProgressTable() {
-            const tbody = document.querySelector("#progressTable tbody");
-            tbody.innerHTML = progressEntries.map((entry, index) => `
-                <tr>
-                    <td>${entry.discipline}</td>
-                    <td>${entry.activity}</td>
-                    <td>${entry.quantity}</td>
-                    <td>${entry.unit}</td>
-                    <td>
-                        <button type="button" class="action-btn edit-btn" onclick="openProgressModal(${index})">✏️</button>
-                        <button type="button" class="action-btn delete-btn" onclick="removeProgress(${index})">🗑️</button>
-                    </td>
-                </tr>
-            `).join("");
+        function showError(message) {
+            document.getElementById('errorDiv').textContent = message;
+            document.getElementById('errorDiv').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('errorDiv').style.display = 'none';
+            }, 5000);
         }
+
+        function showSuccess(message) {
+            document.getElementById('successDiv').textContent = message;
+            document.getElementById('successDiv').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successDiv').style.display = 'none';
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('selectedDate').addEventListener('change', filterAndDisplayData);
+        document.getElementById('dateRange').addEventListener('change', filterAndDisplayData);
+
+        // Load data automatically when page loads
+        window.addEventListener('load', function() {
+            loadData();
+        });
     </script>
 </body>
 </html>
