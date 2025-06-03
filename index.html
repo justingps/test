@@ -222,6 +222,38 @@
         .error-field {
             border-color: #f44336 !important;
         }
+        
+        /* Autocomplete styles */
+        .autocomplete {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9;
+        }
+        .autocomplete-active {
+            background-color: #4CAF50 !important;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -387,12 +419,12 @@
             <div class="error-message" id="modalProgressDiscipline-error">Please select discipline</div>
 
             <label for="modalActivity">Activity:</label>
-            <select id="modalActivity" onchange="toggleCustomActivityInput(); autoSelectUnit()">
-                <option value="">Select Activity</option>
-                <!-- Activities will be populated dynamically based on discipline -->
-                <option value="Other">Other</option>
-            </select>
+            <div class="autocomplete">
+                <input type="text" id="modalActivityInput" placeholder="Type to search activities" oninput="filterActivities()" onfocus="showAllActivities()">
+                <div id="autocompleteList" class="autocomplete-items" style="display: none;"></div>
+            </div>
             <div class="error-message" id="modalActivity-error">Please select activity</div>
+            <input type="hidden" id="modalActivity" value="">
             <input type="text" id="customActivity" placeholder="Enter Custom Activity" style="display: none; margin-top: 5px;">
             <div class="error-message" id="customActivity-error" style="display: none;">Please enter activity</div>
 
@@ -428,6 +460,8 @@
         let defaultTimeOut = null;
         let editingIndex = -1;
         let editingType = null; // 'personnel' or 'progress'
+        let currentActivities = [];
+        let allActivities = [];
 
         // Activity lists based on discipline
         const activities = {
@@ -666,6 +700,20 @@
             
             // Set up input validation for required fields
             setupFieldValidation();
+            
+            // Initialize all activities list
+            for (const discipline in activities) {
+                allActivities = allActivities.concat(activities[discipline]);
+            }
+            allActivities = [...new Set(allActivities)]; // Remove duplicates
+            allActivities.push("Other"); // Add "Other" option
+            
+            // Close autocomplete when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target.id !== 'modalActivityInput') {
+                    closeAllAutocompleteLists();
+                }
+            });
         });
 
         // Set up field validation
@@ -1083,10 +1131,12 @@
                 // Need to wait for the dropdown to update
                 setTimeout(() => {
                     if (entry.activity === "Other" || !activities[entry.discipline]?.includes(entry.activity)) {
+                        document.getElementById("modalActivityInput").value = "Other";
                         document.getElementById("modalActivity").value = "Other";
                         document.getElementById("customActivity").value = entry.activity;
                         document.getElementById("customActivity").style.display = "block";
                     } else {
+                        document.getElementById("modalActivityInput").value = entry.activity;
                         document.getElementById("modalActivity").value = entry.activity;
                         document.getElementById("customActivity").style.display = "none";
                     }
@@ -1098,7 +1148,8 @@
             } else {
                 // Adding new entry
                 document.getElementById("modalProgressDiscipline").value = "";
-                document.getElementById("modalActivity").innerHTML = '<option value="">Select Activity</option>';
+                document.getElementById("modalActivityInput").value = "";
+                document.getElementById("modalActivity").value = "";
                 document.getElementById("modalQuantity").value = "";
                 document.getElementById("modalUnit").value = "";
                 document.getElementById("customActivity").value = "";
@@ -1119,7 +1170,8 @@
         function closeProgressModal() {
             document.getElementById("progressModal").style.display = "none";
             document.getElementById("modalProgressDiscipline").value = "";
-            document.getElementById("modalActivity").innerHTML = '<option value="">Select Activity</option>';
+            document.getElementById("modalActivityInput").value = "";
+            document.getElementById("modalActivity").value = "";
             document.getElementById("modalQuantity").value = "";
             document.getElementById("modalUnit").value = "";
             document.getElementById("customActivity").value = "";
@@ -1130,46 +1182,120 @@
 
         function updateActivityDropdown() {
             const discipline = document.getElementById("modalProgressDiscipline").value;
-            const activityDropdown = document.getElementById("modalActivity");
-            activityDropdown.innerHTML = '<option value="">Select Activity</option>';
-
+            
             if (discipline && activities[discipline]) {
-                activities[discipline].forEach(activity => {
-                    const option = document.createElement("option");
-                    option.value = activity;
-                    option.textContent = activity;
-                    activityDropdown.appendChild(option);
-                });
-                const otherOption = document.createElement("option");
-                otherOption.value = "Other";
-                otherOption.textContent = "Other";
-                activityDropdown.appendChild(otherOption);
-            }
-        }
-
-        function toggleCustomActivityInput() {
-            const activityDropdown = document.getElementById("modalActivity");
-            const customActivityInput = document.getElementById("customActivity");
-            const customActivityError = document.getElementById("customActivity-error");
-            
-            if (activityDropdown.value === "Other") {
-                customActivityInput.style.display = "block";
-                customActivityInput.required = true;
+                currentActivities = [...activities[discipline], "Other"];
             } else {
-                customActivityInput.style.display = "none";
-                customActivityInput.required = false;
-                customActivityError.style.display = "none";
+                currentActivities = [];
             }
+            
+            // Clear the activity input
+            document.getElementById("modalActivityInput").value = "";
+            document.getElementById("modalActivity").value = "";
+            document.getElementById("customActivity").value = "";
+            document.getElementById("customActivity").style.display = "none";
         }
 
-        // Auto-select unit based on activity
-        function autoSelectUnit() {
-            const activity = document.getElementById("modalActivity").value;
-            const unitDropdown = document.getElementById("modalUnit");
+        function showAllActivities() {
+            const input = document.getElementById("modalActivityInput");
+            const val = input.value.toLowerCase();
+            const autocompleteList = document.getElementById("autocompleteList");
             
-            if (activity && activityUnitMap[activity]) {
-                unitDropdown.value = activityUnitMap[activity];
+            // Clear previous suggestions
+            autocompleteList.innerHTML = "";
+            
+            if (currentActivities.length === 0) {
+                autocompleteList.style.display = "none";
+                return;
             }
+            
+            // Show all available activities for the selected discipline
+            currentActivities.forEach(activity => {
+                const item = document.createElement("div");
+                item.innerHTML = activity;
+                item.addEventListener("click", function() {
+                    input.value = activity;
+                    document.getElementById("modalActivity").value = activity;
+                    autocompleteList.style.display = "none";
+                    
+                    if (activity === "Other") {
+                        document.getElementById("customActivity").style.display = "block";
+                        document.getElementById("customActivity").focus();
+                    } else {
+                        document.getElementById("customActivity").style.display = "none";
+                        // Auto-select unit if available
+                        if (activityUnitMap[activity]) {
+                            document.getElementById("modalUnit").value = activityUnitMap[activity];
+                        }
+                    }
+                });
+                autocompleteList.appendChild(item);
+            });
+            
+            autocompleteList.style.display = "block";
+        }
+
+        function filterActivities() {
+            const input = document.getElementById("modalActivityInput");
+            const val = input.value.toLowerCase();
+            const autocompleteList = document.getElementById("autocompleteList");
+            
+            // Clear previous suggestions
+            autocompleteList.innerHTML = "";
+            
+            if (currentActivities.length === 0) {
+                autocompleteList.style.display = "none";
+                return;
+            }
+            
+            // Filter activities based on input
+            const filteredActivities = currentActivities.filter(activity => 
+                activity.toLowerCase().includes(val)
+            );
+            
+            if (filteredActivities.length === 0) {
+                // If no matches, show "Other" option
+                const item = document.createElement("div");
+                item.innerHTML = "Other";
+                item.addEventListener("click", function() {
+                    input.value = "Other";
+                    document.getElementById("modalActivity").value = "Other";
+                    autocompleteList.style.display = "none";
+                    document.getElementById("customActivity").style.display = "block";
+                    document.getElementById("customActivity").focus();
+                });
+                autocompleteList.appendChild(item);
+            } else {
+                // Show matching activities
+                filteredActivities.forEach(activity => {
+                    const item = document.createElement("div");
+                    item.innerHTML = activity;
+                    item.addEventListener("click", function() {
+                        input.value = activity;
+                        document.getElementById("modalActivity").value = activity;
+                        autocompleteList.style.display = "none";
+                        
+                        if (activity === "Other") {
+                            document.getElementById("customActivity").style.display = "block";
+                            document.getElementById("customActivity").focus();
+                        } else {
+                            document.getElementById("customActivity").style.display = "none";
+                            // Auto-select unit if available
+                            if (activityUnitMap[activity]) {
+                                document.getElementById("modalUnit").value = activityUnitMap[activity];
+                            }
+                        }
+                    });
+                    autocompleteList.appendChild(item);
+                });
+            }
+            
+            autocompleteList.style.display = "block";
+        }
+
+        function closeAllAutocompleteLists() {
+            const autocompleteList = document.getElementById("autocompleteList");
+            autocompleteList.style.display = "none";
         }
 
         function addProgressEntry() {
@@ -1192,11 +1318,11 @@
             
             if (!activity) {
                 document.getElementById("modalActivity-error").style.display = "block";
-                document.getElementById("modalActivity").classList.add("error-field");
+                document.getElementById("modalActivityInput").classList.add("error-field");
                 isValid = false;
             } else {
                 document.getElementById("modalActivity-error").style.display = "none";
-                document.getElementById("modalActivity").classList.remove("error-field");
+                document.getElementById("modalActivityInput").classList.remove("error-field");
             }
             
             if (activity === "Other") {
