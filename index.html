@@ -691,7 +691,7 @@
         document.getElementById('errorMessage').classList.add('hidden');
         document.getElementById('responseMessage').classList.add('hidden');
         
-        await fetch('https://script.google.com/macros/s/AKfycbwz6cCY7geXNgPt6H5Z8CRZ2bv3B71hzGx6jmbO3_vL8xvp9hWXzS692dh3zddHhyHT/exec', {
+        await fetch('https://script.google.com/macros/s/AKfycbxDmwFecGECDPTfGfxHexwD_77LKo3V5_KD5o80whSO8zudaeC5pzAsw_Yvrjm9qI7_/exec', {
           method: 'POST',
           body: JSON.stringify(data),
           headers: { 'Content-Type': 'application/json' },
@@ -1051,34 +1051,43 @@
       });
     }
     
-    async function updateEmployeeInGoogleSheets(originalEmployee, updatedEmployee) {
-      // This function should send the updated data to your Google Apps Script
-      // You'll need to modify your Google Apps Script to handle updates
-      
-      const data = {
-        action: 'update',
-        originalData: originalEmployee,
-        updatedData: updatedEmployee
-      };
-      
-      try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbwz6cCY7geXNgPt6H5Z8CRZ2bv3B71hzGx6jmbO3_vL8xvp9hWXzS692dh3zddHhyHT/exec', {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: { 'Content-Type': 'application/json' },
-          mode: 'no-cors'
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to update employee data');
-        }
-        
-        return await response.json();
-      } catch (error) {
-        console.error('Error updating employee:', error);
-        throw error;
-      }
-    }
+async function updateEmployeeInGoogleSheets(originalEmployee, updatedEmployee) {
+  // Use your actual Google Script URL here
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDmwFecGECDPTfGfxHexwD_77LKo3V5_KD5o80whSO8zudaeC5pzAsw_Yvrjm9qI7_/exec';
+  
+  const data = {
+    action: 'update',
+    originalData: originalEmployee,
+    updatedData: updatedEmployee
+  };
+
+  try {
+    // Create a hidden form to submit the data (works around CORS)
+    const form = document.createElement('form');
+    form.style.display = 'none';
+    form.method = 'POST';
+    form.action = SCRIPT_URL;
+    form.target = '_blank'; // Open in new window to prevent navigation
+    
+    // Add data as hidden input
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = JSON.stringify(data);
+    form.appendChild(input);
+    
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Remove the form after submission
+    setTimeout(() => document.body.removeChild(form), 5000);
+    
+    return { status: 'success' };
+  } catch (error) {
+    console.error('Update error:', error);
+    throw new Error('Failed to update employee. Please check the console for details.');
+  }
+}
     
     // Download Excel functionality
     function downloadExcel() {
