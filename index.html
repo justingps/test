@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -356,6 +355,58 @@
       width: 90%;
     }
 
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .action-buttons button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .edit-btn {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .close-btn {
+      background-color: var(--text-light);
+      color: white;
+    }
+
+    .confirm-delete {
+      background-color: #dc2626;
+      color: white;
+    }
+
+    .edit-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .edit-form .form-group {
+      margin-bottom: 10px;
+    }
+
+    .edit-form .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
     @media (max-width: 768px) {
       .header {
         flex-direction: column;
@@ -373,6 +424,10 @@
       }
 
       .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .edit-form {
         grid-template-columns: 1fr;
       }
     }
@@ -627,7 +682,7 @@
         document.getElementById('errorMessage').classList.add('hidden');
         document.getElementById('responseMessage').classList.add('hidden');
         
-        await fetch('https://script.google.com/macros/s/AKfycbxtMf6e9xcbYD7LzhyM10lnV1QZhjOifYlCMLQMTi0tZTv4RMysjEyzlYScX84DZ34/exec', {
+        await fetch('https://script.google.com/macros/s/AKfycbw_vBT3c9Q1JClr6jaYAwpvDwEET1rKElFOqvG8ghP8GckOMUOqxGPZIyuQXYizwDNUxg/exec', {
           method: 'POST',
           body: JSON.stringify(data),
           headers: { 'Content-Type': 'application/json' },
@@ -810,6 +865,12 @@
             <button class="form-button view-btn" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
               <i class="fas fa-eye"></i> View
             </button>
+            <button class="form-button edit-btn" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; margin-left: 5px;">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="form-button delete-btn" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; margin-left: 5px;">
+              <i class="fas fa-trash"></i> Delete
+            </button>
           </td>
         `;
         
@@ -818,8 +879,18 @@
           showEmployeeDetails(employee);
         });
         
+        row.querySelector('.edit-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          showEditEmployeeForm(employee);
+        });
+        
+        row.querySelector('.delete-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          showDeleteConfirmation(employee);
+        });
+        
         row.addEventListener('click', (e) => {
-          if (!e.target.closest('.view-btn')) {
+          if (!e.target.closest('.view-btn') && !e.target.closest('.edit-btn') && !e.target.closest('.delete-btn')) {
             showEmployeeDetails(employee);
           }
         });
@@ -851,10 +922,9 @@
       
       detailsHtml += `
           </div>
-          <div style="text-align: center; margin-top: 20px;">
-            <button class="close-modal-btn" 
-                    style="padding: 8px 16px; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
-              Close
+          <div class="action-buttons">
+            <button class="close-btn">
+              <i class="fas fa-times"></i> Close
             </button>
           </div>
         </div>
@@ -863,7 +933,239 @@
       modal.innerHTML = detailsHtml;
       document.body.appendChild(modal);
       
-      modal.querySelector('.close-modal-btn').addEventListener('click', () => {
+      modal.querySelector('.close-btn').addEventListener('click', () => {
+        modal.remove();
+      });
+      
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.remove();
+        }
+      });
+      
+      document.addEventListener('keydown', function handler(e) {
+        if (e.key === 'Escape') {
+          modal.remove();
+          document.removeEventListener('keydown', handler);
+        }
+      });
+    }
+    
+    function showEditEmployeeForm(employee) {
+      document.querySelectorAll('.modal').forEach(modal => modal.remove());
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      
+      let formHtml = `
+        <div class="modal-content">
+          <h2 style="margin-top: 0; color: var(--primary-color);">Edit Employee Details</h2>
+          <div class="edit-form" id="editForm">
+      `;
+      
+      for (const key in employee) {
+        if (employee.hasOwnProperty(key)) {
+          const value = employee[key] || '';
+          const inputType = key.toLowerCase().includes('date') || key.toLowerCase().includes('expiry') || key.toLowerCase().includes('dob') ? 'date' : 'text';
+          
+          formHtml += `
+            <div class="form-group">
+              <label class="form-label">${key}</label>
+              <input type="${inputType}" id="edit-${key.replace(/\s+/g, '')}" class="form-input" value="${value}">
+            </div>
+          `;
+        }
+      }
+      
+      formHtml += `
+            <div class="form-group full-width">
+              <div class="response-message hidden" id="editResponseMessage"></div>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button class="edit-btn" id="saveEditBtn">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+            <button class="close-btn" id="cancelEditBtn">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </div>
+      `;
+      
+      modal.innerHTML = formHtml;
+      document.body.appendChild(modal);
+      
+      // Set date fields to proper format
+      document.querySelectorAll('#editForm input[type="date"]').forEach(input => {
+        if (input.value) {
+          // Convert date from "dd-MMM-yyyy" to "yyyy-MM-dd" format
+          const dateParts = input.value.split('-');
+          if (dateParts.length === 3) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthIndex = months.findIndex(m => m === dateParts[1]);
+            if (monthIndex !== -1) {
+              const formattedDate = `${dateParts[2]}-${String(monthIndex + 1).padStart(2, '0')}-${dateParts[0].padStart(2, '0')}`;
+              input.value = formattedDate;
+            }
+          }
+        }
+      });
+      
+      modal.querySelector('#saveEditBtn').addEventListener('click', async () => {
+        const updatedEmployee = { ...employee };
+        let hasChanges = false;
+        
+        for (const key in employee) {
+          if (employee.hasOwnProperty(key)) {
+            const inputId = `edit-${key.replace(/\s+/g, '')}`;
+            const input = document.getElementById(inputId);
+            if (input && input.value !== employee[key]) {
+              updatedEmployee[key] = input.value;
+              hasChanges = true;
+            }
+          }
+        }
+        
+        if (!hasChanges) {
+          document.getElementById('editResponseMessage').textContent = 'No changes were made';
+          document.getElementById('editResponseMessage').className = 'response-message error-message';
+          document.getElementById('editResponseMessage').classList.remove('hidden');
+          return;
+        }
+        
+        try {
+          const saveBtn = modal.querySelector('#saveEditBtn');
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+          
+          document.getElementById('editResponseMessage').classList.add('hidden');
+          
+          // Send update request to Google Apps Script
+          const response = await fetch('https://script.google.com/macros/s/AKfycbxtMf6e9xcbYD7LzhyM10lnV1QZhjOifYlCMLQMTi0tZTv4RMysjEyzlYScX84DZ34/exec', {
+            method: 'POST',
+            body: JSON.stringify({
+              action: 'update',
+              employeeId: employee['Employment ID'] || employee['Employee ID'] || employee['ID'],
+              updatedData: updatedEmployee
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            mode: 'no-cors'
+          });
+          
+          document.getElementById('editResponseMessage').textContent = 'Employee updated successfully!';
+          document.getElementById('editResponseMessage').className = 'response-message success-message';
+          document.getElementById('editResponseMessage').classList.remove('hidden');
+          
+          // Reload the employee list after a short delay
+          setTimeout(() => {
+            loadEmployeeList();
+            modal.remove();
+          }, 1500);
+        } catch (error) {
+          console.error('Error updating employee:', error);
+          document.getElementById('editResponseMessage').textContent = `Error: ${error.message || 'Failed to update employee'}`;
+          document.getElementById('editResponseMessage').className = 'response-message error-message';
+          document.getElementById('editResponseMessage').classList.remove('hidden');
+        } finally {
+          const saveBtn = modal.querySelector('#saveEditBtn');
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+          }
+        }
+      });
+      
+      modal.querySelector('#cancelEditBtn').addEventListener('click', () => {
+        modal.remove();
+      });
+      
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.remove();
+        }
+      });
+      
+      document.addEventListener('keydown', function handler(e) {
+        if (e.key === 'Escape') {
+          modal.remove();
+          document.removeEventListener('keydown', handler);
+        }
+      });
+    }
+    
+    function showDeleteConfirmation(employee) {
+      document.querySelectorAll('.modal').forEach(modal => modal.remove());
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      
+      const employeeId = employee['Employment ID'] || employee['Employee ID'] || employee['ID'];
+      const employeeName = employee['Employee Name'] || employee['Name'] || '-';
+      
+      modal.innerHTML = `
+        <div class="modal-content">
+          <h2 style="margin-top: 0; color: var(--accent-color);">Confirm Deletion</h2>
+          <p>Are you sure you want to delete the record for:</p>
+          <p><strong>ID:</strong> ${employeeId}</p>
+          <p><strong>Name:</strong> ${employeeName}</p>
+          <div class="response-message hidden" id="deleteResponseMessage"></div>
+          <div class="action-buttons">
+            <button class="confirm-delete" id="confirmDeleteBtn">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+            <button class="close-btn" id="cancelDeleteBtn">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      modal.querySelector('#confirmDeleteBtn').addEventListener('click', async () => {
+        try {
+          const deleteBtn = modal.querySelector('#confirmDeleteBtn');
+          deleteBtn.disabled = true;
+          deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+          
+          document.getElementById('deleteResponseMessage').classList.add('hidden');
+          
+          // Send delete request to Google Apps Script
+          const response = await fetch('https://script.google.com/macros/s/AKfycbxtMf6e9xcbYD7LzhyM10lnV1QZhjOifYlCMLQMTi0tZTv4RMysjEyzlYScX84DZ34/exec', {
+            method: 'POST',
+            body: JSON.stringify({
+              action: 'delete',
+              employeeId: employeeId
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            mode: 'no-cors'
+          });
+          
+          document.getElementById('deleteResponseMessage').textContent = 'Employee deleted successfully!';
+          document.getElementById('deleteResponseMessage').className = 'response-message success-message';
+          document.getElementById('deleteResponseMessage').classList.remove('hidden');
+          
+          // Reload the employee list after a short delay
+          setTimeout(() => {
+            loadEmployeeList();
+            modal.remove();
+          }, 1500);
+        } catch (error) {
+          console.error('Error deleting employee:', error);
+          document.getElementById('deleteResponseMessage').textContent = `Error: ${error.message || 'Failed to delete employee'}`;
+          document.getElementById('deleteResponseMessage').className = 'response-message error-message';
+          document.getElementById('deleteResponseMessage').classList.remove('hidden');
+        } finally {
+          const deleteBtn = modal.querySelector('#confirmDeleteBtn');
+          if (deleteBtn) {
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete';
+          }
+        }
+      });
+      
+      modal.querySelector('#cancelDeleteBtn').addEventListener('click', () => {
         modal.remove();
       });
       
