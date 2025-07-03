@@ -653,7 +653,7 @@
         document.getElementById('errorMessage').classList.add('hidden');
         document.getElementById('responseMessage').classList.add('hidden');
         
-        await fetch('https://script.google.com/macros/s/AKfycbw_vBT3c9Q1JClr6jaYAwpvDwEET1rKElFOqvG8ghP8GckOMUOqxGPZIyuQXYizwDNUxg/exec', {
+        await fetch('https://script.google.com/macros/s/AKfycbzUb7U7f5U7uXcLI-r9HrDtt56LEV9BYREd8lWFEWBbEHVgB9ZQjSkAJxGKwwsghZnD/exec', {
           method: 'POST',
           body: JSON.stringify(data),
           headers: { 'Content-Type': 'application/json' },
@@ -759,7 +759,7 @@
       document.getElementById('employeeListContent').style.display = 'none';
       
       try {
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzjTfS6kvP94ofoE8Ck3R_I-uGlJ9aa4dpJ-mpChe4LZKYKM4j3twkBQNtsP0QpAmzeZDI2Utfg5RC/pub?gid=0&single=true&output=csv';
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTY2psTIclZ7uQwQhyzXaJtY6kI60jd_NCMXK747-ZS_LVai1lXYa8Ye1PWKImsYg9AaZZ-q1DOUuDE/pub?gid=0&single=true&output=csv';
         const timestamp = new Date().getTime();
         const response = await fetch(`${csvUrl}&t=${timestamp}`);
         
@@ -956,7 +956,7 @@
           saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
           
           // Update the Google Sheet via the Apps Script web app
-          const response = await fetch('https://script.google.com/macros/s/AKfycbw_vBT3c9Q1JClr6jaYAwpvDwEET1rKElFOqvG8ghP8GckOMUOqxGPZIyuQXYizwDNUxg/exec', {
+          const response = await fetch('https://script.google.com/macros/s/AKfycbzUb7U7f5U7uXcLI-r9HrDtt56LEV9BYREd8lWFEWBbEHVgB9ZQjSkAJxGKwwsghZnD/exec', {
             method: 'POST',
             body: JSON.stringify({
               action: 'update',
