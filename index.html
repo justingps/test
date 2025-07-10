@@ -1,63 +1,27 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Common Portal</title>
+  <title>Gulf Petrochemical Services Portal</title>
   <link rel="icon" type="image/png" href="https://justingps.github.io/dpr/logo.png" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <style>
     :root {
-      --primary-color: #1e40af; /* Adjusted for professional tone */
-      --secondary-color: #1e3a8a;
-      --accent-color: #9f1239; /* More subdued professional accent */
-      --light-color: #e0e7ff;
-      --dark-color: #111827;
-      --text-color: #1f2a44;
-      --text-light: #4b5563; /* Slightly darker for professional look */
-      --border-color: #d1d5db;
-      --card-bg: #f8fafc; /* Subtle off-white for professional card background */
+      --primary: #2563eb;       /* Modern blue */
+      --primary-dark: #1e40af;
+      --primary-light: #93c5fd;
+      --secondary: #10b981;    /* Professional teal */
+      --accent: #f59e0b;       /* Accent gold */
+      --dark: #1f2937;
+      --light: #f9fafb;
+      --gray: #6b7280;
+      --gray-light: #e5e7eb;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --glass: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.18);
     }
 
     * {
@@ -68,10 +32,11 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #e5e7eb;
-      color: var(--text-color);
-      line-height: 1.5;
-      overflow: hidden;
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     #particles-js {
@@ -80,7 +45,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(145deg, var(--primary), var(--primary-dark));
       z-index: -1;
     }
 
@@ -89,152 +54,331 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 2rem;
       text-align: center;
       position: relative;
       z-index: 1;
     }
 
+    .header {
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-container {
+      width: 120px;
+      height: 120px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+      border: 2px solid var(--glass-border);
+    }
+
     .logo {
-      height: 128px;
-      margin-bottom: 2rem;
-      border-radius: 4px;
+      width: 80px;
+      height: auto;
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: 2.25rem;
       font-weight: 700;
-      color: var(--dark-color);
-      margin-bottom: 1rem;
+      color: white;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
     }
 
     .subtitle {
       font-size: 1rem;
-      color: var(--text-light);
-      margin-bottom: 2rem;
-      font-family: 'Roboto', sans-serif;
+      color: var(--primary-light);
+      margin-bottom: 0;
+      font-weight: 400;
+      max-width: 600px;
     }
 
     .app-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
       width: 100%;
-      max-width: 600px;
+      max-width: 900px;
+      margin-top: 1rem;
     }
 
     .app-card {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 1.5rem;
+      border-radius: 12px;
+      padding: 1.75rem;
       text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--glass-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
     }
 
     .app-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .app-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .app-card a {
       text-decoration: none;
-      color: var(--primary-color);
-      font-weight: 500;
+      color: var(--dark);
+      font-weight: 600;
       font-size: 1.1rem;
       display: block;
+      transition: color 0.2s ease;
     }
 
     .app-card a:hover {
-      color: var(--secondary-color);
+      color: var(--primary);
     }
 
     .app-card p {
-      color: var(--text-light);
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
+      color: var(--gray);
+      font-size: 0.95rem;
+      margin-top: 0.75rem;
+      line-height: 1.5;
     }
 
-    @media (max-width: 600px) {
-      .app-grid {
-        grid-template-columns: 1fr;
-      }
+    .footer {
+      margin-top: 3rem;
+      color: white;
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
 
-      .app-card {
-        padding: 1rem;
-      }
+    /* Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
+    .app-card {
+      animation: fadeIn 0.6s ease forwards;
+      opacity: 0;
+    }
+
+    .app-card:nth-child(1) { animation-delay: 0.1s; }
+    .app-card:nth-child(2) { animation-delay: 0.2s; }
+    .app-card:nth-child(3) { animation-delay: 0.3s; }
+    .app-card:nth-child(4) { animation-delay: 0.4s; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
       }
-
+      
       .subtitle {
         font-size: 0.9rem;
       }
+      
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Floating animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .logo-container {
+      animation: float 6s ease-in-out infinite;
     }
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
   <div class="container">
-    <img src="https://justingps.github.io/dpr/logo.png" alt="Company Logo" class="logo" />
-    <h1>Common Portal</h1>
-    <div class="subtitle">GULF PETROCHEMICAL SERVICES LLC.</div>
+    <div class="header">
+      <div class="logo-container">
+        <img src="https://justingps.github.io/dpr/logo.png" alt="Gulf Petrochemical Services Logo" class="logo" />
+      </div>
+      <h1>Gulf Petrochemical Services</h1>
+      <p class="subtitle">Enterprise Portal System</p>
+    </div>
+    
     <div class="app-grid">
       <div class="app-card">
+        <div class="app-icon">
+          <i class="fas fa-users-cog"></i>
+        </div>
         <a href="https://justingps.github.io/ems/" target="_blank" rel="noopener noreferrer">
-          <i class="fas fa-users"></i> Employee Management System
+          Employee Management System
         </a>
-        <p>Manage employee records and information.</p>
+        <p>Comprehensive platform for managing employee records, attendance, and HR processes.</p>
       </div>
+      
       <div class="app-card">
+        <div class="app-icon">
+          <i class="fas fa-file-contract"></i>
+        </div>
         <a href="https://justingps.github.io/gps-oxy/" target="_blank" rel="noopener noreferrer">
-          <i class="fas fa-file-alt"></i> GPS-OXY Application
+          GPS-OXY Application
         </a>
-        <p>Access the GPS-OXY reporting system.</p>
+        <p>Advanced reporting and documentation system for operational efficiency.</p>
       </div>
+      
+      <!-- Additional placeholder cards for potential future apps -->
+      <div class="app-card">
+        <div class="app-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <a href="#" onclick="return false;">
+          Analytics Dashboard
+        </a>
+        <p>Real-time business intelligence and performance metrics. (Coming Soon)</p>
+      </div>
+      
+      <div class="app-card">
+        <div class="app-icon">
+          <i class="fas fa-tools"></i>
+        </div>
+        <a href="#" onclick="return false;">
+          Maintenance Portal
+        </a>
+        <p>Equipment tracking and maintenance scheduling system. (Coming Soon)</p>
+      </div>
+    </div>
+    
+    <div class="footer">
+      &copy; 2023 Gulf Petrochemical Services LLC. All rights reserved.
     </div>
   </div>
 
   <script>
-    // Initialize particles.js
+    // Initialize particles.js with more professional settings
     particlesJS('particles-js', {
       particles: {
-        number: { value: 80, density: { enable: true, value_area: 800 } },
-        color: { value: '#ffffff' },
-        shape: { type: 'circle', stroke: { width: 0, color: '#000000' } },
-        opacity: { value: 0.5, random: false },
-        size: { value: 3, random: true },
+        number: { 
+          value: 70, 
+          density: { 
+            enable: true, 
+            value_area: 1000 
+          } 
+        },
+        color: { 
+          value: "#ffffff" 
+        },
+        shape: { 
+          type: "circle", 
+          stroke: { 
+            width: 0, 
+            color: "#000000" 
+          } 
+        },
+        opacity: {
+          value: 0.7,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 1,
+            opacity_min: 0.3,
+            sync: false
+          }
+        },
+        size: {
+          value: 3,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 2,
+            size_min: 1,
+            sync: false
+          }
+        },
         line_linked: {
           enable: true,
-          distance: 150,
-          color: '#ffffff',
-          opacity: 0.4,
+          distance: 180,
+          color: "#ffffff",
+          opacity: 0.3,
           width: 1
         },
         move: {
           enable: true,
-          speed: 2,
-          direction: 'none',
-          random: false,
+          speed: 1.5,
+          direction: "none",
+          random: true,
           straight: false,
-          out_mode: 'out',
-          bounce: false
+          out_mode: "out",
+          bounce: false,
+          attract: {
+            enable: true,
+            rotateX: 600,
+            rotateY: 1200
+          }
         }
       },
       interactivity: {
-        detect_on: 'canvas',
+        detect_on: "canvas",
         events: {
-          onhover: { enable: true, mode: 'grab' },
-          onclick: { enable: true, mode: 'push' },
+          onhover: {
+            enable: true,
+            mode: "grab"
+          },
+          onclick: {
+            enable: true,
+            mode: "push"
+          },
           resize: true
         },
         modes: {
-          grab: { distance: 140, line_linked: { opacity: 1 } },
-          push: { particles_nb: 4 }
+          grab: {
+            distance: 160,
+            line_linked: {
+              opacity: 0.8
+            }
+          },
+          push: {
+            particles_nb: 3
+          }
         }
       },
       retina_detect: true
+    });
+    
+    // Add smooth scroll behavior
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
     });
   </script>
 </body>
