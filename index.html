@@ -1,357 +1,486 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gulf Petrochemical Services Portal</title>
-  <link rel="icon" href="https://justingps.github.io/dpr/logo.png" type="image/png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-  <style>
-    :root {
-      --primary-blue: #003366;
-      --secondary-blue: #0066cc;
-      --accent-orange: #ff6600;
-      --light-gray: #f5f5f5;
-      --medium-gray: #e0e0e0;
-      --dark-gray: #333333;
-      --white: #ffffff;
-      --error-red: #d32f2f;
-      --success-green: #388e3c;
-      --border-radius: 4px;
-      --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    body {
-      font-family: 'Roboto', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: var(--dark-gray);
-      line-height: 1.5;
-      position: relative;
-    }
+<title>GPS Operations Dashboard</title>
 
-    #particles-js {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: var(--primary-blue);
-      background-image: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
-      z-index: -1;
-    }
+<link rel="icon" href="https://justingps.github.io/dpr/logo.png">
 
-    .portal-container {
-      width: 100%;
-      max-width: 1200px;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    .portal-header {
-      text-align: center;
-      margin-bottom: 40px;
-      color: white;
-    }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    .company-logo {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 20px;
-      background-color: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      animation: float 6s ease-in-out infinite;
-    }
+<style>
 
-    .company-logo img {
-      width: 70px;
-      height: auto;
-    }
+body{
+margin:0;
+font-family:Inter;
+background:#f3f4f6;
+color:#111827;
+}
 
-    .portal-header h1 {
-      font-size: 2.5rem;
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
+/* HEADER */
 
-    .portal-header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
-      max-width: 600px;
-      margin: 0 auto;
-    }
+.header{
+height:70px;
+background:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 25px;
+box-shadow:0 3px 10px rgba(0,0,0,0.08);
+}
 
-    .apps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
-      width: 100%;
-    }
+.logo{
+display:flex;
+align-items:center;
+gap:12px;
+}
 
-    .app-card {
-      background-color: rgba(255, 255, 255, 0.95);
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      padding: 30px;
-      text-align: center;
-      transition: var(--transition);
-      border-top: 4px solid var(--accent-orange);
-      backdrop-filter: blur(5px);
-      animation: fadeIn 0.6s ease forwards;
-      opacity: 0;
-    }
+.logo img{
+height:40px;
+}
 
-    .app-card:nth-child(1) { animation-delay: 0.1s; }
-    .app-card:nth-child(2) { animation-delay: 0.2s; }
-    .app-card:nth-child(3) { animation-delay: 0.3s; }
-    .app-card:nth-child(4) { animation-delay: 0.4s; }
+/* LAYOUT */
 
-    .app-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    }
+.layout{
+display:flex;
+height:calc(100vh - 70px);
+}
 
-    .app-icon {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      color: var(--secondary-blue);
-    }
+/* SIDEBAR */
 
-    .app-card h3 {
-      font-size: 1.3rem;
-      margin-bottom: 15px;
-      color: var(--primary-blue);
-    }
+.sidebar{
+width:220px;
+background:white;
+border-right:1px solid #e5e7eb;
+padding-top:20px;
+}
 
-    .app-card p {
-      color: var(--dark-gray);
-      margin-bottom: 20px;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
+.sidebar button{
+width:100%;
+border:none;
+background:none;
+padding:15px;
+text-align:left;
+cursor:pointer;
+font-weight:500;
+}
 
-    .app-button {
-      display: inline-block;
-      padding: 10px 25px;
-      background-color: var(--accent-orange);
-      color: white;
-      border-radius: var(--border-radius);
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-    }
+.sidebar button:hover{
+background:#f3f4f6;
+}
 
-    .app-button:hover {
-      background-color: #e65c00;
-      transform: translateY(-2px);
-    }
+.sidebar .active{
+background:#2563eb;
+color:white;
+}
 
-    .portal-footer {
-      margin-top: 50px;
-      color: white;
-      text-align: center;
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
+/* CONTENT */
 
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+.content{
+flex:1;
+padding:25px;
+overflow:auto;
+}
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+/* KPI */
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .portal-container {
-        padding: 30px 20px;
-      }
-      
-      .portal-header h1 {
-        font-size: 2rem;
-      }
-      
-      .apps-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .app-card {
-        padding: 25px;
-      }
-    }
-  </style>
+.kpi-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.kpi{
+background:white;
+padding:18px;
+border-radius:10px;
+box-shadow:0 5px 12px rgba(0,0,0,0.06);
+}
+
+.kpi-value{
+font-size:24px;
+font-weight:600;
+}
+
+/* CARDS */
+
+.card{
+background:white;
+border-radius:10px;
+padding:20px;
+box-shadow:0 5px 12px rgba(0,0,0,0.06);
+margin-bottom:20px;
+}
+
+/* GRID */
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+@media(max-width:900px){
+.grid{
+grid-template-columns:1fr;
+}
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #e5e7eb;
+font-size:13px;
+}
+
+th{
+background:#f9fafb;
+}
+
+/* FILTER */
+
+.filters{
+margin-bottom:15px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.filters input{
+padding:8px;
+border:1px solid #d1d5db;
+border-radius:6px;
+}
+
+.dark{
+background:#111827;
+color:white;
+}
+
+.dark .card,
+.dark .kpi,
+.dark .sidebar,
+.dark .header{
+background:#1f2937;
+color:white;
+}
+
+</style>
+
 </head>
+
 <body>
-  <div id="particles-js"></div>
-  
-  <div class="portal-container">
-    <div class="portal-header">
-      <div class="company-logo">
-        <img src="https://justingps.github.io/dpr/logo.png" alt="Company Logo">
-      </div>
-      <h1>Gulf Petrochemical Services</h1>
-      <p>Enterprise Portal System</p>
-    </div>
-    
-    <div class="apps-grid">
-      <div class="app-card">
-        <div class="app-icon">
-          <i class="fas fa-users-cog"></i>
-        </div>
-        <h3>Employee Management System</h3>
-        <p>Comprehensive platform for managing employee records, attendance, and HR operations.</p>
-        <a href="https://justingps.github.io/ems/" class="app-button">Access System</a>
-      </div>
-      
-      <div class="app-card">
-        <div class="app-icon">
-          <i class="fas fa-file-contract"></i>
-        </div>
-        <h3>Reporting Application</h3>
-        <p>Advanced reporting and documentation system for operational efficiency and compliance.</p>
-        <a href="https://justingps.github.io/gps-oxy/" class="app-button">Access Reports</a>
-      </div>
-      
-      <!-- Future apps can be added here -->
-      <!--
-      <div class="app-card">
-        <div class="app-icon">
-          <i class="fas fa-chart-line"></i>
-        </div>
-        <h3>Analytics Dashboard</h3>
-        <p>Real-time business intelligence and performance metrics visualization.</p>
-        <a href="#" class="app-button">Coming Soon</a>
-      </div>
-      
-      <div class="app-card">
-        <div class="app-icon">
-          <i class="fas fa-tools"></i>
-        </div>
-        <h3>Maintenance Portal</h3>
-        <p>Equipment tracking and maintenance scheduling system.</p>
-        <a href="#" class="app-button">Coming Soon</a>
-      </div>
-      -->
-    </div>
-    
-    <div class="portal-footer">
-      &copy; 2023 Gulf Petrochemical Services LLC. All rights reserved.
-    </div>
-  </div>
 
-  <script>
-    // Initialize particles.js with professional configuration
-    particlesJS('particles-js', {
-      particles: {
-        number: { 
-          value: 70, 
-          density: { 
-            enable: true, 
-            value_area: 1000 
-          } 
-        },
-        color: { 
-          value: "#ffffff" 
-        },
-        shape: { 
-          type: "circle" 
-        },
-        opacity: {
-          value: 0.7,
-          random: true,
-          anim: {
-            enable: true,
-            speed: 1,
-            opacity_min: 0.3,
-            sync: false
-          }
-        },
-        size: {
-          value: 3,
-          random: true,
-          anim: {
-            enable: true,
-            speed: 2,
-            size_min: 1,
-            sync: false
-          }
-        },
-        line_linked: {
-          enable: true,
-          distance: 180,
-          color: "#ffffff",
-          opacity: 0.3,
-          width: 1
-        },
-        move: {
-          enable: true,
-          speed: 1.5,
-          direction: "none",
-          random: true,
-          straight: false,
-          out_mode: "out",
-          bounce: false,
-          attract: {
-            enable: true,
-            rotateX: 600,
-            rotateY: 1200
-          }
-        }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: {
-            enable: true,
-            mode: "grab"
-          },
-          onclick: {
-            enable: true,
-            mode: "push"
-          }
-        },
-        modes: {
-          grab: {
-            distance: 160,
-            line_linked: {
-              opacity: 0.8
-            }
-          },
-          push: {
-            particles_nb: 3
-          }
-        }
-      }
-    });
+<div class="header">
 
-    // Modify all links to open in same tab
-    document.querySelectorAll('.app-button').forEach(button => {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = this.getAttribute('href');
-      });
-    });
-  </script>
+<div class="logo">
+<img src="https://justingps.github.io/dpr/logo.png">
+<b>GPS Operations Dashboard</b>
+</div>
+
+<div>
+
+<button onclick="toggleDark()">🌙</button>
+
+</div>
+
+</div>
+
+<div class="layout">
+
+<div class="sidebar">
+
+<button class="tab active" data-tab="summary">Summary</button>
+<button class="tab" data-tab="reports">Reports</button>
+<button class="tab" data-tab="status">Status</button>
+<button class="tab" data-tab="resource">Resources</button>
+
+</div>
+
+<div class="content">
+
+<!-- SUMMARY -->
+
+<div id="summary" class="page">
+
+<div class="kpi-grid">
+
+<div class="kpi">
+<div class="kpi-value" id="kpiCrew">0</div>
+Crew Today
+</div>
+
+<div class="kpi">
+<div class="kpi-value" id="kpiForeman">0</div>
+Foremen
+</div>
+
+<div class="kpi">
+<div class="kpi-value" id="kpiEquipment">0</div>
+Equipment
+</div>
+
+<div class="kpi">
+<div class="kpi-value" id="kpiProjects">0</div>
+Projects
+</div>
+
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h3>Crew Allocation</h3>
+<canvas id="chartCrew"></canvas>
+</div>
+
+<div class="card">
+<h3>Crew Trend</h3>
+<canvas id="chartTrend"></canvas>
+</div>
+
+</div>
+
+</div>
+
+<!-- REPORTS -->
+
+<div id="reports" class="page" style="display:none">
+
+<div class="filters">
+<input type="date" id="reportDate">
+<input id="searchWI" placeholder="Search WI">
+</div>
+
+<div class="card">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Foreman</th>
+<th>WI No</th>
+<th>Area</th>
+<th>Crew</th>
+</tr>
+</thead>
+
+<tbody id="reportTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- STATUS -->
+
+<div id="status" class="page" style="display:none">
+
+<div class="card">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Foreman</th>
+<th>Project</th>
+<th>Area</th>
+<th>Crew</th>
+</tr>
+</thead>
+
+<tbody id="statusTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- RESOURCE -->
+
+<div id="resource" class="page" style="display:none">
+
+<div class="card">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Resource ID</th>
+<th>Designation</th>
+<th>Project</th>
+<th>Area</th>
+</tr>
+</thead>
+
+<tbody id="resourceTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* GOOGLE SHEET */
+
+const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRMvKP4HfM5zZpM3RjdpPcX0DZA3yWpGhXt_lqpzblpbIQW7vcJswPPm8gMdmVZ366FCUwZGLCsF1fb/pub?gid=0&single=true&output=csv"
+
+let data=[]
+
+async function loadData(){
+
+const res=await fetch(SHEET_URL)
+
+const csv=await res.text()
+
+data=parseCSV(csv)
+
+updateDashboard()
+
+}
+
+function parseCSV(csv){
+
+const rows=csv.split("\n")
+
+const headers=rows[0].split(",")
+
+return rows.slice(1).map(r=>{
+const obj={}
+r.split(",").forEach((v,i)=>obj[headers[i]]=v)
+return obj
+})
+
+}
+
+/* DASHBOARD */
+
+function updateDashboard(){
+
+document.getElementById("kpiCrew").innerText=data.length
+
+const foremen=new Set(data.map(d=>d["FOREMAN NAME"]))
+
+document.getElementById("kpiForeman").innerText=foremen.size
+
+const equipment=data.filter(d=>d["MANPOWER / EQUIPMENT"]=="Equipment")
+
+document.getElementById("kpiEquipment").innerText=equipment.length
+
+const projects=new Set(data.map(d=>d["WI NO"]))
+
+document.getElementById("kpiProjects").innerText=projects.size
+
+renderTables()
+
+renderCharts()
+
+}
+
+/* TABLE */
+
+function renderTables(){
+
+const reportTable=document.getElementById("reportTable")
+
+reportTable.innerHTML=""
+
+data.slice(0,30).forEach((r,i)=>{
+
+reportTable.innerHTML+=`
+<tr>
+<td>${i+1}</td>
+<td>${r["FOREMAN NAME"]}</td>
+<td>${r["WI NO"]}</td>
+<td>${r["AREA / BLOCK"]}</td>
+<td>${r["RESOURCE ID"]}</td>
+</tr>
+`
+
+})
+
+document.getElementById("statusTable").innerHTML=reportTable.innerHTML
+
+document.getElementById("resourceTable").innerHTML=reportTable.innerHTML
+
+}
+
+/* CHART */
+
+function renderCharts(){
+
+new Chart(document.getElementById("chartCrew"),{
+type:"bar",
+data:{
+labels:["Area1","Area2","Area3"],
+datasets:[{label:"Crew",data:[12,19,7]}]
+}
+})
+
+new Chart(document.getElementById("chartTrend"),{
+type:"line",
+data:{
+labels:["Mon","Tue","Wed","Thu"],
+datasets:[{label:"Crew",data:[10,14,12,18]}]
+}
+})
+
+}
+
+/* DARK MODE */
+
+function toggleDark(){
+document.body.classList.toggle("dark")
+}
+
+/* TABS */
+
+document.querySelectorAll(".tab").forEach(btn=>{
+
+btn.onclick=()=>{
+
+document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"))
+
+btn.classList.add("active")
+
+document.querySelectorAll(".page").forEach(p=>p.style.display="none")
+
+document.getElementById(btn.dataset.tab).style.display="block"
+
+}
+
+})
+
+/* AUTO REFRESH */
+
+setInterval(loadData,300000)
+
+loadData()
+
+</script>
+
 </body>
 </html>
