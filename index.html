@@ -3,602 +3,475 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GPS · field intelligence</title>
+  <title>GPS · advanced field OPS</title>
   <link rel="icon" href="https://justingps.github.io/dpr/logo.png" type="image/png">
   <!-- Fonts & Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <!-- Chart.js & Particles -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <style>
-    /* ----- MODERN DESIGN SYSTEM ----- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    :root {
+      --primary: #0f2b4b;
+      --primary-light: #1e4a7a;
+      --accent: #f39c12;
+      --accent-glow: #ffb347;
+      --surface: #edf2f7;
+      --card-bg: #ffffffd9;
+      --card-glass: rgba(255,255,255,0.75);
+      --text-dark: #13294b;
+      --text-muted: #2c3e50cc;
+      --border-light: #e2e8f0;
+      --shadow-sm: 0 8px 20px -6px rgba(0,20,40,0.15), 0 0 0 1px rgba(0,0,0,0.02);
+      --shadow-focus: 0 0 0 3px rgba(243,156,18,0.25);
+      --transition: all 0.2s ease;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: #f0f4f8;
-      color: #1a2639;
+      background: var(--surface);
+      color: var(--text-dark);
       line-height: 1.5;
       min-height: 100vh;
+      position: relative;
       overflow-x: hidden;
     }
 
-    /* particles background (login) */
+    /* particles background (login only) */
     #particles-js {
       position: fixed;
       width: 100%;
       height: 100%;
-      background: linear-gradient(145deg, #0b2b4f 0%, #1b4a7a 100%);
-      z-index: -1;
+      background: linear-gradient(145deg, #0b2742, #173e5f);
+      z-index: 0;
     }
 
-    /* ----- LOGIN CARD (GLASSMORPHIC) ----- */
+    /* LOGIN PANEL (refined) */
     .login-container {
-      width: 100%;
-      max-width: 440px;
-      padding: 1.5rem;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      width: 420px;
+      z-index: 10;
+      padding: 20px;
     }
 
     .login-box {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255,255,255,0.92);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 32px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-      padding: 2.5rem 2rem;
-      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 28px;
+      padding: 38px 32px;
+      box-shadow: 0 30px 45px -20px #00000060, 0 0 0 1px rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.6);
     }
 
     .company-logo {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 28px;
     }
+    .company-logo img { height: 60px; margin-bottom: 12px; }
+    .company-logo h1 { font-size: 28px; font-weight: 600; color: var(--primary); letter-spacing: -0.5px; }
+    .company-logo p { font-size: 15px; color: var(--text-muted); }
 
-    .company-logo img {
-      height: 64px;
-      filter: drop-shadow(0 4px 6px rgba(0,35,70,0.2));
+    .form-group { margin-bottom: 24px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+      color: var(--primary);
     }
-
-    .company-logo h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #003057, #1b4f8b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin: 0.5rem 0 0.2rem;
-      letter-spacing: -0.5px;
-    }
-
-    .company-logo p {
-      color: #3a5670;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
     .input-field {
       position: relative;
-      margin-bottom: 1.5rem;
     }
-
     .input-field i {
       position: absolute;
-      left: 18px;
+      left: 16px;
       top: 50%;
       transform: translateY(-50%);
-      color: #2c4b6f;
-      font-size: 1.1rem;
+      color: var(--primary-light);
       opacity: 0.7;
+      font-size: 16px;
     }
-
     .input-field input {
       width: 100%;
-      padding: 1rem 1rem 1rem 3rem;
-      background: rgba(240, 248, 255, 0.7);
-      border: 2px solid transparent;
-      border-radius: 24px;
-      font-size: 1rem;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 10px rgba(0, 30, 60, 0.05);
+      padding: 14px 16px 14px 46px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 40px;
+      font-size: 15px;
+      backdrop-filter: blur(4px);
+      transition: var(--transition);
     }
-
     .input-field input:focus {
       outline: none;
-      border-color: #f28b1c;
-      background: white;
-      box-shadow: 0 8px 20px rgba(242, 139, 28, 0.15);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-focus);
+      background: #ffffff;
     }
 
     .login-options {
       display: flex;
       justify-content: space-between;
-      font-size: 0.9rem;
-      margin: 1rem 0 1.8rem;
-    }
-
-    .remember-me {
-      display: flex;
       align-items: center;
-      gap: 0.4rem;
-      color: #1e3a5f;
+      font-size: 14px;
+      margin: 20px 0 30px;
     }
-
-    .forgot-password {
-      color: #f28b1c;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
+    .forgot-password { color: var(--primary-light); text-decoration: none; }
     .login-button {
       width: 100%;
-      padding: 1rem;
-      background: linear-gradient(145deg, #f28b1c, #f06d2b);
+      padding: 15px;
+      background: var(--primary);
+      color: white;
       border: none;
       border-radius: 40px;
-      color: white;
-      font-weight: 700;
-      font-size: 1.1rem;
-      letter-spacing: 0.5px;
+      font-weight: 600;
+      font-size: 16px;
       cursor: pointer;
-      box-shadow: 0 10px 20px -5px #f28b1c80;
-      transition: all 0.2s;
+      transition: 0.15s;
+      box-shadow: 0 8px 18px -6px var(--primary);
     }
+    .login-button:hover { background: #1d3b5e; transform: scale(1.01); }
+    .login-error { color: #c0392b; display: none; align-items: center; gap: 6px; margin-top: 16px; }
 
-    .login-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 18px 30px -5px #e0691a;
-    }
-
-    .login-error {
-      color: #c62828;
-      background: #ffebee;
-      padding: 0.8rem;
-      border-radius: 40px;
-      margin-top: 1.5rem;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .login-footer, .version-info {
-      text-align: center;
-      color: #30587b;
-      font-size: 0.8rem;
-      margin-top: 2rem;
-    }
-
-    /* ----- DASHBOARD (NEUMORPHIC + GLASS) ----- */
-    .container {
+    /* dashboard container — hidden until login */
+    .dashboard {
       max-width: 1600px;
-      margin: 1.5rem auto;
-      background: rgba(238, 242, 248, 0.7);
-      backdrop-filter: blur(4px);
-      border-radius: 40px;
-      box-shadow: 20px 20px 40px #b5bbc9, -20px -20px 40px #ffffff;
+      margin: 24px auto;
+      padding: 0 24px;
       display: none;
-      padding: 1.5rem;
+      animation: fadeUp 0.4s ease;
     }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; }}
 
-    .header {
+    /* glass‑morphic header */
+    .header-glass {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(10px);
+      border-radius: 48px;
+      padding: 16px 28px;
+      margin-bottom: 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255,255,255,0.6);
-      backdrop-filter: blur(8px);
-      padding: 1.2rem 2rem;
-      border-radius: 80px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.02);
-      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255,255,255,0.7);
     }
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-    }
-
-    .logo {
-      height: 55px;
-      border-radius: 16px;
-    }
-
-    .company-info {
-      font-size: 0.9rem;
-      background: rgba(255,255,255,0.4);
-      padding: 0.6rem 1.4rem;
-      border-radius: 50px;
-      box-shadow: inset 0 1px 4px #ffffff, inset 0 -1px 4px #b0b7c9;
-    }
-
-    .logout-button {
-      background: #1e3a5f;
-      color: white;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 40px;
-      font-weight: 600;
+    .logo-area { display: flex; align-items: center; gap: 20px; }
+    .logo-area img { height: 52px; }
+    .company-meta { font-size: 14px; color: var(--primary); font-weight: 500; }
+    .logout-btn {
+      background: rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 32px;
+      padding: 12px 28px;
+      font-weight: 500;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      transition: 0.2s;
-    }
-
-    .logout-button:hover {
-      background: #15334f;
-      box-shadow: 0 10px 18px #1e3a5f60;
-    }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      background: rgba(255,255,255,0.4);
-      padding: 0.6rem;
-      border-radius: 60px;
-      margin-bottom: 2rem;
+      transition: 0.15s;
       backdrop-filter: blur(4px);
     }
+    .logout-btn:hover { background: #ffffff; border-color: var(--accent); color: var(--primary); }
 
-    .tab {
-      padding: 0.8rem 2rem;
+    /* tabs – soft neumorphism */
+    .tabs-modern {
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(4px);
+      padding: 8px;
+      border-radius: 56px;
+      margin-bottom: 32px;
+      width: fit-content;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .tab-item {
+      padding: 14px 28px;
       border-radius: 40px;
       font-weight: 600;
-      color: #2b405c;
+      color: var(--primary);
       cursor: pointer;
+      transition: 0.15s;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      transition: 0.2s;
+      gap: 8px;
     }
-
-    .tab.active {
+    .tab-item i { font-size: 1.1rem; }
+    .tab-item.active {
       background: white;
-      box-shadow: 0 8px 14px rgba(0,30,60,0.12);
-      color: #f06d2b;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      color: var(--accent);
     }
+    .tab-item:hover:not(.active) { background: rgba(255,255,255,0.6); }
 
-    .tab:hover:not(.active) {
-      background: rgba(255,255,255,0.7);
-    }
+    /* panels */
+    .tab-pane { display: none; animation: fadeIn 0.25s; }
+    .tab-pane.active-pane { display: block; }
 
     /* filter bar */
-    .filter-container {
+    .filter-glass {
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(8px);
+      border-radius: 48px;
+      padding: 16px 24px;
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
-      background: white;
-      padding: 1.2rem 1.8rem;
-      border-radius: 80px;
-      margin: 1.5rem 0 2rem;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+      gap: 16px 28px;
+      margin-bottom: 32px;
+      border: 1px solid rgba(255,255,255,0.7);
     }
-
     .filter-group {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: #f0f5fd;
-      padding: 0.3rem 1rem 0.3rem 1.5rem;
-      border-radius: 40px;
-      flex: 1 1 180px;
+      gap: 10px;
     }
-
-    .filter-label i {
-      color: #f28b1c;
-    }
-
-    .date-picker, .area-select, .discipline-select, .wi-input {
-      border: none;
-      background: transparent;
-      padding: 0.5rem 0.5rem 0.5rem 0;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      width: 100%;
-      outline: none;
-    }
-
-    /* cards */
-    .chart-container, .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 1.8rem;
-      margin: 2rem 0;
-    }
-
-    .chart-card, .details-card, .daily-summary {
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(4px);
-      border-radius: 32px;
-      padding: 1.5rem;
-      box-shadow: 10px 10px 20px #bfc7d4, -10px -10px 20px #ffffff;
-    }
-
-    .chart-title {
-      font-weight: 700;
-      color: #152b44;
-      margin-bottom: 1.5rem;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .work-group {
+    .filter-group label { font-weight: 600; color: var(--primary); font-size: 0.9rem; }
+    .filter-field {
       background: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 32px;
+      font-size: 0.9rem;
+      min-width: 160px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* KPI cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: var(--card-glass);
+      backdrop-filter: blur(6px);
       border-radius: 28px;
-      padding: 1rem;
-      margin-bottom: 2rem;
-      box-shadow: 6px 6px 12px #cbd2e0, -6px -6px 12px #ffffff;
+      padding: 22px 18px;
+      border: 1px solid rgba(255,255,255,0.8);
+      box-shadow: var(--shadow-sm);
     }
+    .kpi-label { font-size: 14px; color: var(--primary); opacity: 0.8; margin-bottom: 8px; }
+    .kpi-value { font-size: 36px; font-weight: 700; color: var(--primary); line-height: 1.2; }
+    .kpi-trend { font-size: 13px; margin-top: 6px; color: #27ae60; display: flex; align-items: center; gap: 4px; }
 
-    .work-group-header {
-      display: flex;
-      justify-content: space-between;
-      background: linear-gradient(105deg, #1e3a5f, #295886);
-      color: white;
-      padding: 1rem 1.8rem;
-      border-radius: 40px;
-      margin-bottom: 1.5rem;
+    /* charts grid */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px,1fr));
+      gap: 24px;
+      margin-bottom: 32px;
     }
-
-    .summary-card {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-      margin: 1rem 0;
+    .chart-card {
+      background: var(--card-glass);
+      backdrop-filter: blur(5px);
+      border-radius: 32px;
+      padding: 22px;
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: var(--shadow-sm);
     }
-
-    .summary-item {
-      background: #f0f5fe;
-      border-radius: 24px;
-      padding: 1rem 1.5rem;
-      flex: 1 1 140px;
-    }
-
-    .summary-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      color: #345e8b;
-    }
-
-    .summary-value {
-      font-weight: 800;
-      font-size: 1.6rem;
-      color: #152b44;
-    }
+    .chart-title { font-size: 1rem; font-weight: 600; margin-bottom: 18px; color: var(--primary); }
 
     /* tables */
-    .resource-table, .progress-table, .status-table, .data-table {
+    .table-responsive {
+      overflow-x: auto;
+      background: var(--card-glass);
+      backdrop-filter: blur(4px);
+      border-radius: 28px;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 6px;
+      border-collapse: collapse;
+      font-size: 0.9rem;
     }
-
-    th {
-      text-align: left;
-      padding: 1rem 0.5rem 0.5rem 0.5rem;
-      color: #2b4a73;
-      font-weight: 600;
-      font-size: 0.8rem;
-    }
-
-    td {
-      background: rgba(240,246,255,0.7);
-      padding: 0.8rem 0.5rem;
-      border-radius: 20px;
-    }
-
-    .status-indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 10px;
+    th { text-align: left; padding: 16px 12px; background: transparent; color: var(--primary); font-weight: 600; }
+    td { padding: 12px; border-top: 1px solid rgba(0,0,0,0.03); }
+    .status-badge {
       display: inline-block;
-      margin-right: 0.4rem;
+      width: 10px; height: 10px;
+      border-radius: 10px;
+      margin-right: 8px;
     }
-
-    .status-active { background: #2e7d32; }
-    .status-inactive { background: #b71c1c; }
+    .badge-active { background: #2ecc71; }
+    .badge-inactive { background: #e67e22; }
 
     /* loading */
-    .loading-container {
-      background: rgba(255,255,255,0.4);
-      border-radius: 60px;
-      padding: 3rem;
-      text-align: center;
-      backdrop-filter: blur(4px);
-    }
+    .loading-pulse { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 40px; }
 
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid rgba(30, 58, 95, 0.2);
-      border-top-color: #f28b1c;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    @media (max-width: 800px) {
-      .tabs { flex-wrap: wrap; }
-      .filter-container { border-radius: 40px; }
-      .header { flex-direction: column; align-items: start; gap: 1rem; }
+    /* responsive */
+    @media (max-width: 700px) {
+      .header-glass { flex-direction: column; align-items: start; gap: 12px; }
+      .tabs-modern { flex-wrap: wrap; width: 100%; }
     }
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
 
-  <!-- LOGIN PAGE -->
+  <!-- LOGIN SCREEN (enhanced) -->
   <div id="loginContainer" class="login-container">
     <div class="login-box">
       <div class="company-logo">
         <img src="https://justingps.github.io/dpr/logo.png" alt="GPS">
         <h1>GPS</h1>
-        <p>field operations · unified dashboard</p>
+        <p>Field Operations · advanced</p>
       </div>
-
       <div class="form-group">
-        <div class="input-field">
-          <i class="fas fa-user"></i>
-          <input type="text" id="username" placeholder="username" autocomplete="off">
-        </div>
-        <div class="input-field">
-          <i class="fas fa-lock"></i>
-          <input type="password" id="password" placeholder="password">
-        </div>
+        <label>Username</label>
+        <div class="input-field"><i class="fas fa-user"></i><input type="text" id="username" placeholder="gpsoman"></div>
       </div>
-
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-field"><i class="fas fa-lock"></i><input type="password" id="password" placeholder="••••••••"></div>
+      </div>
       <div class="login-options">
-        <label class="remember-me"><input type="checkbox"> Stay signed in</label>
-        <a href="#" class="forgot-password">recovery</a>
+        <label><input type="checkbox"> Remember</label>
+        <a href="#" class="forgot-password">Forgot?</a>
       </div>
-
-      <button id="loginButton" class="login-button"><i class="fas fa-arrow-right-to-bracket"></i> SECURE LOGIN</button>
-      <div id="loginError" class="login-error"><i class="fas fa-circle-exclamation"></i> Invalid credentials</div>
-
-      <div class="login-footer">GULF PETROCHEMICAL SERVICES · MISA 24000110790</div>
-      <div class="version-info">v.3.2.1 · AI-enhanced</div>
+      <button id="loginButton" class="login-button"><i class="fas fa-arrow-right-to-bracket" style="margin-right: 8px;"></i>Access dashboard</button>
+      <div id="loginError" class="login-error"><i class="fas fa-exclamation-circle"></i> Invalid credentials</div>
     </div>
   </div>
 
-  <!-- DASHBOARD (hidden until login) -->
-  <div class="container" id="dashboardContainer">
-    <div class="header">
-      <div class="logo-container">
-        <img src="https://justingps.github.io/dpr/logo.png" class="logo" alt="GPS">
-        <div class="company-info">
-          <strong>CONTRACTOR:</strong> GULF PETROCHEMICAL SERVICES LLC.<br>
-          <strong>CLIENT:</strong> OCCIDENTAL OF OMAN INC. · <strong>TODAY</strong> <span id="currentDate"></span>
+  <!-- DASHBOARD (glass‑modern) -->
+  <div class="dashboard" id="dashboardContainer">
+    <!-- header -->
+    <div class="header-glass">
+      <div class="logo-area">
+        <img src="https://justingps.github.io/dpr/logo.png" alt="GPS">
+        <div class="company-meta">
+          <div><strong>GULF PETROCHEMICAL SERVICES LLC</strong> · OXY contract</div>
+          <div style="font-size: 13px; opacity:0.8;"><i class="far fa-calendar"></i> <span id="currentDate"></span></div>
         </div>
       </div>
-      <button id="logoutButton" class="logout-button"><i class="fas fa-power-off"></i> LOGOUT</button>
+      <button id="logoutButton" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
 
-    <!-- TABS -->
-    <div class="tabs">
-      <div class="tab active" onclick="openTab('summary')"><i class="fas fa-chart-pie"></i> ANALYTICS</div>
-      <div class="tab" onclick="openTab('reports')"><i class="fas fa-newspaper"></i> DAILY REPORT</div>
-      <div class="tab" onclick="openTab('status')"><i class="fas fa-clipboard-list"></i> PROJECT STATUS</div>
-      <div class="tab" onclick="openTab('resource')"><i class="fas fa-hard-hat"></i> RESOURCES</div>
+    <!-- tabs -->
+    <div class="tabs-modern">
+      <div class="tab-item active" data-tab="summary"><i class="fas fa-chart-pie"></i> Summary</div>
+      <div class="tab-item" data-tab="reports"><i class="fas fa-file-lines"></i> Reports</div>
+      <div class="tab-item" data-tab="status"><i class="fas fa-list-check"></i> Status</div>
+      <div class="tab-item" data-tab="resource"><i class="fas fa-helmet-safety"></i> Resource</div>
     </div>
 
-    <!-- ========== SUMMARY TAB ========= -->
-    <div id="summary" class="tab-content active">
-      <h1 style="margin-bottom: 0.5rem;">work analytics ⚡</h1>
-      <div class="summary-date-filter" style="display: flex; gap:1rem; align-items:center; margin:1rem 0;">
-        <span><i class="far fa-calendar"></i> from</span>
-        <input type="date" id="summaryStartDate" class="date-picker">
-        <span>to</span>
-        <input type="date" id="summaryEndDate" class="date-picker">
-        <button class="login-button" style="width:auto; padding:0.6rem 2rem;" onclick="updateSummaryCharts()">apply</button>
+    <!-- SUMMARY PANEL -->
+    <div id="summaryPane" class="tab-pane active-pane">
+      <!-- KPI row (added meaningful metrics) -->
+      <div class="kpi-grid" id="summaryKpi"></div>
+
+      <div class="filter-glass">
+        <div class="filter-group"><label>FROM</label><input type="date" id="summaryStartDate" class="filter-field"></div>
+        <div class="filter-group"><label>TO</label><input type="date" id="summaryEndDate" class="filter-field"></div>
       </div>
 
-      <div id="summaryLoading" class="loading-container" style="display: none;"><div class="loading-spinner"></div> loading insights ...</div>
-      <div id="summaryContent">
-        <div class="summary-grid">
-          <div class="chart-card"><div class="chart-title"><i class="fas fa-people-group"></i> crew by area (stacked)</div><canvas id="crewAllocationChart"></canvas></div>
-          <div class="chart-card"><div class="chart-title"><i class="fas fa-chart-line"></i> crew trend top areas</div><canvas id="crewTrendChart"></canvas></div>
-          <div class="chart-card"><div class="chart-title"><i class="fas fa-trophy"></i> top 5 work groups</div><canvas id="workGroupUtilizationChart"></canvas></div>
-          <div class="chart-card">
-            <div class="chart-title"><i class="fas fa-clock"></i> recent activity</div>
-            <table class="data-table">
-              <thead><tr><th>date</th><th>foremen</th><th>crew</th><th>status</th></tr></thead>
-              <tbody id="recentActivity"></tbody>
-            </table>
-          </div>
+      <div id="summaryLoading" class="loading-pane">
+        <div class="loading-pulse"><i class="fas fa-spinner fa-pulse"></i> loading insights ...</div>
+      </div>
+
+      <div id="summaryContent" style="display: none;">
+        <div class="chart-grid">
+          <div class="chart-card"><div class="chart-title">👥 Crew allocation by area</div><canvas id="crewAllocationChart"></canvas></div>
+          <div class="chart-card"><div class="chart-title">📈 Crew trend (top areas)</div><canvas id="crewTrendChart"></canvas></div>
+          <div class="chart-card"><div class="chart-title">⚡ Top work groups by crew</div><canvas id="workGroupUtilizationChart"></canvas></div>
+        </div>
+        <!-- recent activity + extra KPIs inside card -->
+        <div class="chart-card">
+          <div class="chart-title">🕒 Recent activity</div>
+          <table>
+            <thead><tr><th>Date</th><th>Foremen</th><th>Crew</th><th>Status</th></tr></thead>
+            <tbody id="recentActivity"></tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- ========== REPORTS TAB (daily) ========= -->
-    <div id="reports" class="tab-content">
-      <div class="filter-container">
-        <div class="filter-group"><i class="fas fa-calendar-day filter-label"></i><input type="date" id="reportDate" class="date-picker" onchange="applyFilters()"></div>
-        <div class="filter-group"><i class="fas fa-location-dot filter-label"></i><select id="areaSelect" class="area-select" onchange="applyFilters()"><option value="all">All areas</option><option>Safha (Block-9)</option><option>Block-62</option><option>Wadi Latham (Block-9)</option><option>Infrastructure Project</option><option>Khamila (Bock-27)</option><option>FRT Project</option><option>Power Project</option><option>Other</option></select></div>
-        <div class="filter-group"><i class="fas fa-gear filter-label"></i><select id="disciplineSelect" class="discipline-select" onchange="applyFilters()"><option value="all">All disciplines</option><option>Piping & Mechanical</option><option>Electrical</option><option>Civil</option><option>Instrumentation</option></select></div>
-        <div class="filter-group"><i class="fas fa-magnifying-glass filter-label"></i><input type="text" id="wiInput" class="wi-input" placeholder="WI search" oninput="applyFilters()"></div>
+    <!-- REPORTS PANEL -->
+    <div id="reportsPane" class="tab-pane">
+      <div class="filter-glass" id="reportFilters">
+        <div class="filter-group"><label>DATE</label><input type="date" id="reportDate" class="filter-field"></div>
+        <div class="filter-group"><label>AREA</label><select id="areaSelect" class="filter-field"></select></div>
+        <div class="filter-group"><label>DISCIPLINE</label><select id="disciplineSelect" class="filter-field"></select></div>
+        <div class="filter-group"><label>WI</label><input type="text" id="wiInput" placeholder="search.." class="filter-field"></div>
       </div>
-      <div id="reportsLoading" class="loading-container" style="display: none;"><div class="loading-spinner"></div> loading reports...</div>
-      <div id="reportsContent">
-        <div id="dailySummaryContainer" class="daily-summary"></div>
+      <div id="reportsLoading" class="loading-pulse"><i class="fas fa-spinner fa-pulse"></i> loading reports ...</div>
+      <div id="reportsContent" style="display: none;">
+        <div id="dailySummaryContainer" class="chart-card" style="margin-bottom:20px;"></div>
         <div id="reportContainer"></div>
       </div>
     </div>
 
-    <!-- ========== STATUS TAB ========= -->
-    <div id="status" class="tab-content">
-      <h2>active projects · status</h2>
-      <div class="filter-container">
-        <div class="filter-group"><i class="fas fa-calendar"></i><input type="date" id="statusDate" class="date-picker" onchange="updateStatusTable()"></div>
-        <div class="filter-group"><i class="fas fa-map"></i><select id="statusAreaSelect" class="area-select" onchange="updateStatusTable()"><option value="all">All areas</option><option>Safha (Block-9)</option><option>Block-62</option><option>Wadi Latham (Block-9)</option><option>Infrastructure Project</option><option>Khamila (Bock-27)</option><option>FRT Project</option><option>Power Project</option><option>Other</option></select></div>
+    <!-- STATUS PANEL -->
+    <div id="statusPane" class="tab-pane">
+      <div class="filter-glass">
+        <div class="filter-group"><label>DATE</label><input type="date" id="statusDate" class="filter-field"></div>
+        <div class="filter-group"><label>AREA</label><select id="statusAreaSelect" class="filter-field"></select></div>
       </div>
-      <div id="statusLoading" class="loading-container" style="display: none;"><div class="loading-spinner"></div> fetching status...</div>
-      <div id="statusContent">
-        <div class="details-card">
-          <h3 id="statusTableTitle">Active projects</h3>
-          <div class="summary-card"><div class="summary-item"><span class="summary-label">total projects</span><span id="totalProjects" class="summary-value">0</span></div><div class="summary-item"><span class="summary-label">total crew</span><span id="totalCrewSize" class="summary-value">0</span></div></div>
-          <table class="status-table"><thead><tr><th>#</th><th>ID</th><th>crew lead</th><th>project (WI)</th><th>area</th><th>crew</th><th>discipline</th></tr></thead><tbody id="statusTableBody"></tbody></table>
+      <div id="statusLoading" class="loading-pulse"><i class="fas fa-spinner fa-pulse"></i> loading status ...</div>
+      <div id="statusContent" style="display: none;">
+        <div class="kpi-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="kpi-card"><span class="kpi-label">📋 total projects</span><span class="kpi-value" id="totalProjects">0</span></div>
+          <div class="kpi-card"><span class="kpi-label">👷 total crew size</span><span class="kpi-value" id="totalCrewSize">0</span></div>
         </div>
+        <div class="table-responsive"><table class="status-table"><thead><tr><th>#</th><th>ID</th><th>CREW LEAD</th><th>PROJECT</th><th>AREA</th><th>CREW</th><th>DISCIPLINE</th></tr></thead><tbody id="statusTableBody"></tbody></table></div>
       </div>
     </div>
 
-    <!-- ========== RESOURCE TAB ========= -->
-    <div id="resource" class="tab-content">
-      <h2>resource allocation</h2>
-      <div class="filter-container">
-        <div class="filter-group"><i class="fas fa-calendar"></i><input type="date" id="resourceDate" class="date-picker" onchange="updateResourceTables()"></div>
-        <div class="filter-group"><i class="fas fa-map"></i><select id="resourceAreaSelect" class="area-select" onchange="updateResourceTables()"><option value="all">All areas</option><option>Safha (Block-9)</option><option>Block-62</option><option>Wadi Latham (Block-9)</option><option>Infrastructure Project</option><option>Khamila (Bock-27)</option><option>FRT Project</option><option>Power Project</option><option>Other</option></select></div>
+    <!-- RESOURCE PANEL -->
+    <div id="resourcePane" class="tab-pane">
+      <div class="filter-glass">
+        <div class="filter-group"><label>DATE</label><input type="date" id="resourceDate" class="filter-field"></div>
+        <div class="filter-group"><label>AREA</label><select id="resourceAreaSelect" class="filter-field"></select></div>
       </div>
-      <div id="resourceLoading" class="loading-container" style="display: none;"><div class="loading-spinner"></div> loading resources...</div>
-      <div id="resourceContent">
-        <div class="details-card">
-          <h3 id="resourceTableTitle">resources</h3>
-          <div class="summary-card"><div class="summary-item"><span class="summary-label">manpower</span><span id="totalManpower" class="summary-value">0</span></div><div class="summary-item"><span class="summary-label">equipment</span><span id="totalEquipment" class="summary-value">0</span></div><div class="summary-item"><span class="summary-label">unclassified</span><span id="totalNotFound" class="summary-value">0</span></div></div>
-          <div style="margin-top:2rem;"><h4>👥 manpower</h4><table class="resource-table"><thead><tr><th>#</th><th>ID</th><th>designation</th><th>project</th><th>area</th><th>foreman</th></tr></thead><tbody id="manpowerTableBody"></tbody></table></div>
-          <div style="margin-top:2rem;"><h4>🛠️ equipment</h4><table class="resource-table"><thead><tr><th>#</th><th>ID</th><th>designation</th><th>project</th><th>area</th><th>foreman</th></tr></thead><tbody id="equipmentTableBody"></tbody></table></div>
-          <div style="margin-top:2rem;"><h4>❓ other</h4><table class="resource-table"><thead><tr><th>#</th><th>ID</th><th>designation</th><th>project</th><th>area</th><th>foreman</th></tr></thead><tbody id="notFoundTableBody"></tbody></table></div>
+      <div id="resourceLoading" class="loading-pulse"><i class="fas fa-spinner fa-pulse"></i> loading resources ...</div>
+      <div id="resourceContent" style="display: none;">
+        <div class="kpi-grid">
+          <div class="kpi-card"><span class="kpi-label">manpower</span><span class="kpi-value" id="totalManpower">0</span></div>
+          <div class="kpi-card"><span class="kpi-label">equipment</span><span class="kpi-value" id="totalEquipment">0</span></div>
+          <div class="kpi-card"><span class="kpi-label">unclassified</span><span class="kpi-value" id="totalNotFound">0</span></div>
         </div>
+        <div class="table-responsive"><h4 style="margin:20px 0 8px;">👤 Manpower</h4><table><thead><tr><th>#</th><th>ID</th><th>Designation</th><th>Project</th><th>Area</th><th>Foreman</th></tr></thead><tbody id="manpowerTableBody"></tbody></table></div>
+        <div class="table-responsive"><h4 style="margin:30px 0 8px;">🚜 Equipment</h4><table><thead><tr><th>#</th><th>ID</th><th>Designation</th><th>Project</th><th>Area</th><th>Foreman</th></tr></thead><tbody id="equipmentTableBody"></tbody></table></div>
+        <div class="table-responsive"><h4 style="margin:30px 0 8px;">❓ Not found</h4><table><thead><tr><th>#</th><th>ID</th><th>Designation</th><th>Project</th><th>Area</th><th>Foreman</th></tr></thead><tbody id="notFoundTableBody"></tbody></table></div>
       </div>
     </div>
   </div>
 
   <script>
     (function() {
-      // ---------- AUTHENTICATION (obfuscated credentials) ----------
-      const validUser = '\x67\x70\x73\x6f\x6d\x61\x6e';
-      const validPass = '\x67\x70\x73\x6f\x6d\x61\x6e';
-
-      // ---------- GLOBAL ----------
+      // ---------- CONFIG ----------
       const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMvKP4HfM5zZpM3RjdpPcX0DZA3yWpGhXt_lqpzblpbIQW7vcJswPPm8gMdmVZ366FCUwZGLCsF1fb/pub?gid=0&single=true&output=csv';
       let allData = [];
       let charts = {};
+
+      // credentials (simple)
+      const validUsername = 'gpsoman';
+      const validPassword = 'gpsoman';
 
       // ---------- LOGIN ----------
       document.getElementById('loginButton').addEventListener('click', login);
       document.getElementById('password').addEventListener('keypress', (e) => { if(e.key === 'Enter') login(); });
 
       function login() {
-        const u = document.getElementById('username').value.trim();
-        const p = document.getElementById('password').value.trim();
-        if (u === validUser && p === validPass) {
+        const user = document.getElementById('username').value.trim();
+        const pwd = document.getElementById('password').value.trim();
+        if (user === validUsername && pwd === validPassword) {
           document.getElementById('loginContainer').style.display = 'none';
           document.getElementById('dashboardContainer').style.display = 'block';
-          document.getElementById('particles-js').style.display = 'none';
-          document.body.style.overflow = 'auto';
-          document.getElementById('loginError').style.display = 'none';
-          initDashboardAfterLogin();
+          document.getElementById('particles-js').style.opacity = '0.3';
+          initDashboard();
         } else {
           document.getElementById('loginError').style.display = 'flex';
         }
@@ -607,301 +480,337 @@
       document.getElementById('logoutButton').addEventListener('click', () => {
         document.getElementById('dashboardContainer').style.display = 'none';
         document.getElementById('loginContainer').style.display = 'block';
-        document.getElementById('particles-js').style.display = 'block';
+        document.getElementById('particles-js').style.opacity = '1';
         document.getElementById('username').value = '';
         document.getElementById('password').value = '';
+        document.getElementById('loginError').style.display = 'none';
       });
 
-      // ---------- DATA FETCH (preserved exactly) ----------
-      function loadData(callback) {
-        fetch(SHEET_URL)
-          .then(r => r.text())
-          .then(csv => {
-            allData = parseCSV(csv);
-            if (callback) callback();
-          })
-          .catch(e => {
-            console.error('data error', e);
-            if (callback) callback();
-          });
-      }
-
+      // ---------- LOAD & PARSE ----------
       function parseCSV(csv) {
-        const lines = []; let cur=[], inQ=false, field='';
-        for (let i=0; i<csv.length; i++) {
+        const lines = []; let current = [], inQ = false, field = '';
+        for (let i = 0; i < csv.length; i++) {
           const c = csv[i];
           if (c === '"') inQ = !inQ;
-          else if (c === ',' && !inQ) { cur.push(field.trim()); field=''; }
-          else if (c === '\n' && !inQ) { cur.push(field.trim()); lines.push(cur); cur=[]; field=''; }
+          else if (c === ',' && !inQ) { current.push(field.trim()); field = ''; }
+          else if (c === '\n' && !inQ) { current.push(field.trim()); lines.push(current); current = []; field = ''; }
           else field += c;
         }
-        if (field.trim() || cur.length) { cur.push(field.trim()); lines.push(cur); }
+        if (field.trim() || current.length) { current.push(field.trim()); lines.push(current); }
         if (!lines.length) return [];
-        const heads = lines[0];
+        const headers = lines[0];
         return lines.slice(1).map(row => {
           let obj = {};
-          heads.forEach((h, i) => obj[h] = row[i] || '');
+          headers.forEach((h, idx) => obj[h] = row[idx] || '');
           return obj;
         });
       }
 
-      // ---------- HELPER FUNCTIONS (original logic) ----------
-      function parseSheetDate(ds) {
-        if (!ds) return null;
-        const months = {'Jan':0,'Feb':1,'Mar':2,'Apr':3,'May':4,'Jun':5,'Jul':6,'Aug':7,'Sep':8,'Oct':9,'Nov':10,'Dec':11};
-        let m = ds.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+      function parseDate(str) {
+        if (!str) return null;
+        const months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+        let m = str.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
         if (m) return new Date(parseInt(m[3]), months[m[2]], parseInt(m[1]));
-        m = ds.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
         if (m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
-        m = ds.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
         return null;
       }
 
-      function formatDateForComparison(d) {
-        if (!d) return '';
-        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      function fmtYMD(d) { return d ? d.toISOString().split('T')[0] : ''; }
+      function fmtDisplay(d) { if (!d) return ''; const dd = String(d.getDate()).padStart(2,'0'), mm = d.toLocaleString('default',{month:'short'}), yyyy = d.getFullYear(); return `${dd}-${mm}-${yyyy}`; }
+
+      // load data
+      fetch(SHEET_URL).then(r => r.text()).then(csv => {
+        allData = parseCSV(csv);
+        if (document.getElementById('dashboardContainer').style.display === 'block') refreshAll();
+      }).catch(e => console.warn('data err', e));
+
+      // ---------- HELPERS ----------
+      function getFilteredRows(date, area='all', discipline='all', wi='') {
+        return allData.filter(row => {
+          if (!row.DATE) return false;
+          let rd = parseDate(row.DATE);
+          if (!rd) return false;
+          if (date && fmtYMD(rd) !== fmtYMD(date)) return false;
+          if (area !== 'all' && row['AREA / BLOCK'] !== area) return false;
+          if (discipline !== 'all' && row['DISCIPLINE'] !== discipline) return false;
+          if (wi && row['WI NO'] && !row['WI NO'].toLowerCase().includes(wi.toLowerCase())) return false;
+          return true;
+        });
       }
 
-      function formatDateForDisplay(d) {
-        if (!d) return '';
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        return d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear();
-      }
-
-      // group data (original implementation)
-      function groupDataByProject(data, dateKey, areaFilter='all', disciplineFilter='all', wiFilter='') {
-        const grouped = {}; const uniqueCrew = new Set();
-        data.forEach(row => {
-          let rd = parseSheetDate(row.DATE);
-          if (!rd) return;
-          if (formatDateForComparison(rd) !== dateKey) return;
-          if (areaFilter !== 'all' && row['AREA / BLOCK'] !== areaFilter) return;
-          if (disciplineFilter !== 'all' && row['DISCIPLINE'] !== disciplineFilter) return;
-          if (wiFilter && row['WI NO'] && !row['WI NO'].toLowerCase().includes(wiFilter.toLowerCase())) return;
-
-          const key = `${row['FOREMAN ID']}|${row['WI NO']}|${row['AREA / BLOCK']}|${row['DISCIPLINE']}`;
-          if (!grouped[key]) {
-            grouped[key] = {
-              id: row['FOREMAN ID'] || '-', crewLead: row['FOREMAN NAME'] || '-', projects: row['WI NO'] || '-',
-              area: row['AREA / BLOCK'] || 'Unknown', discipline: row['DISCIPLINE'] || '-',
-              permits: new Set(), resources: new Set(), foremen: new Set(),
-              details: { 'DESCRIPTION OF WORK': row['DESCRIPTION OF WORK'] || '', 'PERMIT NUMBER': row['PERMIT NUMBER'] || '', 'VALIDATION TIME': row['VALIDATION TIME'] || '', 'SUSPENSION TIME': row['SUSPENSION TIME'] || '', 'PROGRESS': row['PROGRESS'] || '' },
+      function groupByProject(rows) {
+        const groups = {};
+        rows.forEach(r => {
+          let key = `${r['FOREMAN ID'] || ''}|${r['WI NO'] || ''}|${r['AREA / BLOCK'] || ''}`;
+          if (!groups[key]) {
+            groups[key] = {
+              id: r['FOREMAN ID'] || '-',
+              crewLead: r['FOREMAN NAME'] || '-',
+              projects: r['WI NO'] || '-',
+              area: r['AREA / BLOCK'] || 'Unknown',
+              discipline: r['DISCIPLINE'] || '-',
+              permits: new Set(),
+              resources: new Set(),
+              foremen: new Set(),
+              details: { 'DESCRIPTION OF WORK': r['DESCRIPTION OF WORK'] || '', 'PERMIT NUMBER': r['PERMIT NUMBER'] || '' },
               resourceDetails: []
             };
           }
-          if (row['PERMIT NUMBER']) grouped[key].permits.add(row['PERMIT NUMBER']);
-          if (row['RESOURCE ID']) {
-            grouped[key].resources.add(row['RESOURCE ID']);
-            uniqueCrew.add(row['RESOURCE ID']);
-            grouped[key].resourceDetails.push({
-              'RESOURCE ID': row['RESOURCE ID'], 'RESOURCE DESIGNATION': row['RESOURCE DESIGNATION'] || '-',
-              'MANPOWER / EQUIPMENT': row['MANPOWER / EQUIPMENT'] || '', 'TIME-IN': row['TIME-IN'] || '-', 'TIME-OUT': row['TIME-OUT'] || '-'
+          if (r['PERMIT NUMBER']) groups[key].permits.add(r['PERMIT NUMBER']);
+          if (r['RESOURCE ID']) {
+            groups[key].resources.add(r['RESOURCE ID']);
+            groups[key].resourceDetails.push({
+              'RESOURCE ID': r['RESOURCE ID'],
+              'RESOURCE DESIGNATION': r['RESOURCE DESIGNATION'] || '-',
+              'MANPOWER / EQUIPMENT': r['MANPOWER / EQUIPMENT'] || ''
             });
           }
-          if (row['FOREMAN ID']) grouped[key].foremen.add(row['FOREMAN ID']);
+          if (r['FOREMAN ID']) groups[key].foremen.add(r['FOREMAN ID']);
         });
-        return { grouped, totalCrewSize: uniqueCrew.size };
+        return groups;
       }
 
-      // ---------- INIT AFTER LOGIN ----------
-      function initDashboardAfterLogin() {
-        const today = new Date();
-        const yesterday = new Date(today); yesterday.setDate(today.getDate()-1);
-        const weekAgo = new Date(yesterday); weekAgo.setDate(yesterday.getDate()-6);
+      // Populate dropdowns
+      function populateSelects() {
+        const areas = [...new Set(allData.map(d => d['AREA / BLOCK']).filter(Boolean))];
+        ['areaSelect','statusAreaSelect','resourceAreaSelect'].forEach(id => {
+          let sel = document.getElementById(id);
+          if (!sel) return;
+          sel.innerHTML = '<option value="all">All Areas</option>' + areas.map(a => `<option value="${a}">${a}</option>`).join('');
+        });
+        let disciplines = [...new Set(allData.map(d => d['DISCIPLINE']).filter(Boolean))];
+        let discSel = document.getElementById('disciplineSelect');
+        if (discSel) discSel.innerHTML = '<option value="all">All Disciplines</option>' + disciplines.map(d => `<option value="${d}">${d}</option>`).join('');
+      }
+
+      // ---------- DASHBOARD INIT ----------
+      function initDashboard() {
+        let today = new Date();
+        let yesterday = new Date(today); yesterday.setDate(today.getDate()-1);
+        let weekAgo = new Date(yesterday); weekAgo.setDate(yesterday.getDate()-6);
         document.getElementById('reportDate').valueAsDate = yesterday;
         document.getElementById('statusDate').valueAsDate = yesterday;
         document.getElementById('resourceDate').valueAsDate = yesterday;
         document.getElementById('summaryStartDate').valueAsDate = weekAgo;
         document.getElementById('summaryEndDate').valueAsDate = yesterday;
-        document.getElementById('currentDate').innerText = formatDateForDisplay(today);
-
-        // show loading then load data
-        document.getElementById('summaryLoading').style.display = 'flex';
-        document.getElementById('reportsLoading').style.display = 'flex';
-        document.getElementById('statusLoading').style.display = 'flex';
-        document.getElementById('resourceLoading').style.display = 'flex';
-        document.getElementById('summaryContent').style.display = 'none';
-        document.getElementById('reportsContent').style.display = 'none';
-        document.getElementById('statusContent').style.display = 'none';
-        document.getElementById('resourceContent').style.display = 'none';
-
-        loadData(() => {
-          // hide loaders, show content
-          document.getElementById('summaryLoading').style.display = 'none';
-          document.getElementById('reportsLoading').style.display = 'none';
-          document.getElementById('statusLoading').style.display = 'none';
-          document.getElementById('resourceLoading').style.display = 'none';
-          document.getElementById('summaryContent').style.display = 'block';
-          document.getElementById('reportsContent').style.display = 'block';
-          document.getElementById('statusContent').style.display = 'block';
-          document.getElementById('resourceContent').style.display = 'block';
-
-          applyFilters();
-          updateStatusTable();
-          updateResourceTables();
-          updateSummaryCharts();
-        });
+        document.getElementById('currentDate').innerText = fmtDisplay(today);
+        if (allData.length) { populateSelects(); refreshAll(); }
+        else { setTimeout(()=> { if(allData.length) refreshAll(); }, 800); }
       }
 
-      // expose functions globally
-      window.openTab = function(tabName) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(tabName).classList.add('active');
-        event.currentTarget.classList.add('active');
-        if (tabName === 'summary' && allData.length) updateSummaryCharts();
-        if (tabName === 'status' && allData.length) updateStatusTable();
-        if (tabName === 'resource' && allData.length) updateResourceTables();
-      };
-
-      window.applyFilters = function() {
-        const d = document.getElementById('reportDate').valueAsDate;
-        if (!d) return;
-        const selArea = document.getElementById('areaSelect').value;
-        const selDisc = document.getElementById('disciplineSelect').value;
-        const wi = document.getElementById('wiInput').value.trim();
-        const dateKey = formatDateForComparison(d);
-        const filtered = allData.filter(r => {
-          let rd = parseSheetDate(r.DATE);
-          return rd && formatDateForComparison(rd) === dateKey &&
-            (selArea === 'all' || r['AREA / BLOCK'] === selArea) &&
-            (selDisc === 'all' || r['DISCIPLINE'] === selDisc) &&
-            (wi === '' || (r['WI NO'] && r['WI NO'].toLowerCase().includes(wi.toLowerCase())));
-        });
-        displayReports(filtered, dateKey, selArea, selDisc, wi);
-      };
-
-      function displayReports(data, dateKey, selArea, selDisc, wiSearch) {
-        const cont = document.getElementById('reportContainer');
-        const summ = document.getElementById('dailySummaryContainer');
-        if (!data.length) {
-          cont.innerHTML = '<p class="no-data" style="padding:2rem;">no records</p>';
-          summ.innerHTML = ''; return;
-        }
-        const { grouped, totalCrewSize } = groupDataByProject(data, dateKey, selArea, selDisc, wiSearch);
-        // daily summary per area
-        const areaSum = {};
-        Object.values(grouped).forEach(g => {
-          if (!areaSum[g.area]) areaSum[g.area] = { permits: new Set(), crew: new Set(), foremen: new Set() };
-          g.permits.forEach(p => areaSum[g.area].permits.add(p));
-          g.resources.forEach(c => areaSum[g.area].crew.add(c));
-          g.foremen.forEach(f => areaSum[g.area].foremen.add(f));
-        });
-        let sumHtml = `<h3>📋 summary ${formatDateForDisplay(new Date(dateKey))}</h3><div class="daily-summary-grid" style="display:flex; flex-wrap:wrap; gap:1rem;">`;
-        Object.entries(areaSum).forEach(([a, s]) => { sumHtml += `<div class="summary-item"><div class="daily-summary-area">${a}</div><div>permits:${s.permits.size} crew:${s.crew.size} foremen:${s.foremen.size}</div></div>`; });
-        sumHtml += `<div class="summary-item" style="background:#d0e2ff;"><b>TOTAL</b> permits:${Object.values(areaSum).reduce((a,b)=>a+b.permits.size,0)} crew:${totalCrewSize} foremen:${Object.values(areaSum).reduce((a,b)=>a+b.foremen.size,0)}</div></div>`;
-        summ.innerHTML = sumHtml;
-
-        let html = ''; let grpIdx=1;
-        Object.values(grouped).forEach(g => {
-          const manpower = g.resourceDetails.filter(r => r['MANPOWER / EQUIPMENT'].toLowerCase()==='manpower').length;
-          const equipment = g.resourceDetails.filter(r => r['MANPOWER / EQUIPMENT'].toLowerCase()==='equipment').length;
-          const progress = g.details['PROGRESS'].replace(/"/g,'').split('\n').map(l => l.split(' = '));
-          html += `<div class="work-group"><div class="work-group-header"><span>Work group #${grpIdx++}</span><span>WI: ${g.projects}</span></div>`;
-          html += `<div class="work-description">${g.details['DESCRIPTION OF WORK'].replace(/"/g,'')}</div>`;
-          html += `<div class="summary-card">${['Foreman ID',g.id,'Foreman',g.crewLead,'Area',g.area,'Permit',g.details['PERMIT NUMBER'],'Hours',g.details['VALIDATION TIME']+'-'+g.details['SUSPENSION TIME'],'Manpower',manpower,'Equipment',equipment,'Crew',g.resources.size,'Discipline',g.discipline].map((v,i)=>i%2===0?`<div class="summary-item"><span class="summary-label">${v}</span>`:`<div class="summary-value">${v}</div></div>`).join('')}</div>`;
-          html += `<div class="details-card"><h4>progress</h4><table class="progress-table">`+progress.map((p,i)=>`<tr><td>${i+1}</td><td>${p[0]||'-'}</td><td>${p[1]||'-'}</td></tr>`).join('')+`</table></div>`;
-          html += `<div class="details-card"><h4>resources</h4><table class="resource-table"><thead><tr><th>#</th><th>ID</th><th>designation</th><th>type</th><th>in</th><th>out</th></tr></thead><tbody>`+
-            g.resourceDetails.map((r,i)=>`<tr><td>${i+1}</td><td>${r['RESOURCE ID']}</td><td>${r['RESOURCE DESIGNATION']}</td><td>${r['MANPOWER / EQUIPMENT']}</td><td>${r['TIME-IN']}</td><td>${r['TIME-OUT']}</td></tr>`).join('')+`</tbody></table></div></div>`;
-        });
-        cont.innerHTML = html;
-      }
-
-      window.updateSummaryCharts = function() {
+      function refreshAll() {
         if (!allData.length) return;
-        const start = document.getElementById('summaryStartDate').valueAsDate;
-        const end = document.getElementById('summaryEndDate').valueAsDate;
-        if (!start || !end) return;
-        const days = [];
-        for (let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) days.push(new Date(d));
-        const areaCrew={}, trend={}, workGroup={}, recent={};
-        days.forEach(day => {
-          const dkey = formatDateForComparison(day);
-          recent[dkey] = {foremen:new Set(), crew:new Set(), active:false};
-          const { grouped } = groupDataByProject(allData, dkey);
-          Object.values(grouped).forEach(g => {
-            if (!areaCrew[g.area]) areaCrew[g.area]={dates:{},foremen:new Set()};
-            if (!areaCrew[g.area].dates[dkey]) areaCrew[g.area].dates[dkey]={crew:new Set(),foremen:new Set()};
-            g.resources.forEach(r => { areaCrew[g.area].dates[dkey].crew.add(r); recent[dkey].crew.add(r); });
-            g.foremen.forEach(f => { areaCrew[g.area].dates[dkey].foremen.add(f); areaCrew[g.area].foremen.add(f); recent[dkey].foremen.add(f); });
-            if (!trend[dkey]) trend[dkey]={};
-            trend[dkey][g.area] = (trend[dkey][g.area]||0) + g.resources.size;
-            const wkey = g.projects + ' @ ' + g.area;
-            if (!workGroup[wkey]) workGroup[wkey] = new Set();
-            g.resources.forEach(r => workGroup[wkey].add(r));
-            recent[dkey].active = true;
-          });
+        populateSelects();
+        applyFilters(); updateStatusTable(); updateResourceTables(); updateSummaryCharts();
+        document.querySelectorAll('.loading-pane, #reportsLoading, #statusLoading, #resourceLoading').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('#summaryContent, #reportsContent, #statusContent, #resourceContent').forEach(el => el.style.display = 'block');
+      }
+
+      // tab switching
+      document.querySelectorAll('.tab-item').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active-pane'));
+          let target = this.dataset.tab;
+          document.getElementById(target+'Pane').classList.add('active-pane');
+          if (target === 'summary') updateSummaryCharts();
+          if (target === 'status') updateStatusTable();
+          if (target === 'resource') updateResourceTables();
         });
-        // recent activity table
-        document.getElementById('recentActivity').innerHTML = Object.entries(recent).sort((a,b)=>b[0].localeCompare(a[0])).map(([dk, v])=>`<tr><td>${formatDateForDisplay(new Date(dk))}</td><td>${v.foremen.size}</td><td>${v.crew.size}</td><td><span class="status-indicator ${v.active?'status-active':'status-inactive'}"></span>${v.active?'active':'idle'}</td></tr>`).join('');
+      });
 
-        // destroy old charts
-        if (charts.crewAllocationChart) charts.crewAllocationChart.destroy();
-        if (charts.crewTrendChart) charts.crewTrendChart.destroy();
-        if (charts.workGroupUtilizationChart) charts.workGroupUtilizationChart.destroy();
+      // attach filter events
+      document.getElementById('reportDate')?.addEventListener('change', applyFilters);
+      document.getElementById('areaSelect')?.addEventListener('change', applyFilters);
+      document.getElementById('disciplineSelect')?.addEventListener('change', applyFilters);
+      document.getElementById('wiInput')?.addEventListener('input', applyFilters);
+      document.getElementById('statusDate')?.addEventListener('change', updateStatusTable);
+      document.getElementById('statusAreaSelect')?.addEventListener('change', updateStatusTable);
+      document.getElementById('resourceDate')?.addEventListener('change', updateResourceTables);
+      document.getElementById('resourceAreaSelect')?.addEventListener('change', updateResourceTables);
+      document.getElementById('summaryStartDate')?.addEventListener('change', updateSummaryCharts);
+      document.getElementById('summaryEndDate')?.addEventListener('change', updateSummaryCharts);
 
-        const topAreas = Object.keys(areaCrew).map(a => ({name:a, total:Object.values(areaCrew[a].dates).reduce((s,d)=>s+d.crew.size,0)})).sort((x,y)=>y.total-x.total).slice(0,5).map(x=>x.name);
-        const labels = days.map(d=>formatDateForDisplay(d));
-        const colors = ['#2563eb','#8b5cf6','#059669','#d97706','#db2777'];
+      // ========== REPORTS ==========
+      function applyFilters() {
+        let date = document.getElementById('reportDate').valueAsDate;
+        let area = document.getElementById('areaSelect').value;
+        let disc = document.getElementById('disciplineSelect').value;
+        let wi = document.getElementById('wiInput').value.trim();
+        if (!date) return;
+        let rows = getFilteredRows(date, area, disc, wi);
+        displayReports(rows, date);
+      }
 
-        // stacked bar
-        const barSets = topAreas.map((area,i) => ({ label:area, data: days.map(d=> areaCrew[area]?.dates[formatDateForComparison(d)]?.crew.size ||0), backgroundColor:colors[i] }));
-        charts.crewAllocationChart = new Chart(document.getElementById('crewAllocationChart'), { type:'bar', data:{labels, datasets:barSets}, options:{ responsive:true, scales:{x:{stacked:true}, y:{stacked:true}} } });
+      function displayReports(rows, date) {
+        let container = document.getElementById('reportContainer');
+        let summaryDiv = document.getElementById('dailySummaryContainer');
+        if (!rows.length) { container.innerHTML = '<div class="chart-card" style="padding:30px;">no records</div>'; summaryDiv.innerHTML = ''; return; }
+        let groups = groupByProject(rows);
+        // daily summary KPI
+        let areas = {};
+        Object.values(groups).forEach(g => {
+          if (!areas[g.area]) areas[g.area]={permits:new Set(), crew:new Set(), foremen:new Set()};
+          g.permits.forEach(p => areas[g.area].permits.add(p));
+          g.resources.forEach(r => areas[g.area].crew.add(r));
+          g.foremen.forEach(f => areas[g.area].foremen.add(f));
+        });
+        let totalCrew = Object.values(groups).reduce((acc,g)=>acc+g.resources.size,0);
+        let sumHtml = `<h4 style="margin-bottom:16px;">📋 summary ${fmtDisplay(date)}</h4><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">`;
+        Object.entries(areas).forEach(([nm, st]) => { sumHtml += `<div style="background:#f8fafc;border-radius:24px;padding:12px;"><b>${nm}</b><div>🪪 permits ${st.permits.size}</div><div>👥 crew ${st.crew.size}</div><div>👷 foremen ${st.foremen.size}</div></div>`; });
+        sumHtml += `<div style="background:var(--primary);color:white;border-radius:24px;padding:12px;"><b>TOTAL</b><div>⚙️ crew ${totalCrew}</div><div>📌 projects ${Object.keys(groups).length}</div></div></div>`;
+        summaryDiv.innerHTML = sumHtml;
+        // detailed groups
+        let detail = '';
+        let idx=1;
+        Object.values(groups).forEach(g => {
+          let manpower = g.resourceDetails.filter(r => (r['MANPOWER / EQUIPMENT']||'').toLowerCase() === 'manpower').length;
+          let equip = g.resourceDetails.filter(r => (r['MANPOWER / EQUIPMENT']||'').toLowerCase() === 'equipment').length;
+          detail += `<div class="chart-card" style="margin-bottom:20px;"><h4 style="display:flex;justify-content:space-between;">WI: ${g.projects} <span style="font-weight:400;">👨‍🔧 ${g.crewLead}</span></h4>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;"><span>📍 ${g.area}</span><span>🪪 permits ${g.permits.size}</span><span>🧑‍🤝‍🧑 crew ${g.resources.size}</span><span>⚒️ M:${manpower} E:${equip}</span></div>
+          <table class="resource-table"><thead><tr><th>Resource</th><th>Designation</th><th>type</th></tr></thead><tbody>`;
+          g.resourceDetails.slice(0,5).forEach(r => detail += `<tr><td>${r['RESOURCE ID']}</td><td>${r['RESOURCE DESIGNATION']}</td><td>${r['MANPOWER / EQUIPMENT']}</td></tr>`);
+          detail += '</tbody></table></div>';
+        });
+        container.innerHTML = detail;
+      }
 
-        // line trend
-        const lineSets = topAreas.map((area,i) => ({ label:area, data: days.map(d=> trend[formatDateForComparison(d)]?.[area] ||0), borderColor:colors[i], tension:0.2, fill:false }));
-        charts.crewTrendChart = new Chart(document.getElementById('crewTrendChart'), { type:'line', data:{labels, datasets:lineSets} });
+      // ========== STATUS ==========
+      function updateStatusTable() {
+        let date = document.getElementById('statusDate').valueAsDate;
+        let area = document.getElementById('statusAreaSelect').value;
+        if (!date) return;
+        let rows = getFilteredRows(date, area);
+        let groups = groupByProject(rows);
+        document.getElementById('totalProjects').innerText = Object.keys(groups).length;
+        let totalCrew = Object.values(groups).reduce((a,g)=>a+g.resources.size,0);
+        document.getElementById('totalCrewSize').innerText = totalCrew;
+        let html = Object.values(groups).map((g,i)=> `<tr><td>${i+1}</td><td>${g.id}</td><td>${g.crewLead}</td><td>${g.projects}</td><td>${g.area}</td><td>${g.resources.size}</td><td>${g.discipline}</td></tr>`).join('');
+        document.getElementById('statusTableBody').innerHTML = html || '<tr><td colspan="7" class="no-data">none</td></tr>';
+      }
 
-        // top work groups
-        const wgSorted = Object.entries(workGroup).map(([k,s]) => ({name:k, total:s.size})).sort((a,b)=>b.total-a.total).slice(0,5);
-        charts.workGroupUtilizationChart = new Chart(document.getElementById('workGroupUtilizationChart'), { type:'bar', data:{ labels:wgSorted.map(w=>w.name), datasets:[{ label:'crew', data:wgSorted.map(w=>w.total), backgroundColor:colors }] } });
-      };
-
-      window.updateStatusTable = function() {
-        const d = document.getElementById('statusDate').valueAsDate; if (!d) return;
-        const area = document.getElementById('statusAreaSelect').value;
-        const dkey = formatDateForComparison(d);
-        const { grouped, totalCrewSize } = groupDataByProject(allData, dkey, area);
-        const title = `projects on ${formatDateForDisplay(d)}`;
-        document.getElementById('statusTableTitle').innerText = title;
-        document.getElementById('totalProjects').innerText = Object.keys(grouped).length;
-        document.getElementById('totalCrewSize').innerText = totalCrewSize;
-        let rows = ''; let idx=1;
-        Object.values(grouped).forEach(g => { rows += `<tr><td>${idx++}</td><td>${g.id}</td><td>${g.crewLead}</td><td>${g.projects}</td><td>${g.area}</td><td>${g.resources.size}</td><td>${g.discipline}</td></tr>`; });
-        document.getElementById('statusTableBody').innerHTML = rows || '<tr><td colspan="7" class="no-data">no entries</td></tr>';
-      };
-
-      window.updateResourceTables = function() {
-        const d = document.getElementById('resourceDate').valueAsDate; if (!d) return;
-        const area = document.getElementById('resourceAreaSelect').value;
-        const dkey = formatDateForComparison(d);
-        const { grouped } = groupDataByProject(allData, dkey, area);
-        let manpower=[], equip=[], other=[]; 
-        Object.values(grouped).forEach(g => {
+      // ========== RESOURCE ==========
+      function updateResourceTables() {
+        let date = document.getElementById('resourceDate').valueAsDate;
+        let area = document.getElementById('resourceAreaSelect').value;
+        if (!date) return;
+        let rows = getFilteredRows(date, area);
+        let groups = groupByProject(rows);
+        let manpower=[], equip=[], unk=[];
+        Object.values(groups).forEach(g => {
           g.resourceDetails.forEach(r => {
-            const entry = {rid: r['RESOURCE ID'], desig: r['RESOURCE DESIGNATION'], proj: g.projects, area: g.area, foreman: g.crewLead };
-            const t = (r['MANPOWER / EQUIPMENT'] || '').toLowerCase();
+            let entry = {id: r['RESOURCE ID'], des: r['RESOURCE DESIGNATION'], proj: g.projects, area:g.area, foreman:g.crewLead};
+            let t = (r['MANPOWER / EQUIPMENT']||'').toLowerCase();
             if (t === 'manpower') manpower.push(entry);
             else if (t === 'equipment') equip.push(entry);
-            else other.push(entry);
+            else unk.push(entry);
           });
         });
         document.getElementById('totalManpower').innerText = manpower.length;
         document.getElementById('totalEquipment').innerText = equip.length;
-        document.getElementById('totalNotFound').innerText = other.length;
-
-        function render(tbodyId, arr) {
-          let html = arr.map((e,i)=>`<tr><td>${i+1}</td><td>${e.rid}</td><td>${e.desig}</td><td>${e.proj}</td><td>${e.area}</td><td>${e.foreman}</td></tr>`).join('');
-          document.getElementById(tbodyId).innerHTML = html || '<tr><td colspan="6" class="no-data">none</td></tr>';
+        document.getElementById('totalNotFound').innerText = unk.length;
+        function render(arr, tbodyId) {
+          let html = arr.map((e,i)=> `<tr><td>${i+1}</td><td>${e.id}</td><td>${e.des}</td><td>${e.proj}</td><td>${e.area}</td><td>${e.foreman}</td></tr>`).join('');
+          document.getElementById(tbodyId).innerHTML = html || '<tr><td colspan="6">—</td></tr>';
         }
-        render('manpowerTableBody', manpower);
-        render('equipmentTableBody', equip);
-        render('notFoundTableBody', other);
-      };
+        render(manpower, 'manpowerTableBody');
+        render(equip, 'equipmentTableBody');
+        render(unk, 'notFoundTableBody');
+      }
 
-      // preload data in background (optional)
-      loadData(); // silently fill allData for instant use after login
+      // ========== SUMMARY CHARTS + KPI ==========
+      function updateSummaryCharts() {
+        if (!allData.length) return;
+        let sd = document.getElementById('summaryStartDate').valueAsDate;
+        let ed = document.getElementById('summaryEndDate').valueAsDate;
+        if (!sd || !ed) return;
+        let dates = [];
+        for (let d = new Date(sd); d <= ed; d.setDate(d.getDate()+1)) dates.push(new Date(d));
+        // KPI : total unique resources, avg daily crew, active foremen
+        let allResources = new Set(); let dailyCrew = []; let allForemen = new Set();
+        dates.forEach(date => {
+          let rows = getFilteredRows(date);
+          let groups = groupByProject(rows);
+          let dayCrew = 0;
+          Object.values(groups).forEach(g => {
+            g.resources.forEach(r => allResources.add(r));
+            g.foremen.forEach(f => allForemen.add(f));
+            dayCrew += g.resources.size;
+          });
+          dailyCrew.push(dayCrew);
+        });
+        let avgCrew = dailyCrew.reduce((a,b)=>a+b,0)/dates.length || 0;
+        document.getElementById('summaryKpi').innerHTML = `
+          <div class="kpi-card"><span class="kpi-label">🔹 total manpower (unique)</span><span class="kpi-value">${allResources.size}</span><span class="kpi-trend"><i class="fas fa-user"></i> across period</span></div>
+          <div class="kpi-card"><span class="kpi-label">📊 avg daily crew</span><span class="kpi-value">${Math.round(avgCrew*10)/10}</span><span class="kpi-trend"><i class="fas fa-chart-line"></i> last ${dates.length}d</span></div>
+          <div class="kpi-card"><span class="kpi-label">👔 active foremen</span><span class="kpi-value">${allForemen.size}</span><span class="kpi-trend"><i class="fas fa-hard-hat"></i> unique</span></div>
+          <div class="kpi-card"><span class="kpi-label">📅 days in range</span><span class="kpi-value">${dates.length}</span><span class="kpi-trend"><i class="far fa-calendar"></i> ${fmtDisplay(sd)} – ${fmtDisplay(ed)}</span></div>
+        `;
+        // area data for charts
+        let areaCrew = {}; let areaTrend = {}; let workGroup = {};
+        dates.forEach(date => {
+          let rows = getFilteredRows(date);
+          let groups = groupByProject(rows);
+          let dateStr = fmtDisplay(date);
+          areaTrend[dateStr] = {};
+          Object.values(groups).forEach(g => {
+            if (!areaCrew[g.area]) areaCrew[g.area] = { total:0, dates:{}};
+            if (!areaCrew[g.area].dates[dateStr]) areaCrew[g.area].dates[dateStr] = new Set();
+            g.resources.forEach(r => areaCrew[g.area].dates[dateStr].add(r));
+            areaTrend[dateStr][g.area] = (areaTrend[dateStr][g.area]||0) + g.resources.size;
+            let wKey = `${g.projects} - ${g.area}`;
+            if (!workGroup[wKey]) workGroup[wKey] = new Set();
+            g.resources.forEach(r => workGroup[wKey].add(r));
+          });
+        });
+        // top areas
+        let topAreas = Object.keys(areaCrew).map(a => ({name:a, total:Object.values(areaCrew[a].dates).reduce((s,set)=>s+set.size,0)})).sort((x,y)=>y.total-x.total).slice(0,4);
+        // destroy old charts
+        if (charts.crewAllocation) charts.crewAllocation.destroy();
+        if (charts.crewTrend) charts.crewTrend.destroy();
+        if (charts.workGroup) charts.workGroup.destroy();
+        // bar (stacked)
+        let ctx1 = document.getElementById('crewAllocationChart').getContext('2d');
+        let barLabels = dates.map(d=>fmtDisplay(d));
+        let datasets = topAreas.map((area,i) => {
+          let color = `hsl(${i*70+200}, 70%, 50%)`;
+          return {
+            label: area.name,
+            data: barLabels.map(ld => areaCrew[area.name]?.dates[ld]?.size || 0),
+            backgroundColor: color,
+            stack: 'crew'
+          };
+        });
+        charts.crewAllocation = new Chart(ctx1, { type:'bar', data:{ labels:barLabels, datasets }, options:{ responsive:true, scales:{ x:{ stacked:true }, y:{ stacked:true } } }});
+
+        // line chart
+        let ctx2 = document.getElementById('crewTrendChart').getContext('2d');
+        let lineDatasets = topAreas.map((area,i) => ({
+          label: area.name,
+          data: barLabels.map(ld => areaTrend[ld]?.[area.name] || 0),
+          borderColor: `hsl(${i*70+200}, 70%, 45%)`,
+          tension:0.2
+        }));
+        charts.crewTrend = new Chart(ctx2, { type:'line', data:{ labels:barLabels, datasets:lineDatasets }});
+
+        // workgroup top5
+        let topGroups = Object.keys(workGroup).map(k => ({ name:k, size:workGroup[k].size })).sort((a,b)=>b.size-a.size).slice(0,5);
+        let ctx3 = document.getElementById('workGroupUtilizationChart').getContext('2d');
+        charts.workGroup = new Chart(ctx3, { type:'bar', data:{ labels:topGroups.map(g=>g.name), datasets:[{ label:'crew utilized', data:topGroups.map(g=>g.size), backgroundColor:'#f39c12' }] }});
+
+        // recent activity
+        let recent = dates.slice(-5).reverse().map(date => {
+          let rows = getFilteredRows(date);
+          let f = new Set(); let c = new Set();
+          rows.forEach(r => { if(r['FOREMAN ID']) f.add(r['FOREMAN ID']); if(r['RESOURCE ID']) c.add(r['RESOURCE ID']); });
+          return `<tr><td>${fmtDisplay(date)}</td><td>${f.size}</td><td>${c.size}</td><td><span class="status-badge ${c.size?'badge-active':'badge-inactive'}"></span>${c.size?'active':'inactive'}</td></tr>`;
+        }).join('');
+        document.getElementById('recentActivity').innerHTML = recent || '<tr><td colspan="4">no data</td></tr>';
+      }
+
+      window.applyFilters = applyFilters; window.updateStatusTable = updateStatusTable; window.updateResourceTables = updateResourceTables; window.updateSummaryCharts = updateSummaryCharts;
     })();
   </script>
 </body>
