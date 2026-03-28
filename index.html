@@ -13,9 +13,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-/* ═══════════════════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════════════════ */
 :root {
   --font-body: 'DM Sans', sans-serif;
   --font-mono: 'DM Mono', 'Courier New', monospace;
@@ -54,14 +51,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:10px}
 
-/* THEME TOGGLE */
 .theme-toggle{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border-br);border-radius:20px;padding:3px;cursor:pointer;transition:all var(--transition)}
 .theme-opt{padding:5px 11px;border-radius:16px;font-size:0.72rem;font-weight:600;font-family:var(--font-mono);color:var(--text-sub);cursor:pointer;transition:all 0.2s;user-select:none;display:flex;align-items:center;gap:5px;letter-spacing:0.04em}
 .theme-opt.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
 [data-theme="dark"] .theme-opt-dark.active{color:var(--accent2)}
 [data-theme="light"] .theme-opt-light.active{color:var(--warning)}
 
-/* LOGIN */
 #login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--login-bg);transition:background var(--transition)}
 [data-theme="dark"] #login-screen::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 55% 55% at 15% 55%,rgba(224,123,57,0.09) 0%,transparent 60%),radial-gradient(ellipse 50% 55% at 85% 25%,rgba(58,123,213,0.07) 0%,transparent 60%)}
 [data-theme="light"] #login-screen::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 55% 55% at 15% 55%,rgba(224,123,57,0.05) 0%,transparent 60%),radial-gradient(ellipse 50% 55% at 85% 25%,rgba(58,123,213,0.04) 0%,transparent 60%)}
@@ -92,9 +87,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .login-theme-toggle{position:absolute;top:20px;right:20px}
 .login-version{position:absolute;bottom:16px;right:20px;font-family:var(--font-mono);font-size:0.65rem;color:var(--text-dim)}
 
-/* ══════════════════════════════════════════════
-   DASHBOARD SHELL
-══════════════════════════════════════════════ */
 #dashboard{display:none;flex-direction:column;min-height:100vh}
 .topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:var(--topbar-h);background:var(--topbar-bg);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);transition:background var(--transition),border-color var(--transition)}
 .topbar-left{display:flex;align-items:center;gap:14px}
@@ -121,7 +113,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .page-title{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
 .page-title span{color:var(--accent)}
 
-/* FILTERS */
 .filters{display:flex;flex-wrap:wrap;gap:10px;padding:14px 16px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:background var(--transition)}
 .filter-group{display:flex;align-items:center;gap:8px;flex:1;min-width:175px}
 .filter-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub);white-space:nowrap;text-transform:uppercase;letter-spacing:0.07em}
@@ -130,14 +121,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 select.f-input{cursor:pointer}
 option{background:var(--surface2);color:var(--text)}
 
-/* LOADING */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:12px}
 .spinner{width:30px;height:30px;border:2px solid var(--border-br);border-top-color:var(--accent);border-radius:50%;animation:spin 0.65s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-sub)}
 .loading-sub{font-size:0.72rem;color:var(--text-dim);font-style:italic}
 
-/* STAT CARDS */
 .stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;margin-bottom:20px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;transition:background var(--transition),border-color var(--transition),box-shadow 0.2s}
 .stat-card:hover{box-shadow:var(--shadow-sm);border-color:var(--border-br)}
@@ -149,7 +138,6 @@ option{background:var(--surface2);color:var(--text)}
 .stat-value.c-warn{color:var(--warning)}
 .stat-value.c-danger{color:var(--danger)}
 
-/* CHART CARDS */
 .chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px}
 .chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
 .chart-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
@@ -162,7 +150,6 @@ option{background:var(--surface2);color:var(--text)}
 .chart-wrap.h240{height:240px}.chart-wrap.h260{height:260px}
 .chart-wrap.h280{height:280px}.chart-wrap.h320{height:320px}
 
-/* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s}
 .kpi-card:hover{box-shadow:var(--shadow-sm)}
@@ -172,7 +159,6 @@ option{background:var(--surface2);color:var(--text)}
 .kpi-value{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
 .kpi-delta{font-size:0.7rem;font-family:var(--font-mono);margin-top:5px;color:var(--text-dim)}
 
-/* TABLES */
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px;transition:background var(--transition);width:100%}
 .table-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
 .table-title{font-family:var(--font-display);font-size:0.92rem;font-weight:700;color:var(--text)}
@@ -188,7 +174,6 @@ option{background:var(--surface2);color:var(--text)}
 .data-table td.mono{font-family:var(--font-mono);font-size:0.76rem;color:var(--text-sub)}
 .no-data{text-align:center;padding:44px 20px;color:var(--text-dim);font-size:0.82rem;font-family:var(--font-mono)}
 
-/* WORK CARDS */
 .work-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;transition:background var(--transition)}
 .work-card-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:var(--surface2);border-bottom:1px solid var(--border);transition:background var(--transition)}
 .work-card-num{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.06em}
@@ -201,7 +186,6 @@ option{background:var(--surface2);color:var(--text)}
 .work-meta-value{font-size:0.82rem;font-weight:600;color:var(--text)}
 .work-sub-head{padding:10px 18px;font-family:var(--font-mono);font-size:0.67rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);background:var(--surface2);transition:background var(--transition)}
 
-/* DAY SUMMARY */
 .day-summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:11px;margin-bottom:20px}
 .day-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px;transition:background var(--transition),box-shadow 0.2s}
 .day-summary-card:hover{box-shadow:var(--shadow-sm)}
@@ -212,16 +196,13 @@ option{background:var(--surface2);color:var(--text)}
 .day-stat-label{font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:3px}
 .day-stat-value{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--text)}
 
-/* DATE RANGE ROW */
 .date-range-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:background var(--transition)}
 .date-range-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
 .date-sep{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-dim)}
 
-/* SECTION LABEL */
 .section-label{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-family:var(--font-mono);font-size:0.67rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim)}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* BADGES */
 .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
 .badge-mp{background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.22)}
 .badge-eq{background:rgba(58,123,213,0.12);color:var(--accent2);border:1px solid rgba(58,123,213,0.22)}
@@ -230,19 +211,16 @@ option{background:var(--surface2);color:var(--text)}
 .dot-green{background:var(--accent3);box-shadow:0 0 4px var(--accent3)}
 .dot-amber{background:var(--warning)}
 
-/* PROGRESS BAR */
 .prog-bar-wrap{display:flex;align-items:center;gap:10px}
 .prog-bar-bg{flex:1;height:6px;background:var(--surface2);border-radius:4px;overflow:hidden}
 .prog-bar-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
 .prog-val{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-sub);min-width:36px;text-align:right}
 
-/* INSIGHT CARD */
 .insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
 .insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:background var(--transition)}
 .insight-card-title{font-family:var(--font-display);font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:3px}
 .insight-card-sub{font-family:var(--font-mono);font-size:0.63rem;color:var(--text-sub);margin-bottom:14px}
 
-/* BUTTONS */
 .btn-excel{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;background:rgba(46,170,126,0.1);border:1px solid rgba(46,170,126,0.3);border-radius:var(--radius-sm);color:var(--accent3);font-size:0.78rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:all var(--transition);white-space:nowrap}
 .btn-excel:hover{background:rgba(46,170,126,0.18);border-color:rgba(46,170,126,0.5)}
 .btn-pdf{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;background:rgba(217,79,79,0.1);border:1px solid rgba(217,79,79,0.3);border-radius:var(--radius-sm);color:var(--danger);font-size:0.78rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:all var(--transition);white-space:nowrap}
@@ -252,26 +230,18 @@ option{background:var(--surface2);color:var(--text)}
 .btn-refresh{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;background:rgba(58,123,213,0.1);border:1px solid rgba(58,123,213,0.3);border-radius:var(--radius-sm);color:var(--accent2);font-size:0.78rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:all var(--transition);white-space:nowrap}
 .btn-refresh:hover{background:rgba(58,123,213,0.18);border-color:rgba(58,123,213,0.5)}
 
-/* ══════════════════════════════════════════════
-   CAMP DETAILS — MATCHING MAIN TAB STYLE
-══════════════════════════════════════════════ */
-
-/* Camp stats — section groups */
+/* ══ CAMP STYLES ══ */
 .camp-stats-section{margin-bottom:20px}
 .camp-stats-section-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .camp-stats-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* Camp inline editing */
 .camp-table tr.editing{background:rgba(224,123,57,0.04) !important}
 .camp-table tr.new-row{background:rgba(46,170,126,0.04) !important}
 .camp-table .cell-edit{display:none}
 .camp-table tr.editing .cell-view{display:none}
 .camp-table tr.editing .cell-edit{display:block}
-
 .inline-input{background:var(--input-bg);border:1px solid var(--accent);color:var(--text);font-family:var(--font-body);font-size:0.82rem;padding:6px 10px;border-radius:var(--radius-sm);width:100%;outline:none;min-width:80px;transition:box-shadow 0.2s}
 .inline-input:focus{box-shadow:0 0 0 3px rgba(224,123,57,0.15)}
 select.inline-input{cursor:pointer}
-
 .cell-actions{display:flex;gap:5px;align-items:center;justify-content:flex-end}
 .icon-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid transparent;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.15s;color:var(--text-sub)}
 .icon-btn:hover{color:var(--text);background:var(--surface2);border-color:var(--border-br)}
@@ -285,7 +255,6 @@ tr.editing .save-actions{display:flex}
 tr.editing .edit-actions{display:none}
 tr.saving td{opacity:0.55}
 
-/* STATUS BADGES */
 .status-pill{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-family:var(--font-mono);font-size:0.67rem;font-weight:600;white-space:nowrap}
 .s-pob  {background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28)}
 .s-pob-a{background:rgba(46,170,126,0.08);color:#34c58a;border:1px solid rgba(52,197,138,0.28)}
@@ -296,16 +265,12 @@ tr.saving td{opacity:0.55}
 .s-por  {background:rgba(217,79,79,0.10);color:var(--danger);border:1px solid rgba(217,79,79,0.28)}
 .s-def  {background:var(--surface2);color:var(--text-sub);border:1px solid var(--border-br)}
 
-/* CATEGORY BADGES */
 .cat-mp{background:rgba(46,170,126,0.10);color:var(--accent3);border:1px solid rgba(46,170,126,0.22);display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
 .cat-eq{background:rgba(58,123,213,0.10);color:var(--accent2);border:1px solid rgba(58,123,213,0.22);display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
 .cat-def{background:var(--surface2);color:var(--text-sub);border:1px solid var(--border-br);display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
-
-/* NAT BADGES */
 .nat-exp{background:rgba(224,123,57,0.10);color:var(--accent);border:1px solid rgba(224,123,57,0.22);display:inline-flex;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
 .nat-nat{background:rgba(46,170,126,0.10);color:var(--accent3);border:1px solid rgba(46,170,126,0.22);display:inline-flex;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
 
-/* Camp Toast */
 #camp-toast{position:fixed;bottom:80px;right:24px;z-index:900;display:flex;flex-direction:column;gap:8px}
 .c-toast{background:var(--surface);border:1px solid var(--border-br);color:var(--text);padding:12px 18px;border-radius:10px;font-size:0.82rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:9px;animation:slideInRight 0.25s ease;max-width:320px}
 .c-toast.success{border-color:var(--accent3)}
@@ -313,16 +278,13 @@ tr.saving td{opacity:0.55}
 .c-toast.info{border-color:var(--accent2)}
 @keyframes slideInRight{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-/* Prog/desc cells */
 .prog-cell{max-width:280px;font-size:0.78rem;line-height:1.55;white-space:pre-line}
 .desc-cell{max-width:240px;font-size:0.8rem;line-height:1.5}
 
-/* BACK TO TOP */
 #back-to-top{position:fixed;bottom:28px;right:24px;z-index:200;width:42px;height:42px;background:var(--surface);border:1px solid var(--border-br);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-sub);cursor:pointer;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity 0.3s ease,background 0.2s,color 0.2s,transform 0.2s;font-size:0.9rem}
 #back-to-top.visible{opacity:1;pointer-events:auto}
 #back-to-top:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-2px)}
 
-/* PDF OVERLAY */
 #pdf-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.65);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 #pdf-overlay.visible{display:flex}
 .pdf-modal{background:var(--surface);border:1px solid var(--border-br);border-radius:16px;padding:36px 40px;text-align:center;width:300px;box-shadow:var(--shadow)}
@@ -337,7 +299,7 @@ tr.saving td{opacity:0.55}
 </head>
 <body>
 
-<!-- ══════════════════ LOGIN ══════════════════ -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-grid"></div>
   <div class="login-theme-toggle">
@@ -349,26 +311,17 @@ tr.saving td{opacity:0.55}
   <div class="login-card">
     <div class="login-brand">
       <img src="https://justingps.github.io/dpr/logo.png" alt="GPS">
-      <div>
-        <div class="login-brand-name">GPS</div>
-        <div class="login-brand-sub">Field Operations</div>
-      </div>
+      <div><div class="login-brand-name">GPS</div><div class="login-brand-sub">Field Operations</div></div>
     </div>
     <h2 class="login-heading">Welcome back</h2>
     <p class="login-sub">Sign in to access the operations dashboard</p>
     <div class="field-wrap">
       <label class="field-label" for="u">Username</label>
-      <div class="field-inner">
-        <input type="text" id="u" placeholder="Enter username" autocomplete="username">
-        <i class="fas fa-user"></i>
-      </div>
+      <div class="field-inner"><input type="text" id="u" placeholder="Enter username" autocomplete="username"><i class="fas fa-user"></i></div>
     </div>
     <div class="field-wrap">
       <label class="field-label" for="p">Password</label>
-      <div class="field-inner">
-        <input type="password" id="p" placeholder="Enter password" autocomplete="current-password">
-        <i class="fas fa-lock"></i>
-      </div>
+      <div class="field-inner"><input type="password" id="p" placeholder="Enter password" autocomplete="current-password"><i class="fas fa-lock"></i></div>
     </div>
     <div class="login-opts">
       <label><input type="checkbox" id="rem"> Remember me</label>
@@ -377,19 +330,16 @@ tr.saving td{opacity:0.55}
     <button class="btn-login" id="btn-login">Sign In</button>
     <div class="login-error" id="login-err"><i class="fas fa-circle-exclamation"></i> Invalid username or password</div>
     <div class="login-footer">Gulf Petrochemical Services LLC. © 2025 — All Rights Reserved</div>
-    <div class="login-version">v3.3.0</div>
+    <div class="login-version">v3.3.1</div>
   </div>
 </div>
 
-<!-- ══════════════════ DASHBOARD ══════════════════ -->
+<!-- DASHBOARD -->
 <div id="dashboard">
   <header class="topbar">
     <div class="topbar-left">
       <img src="https://justingps.github.io/dpr/logo.png" alt="GPS" class="topbar-logo">
-      <div>
-        <div class="topbar-name">Gulf Petrochemical Services</div>
-        <div class="topbar-meta">OXY OMAN · CONTRACT #24000110790</div>
-      </div>
+      <div><div class="topbar-name">Gulf Petrochemical Services</div><div class="topbar-meta">OXY OMAN · CONTRACT #24000110790</div></div>
     </div>
     <div class="topbar-right">
       <div class="topbar-date">TODAY <span id="today-label"></span></div>
@@ -408,12 +358,12 @@ tr.saving td{opacity:0.55}
     <button class="nav-tab" data-tab="reports"><i class="fas fa-file-lines"></i> Daily Reports</button>
     <button class="nav-tab" data-tab="status"><i class="fas fa-list-check"></i> Project Status</button>
     <button class="nav-tab" data-tab="resource"><i class="fas fa-people-group"></i> Resources</button>
-    <button class="nav-tab" data-tab="camp"><i class="fas fa-tent"></i> Camp </button>
+    <button class="nav-tab" data-tab="camp"><i class="fas fa-tent"></i> Camp</button>
   </nav>
 
   <div class="content">
 
-    <!-- ════════ ANALYTICS ════════ -->
+    <!-- ANALYTICS -->
     <div id="tab-summary" class="tab-panel active">
       <div class="page-header"><h1 class="page-title">Work <span>Analytics</span></h1></div>
       <div class="date-range-row">
@@ -440,7 +390,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- ════════ KPI ════════ -->
+    <!-- KPI -->
     <div id="tab-kpi" class="tab-panel">
       <div class="page-header"><h1 class="page-title">KPI <span>Dashboard</span></h1></div>
       <div class="date-range-row">
@@ -478,7 +428,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- ════════ REPORT SUMMARY ════════ -->
+    <!-- REPORT SUMMARY -->
     <div id="tab-repsum" class="tab-panel">
       <div class="page-header"><h1 class="page-title">Report <span>Summary</span></h1></div>
       <div class="filters">
@@ -496,7 +446,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- ════════ DAILY REPORTS ════════ -->
+    <!-- DAILY REPORTS -->
     <div id="tab-reports" class="tab-panel">
       <div class="page-header">
         <h1 class="page-title">Daily <span>Reports</span></h1>
@@ -512,7 +462,7 @@ tr.saving td{opacity:0.55}
       <div id="rep-content" style="display:none"><div id="day-summary-wrap"></div><div id="rep-cards"></div></div>
     </div>
 
-    <!-- ════════ PROJECT STATUS ════════ -->
+    <!-- PROJECT STATUS -->
     <div id="tab-status" class="tab-panel">
       <div class="page-header"><h1 class="page-title">Project <span>Status</span></h1></div>
       <div class="filters">
@@ -536,7 +486,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- ════════ RESOURCES ════════ -->
+    <!-- RESOURCES -->
     <div id="tab-resource" class="tab-panel">
       <div class="page-header"><h1 class="page-title">Resource <span>Allocation</span></h1></div>
       <div class="filters">
@@ -557,7 +507,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- ════════ CAMP DETAILS ════════ -->
+    <!-- CAMP DETAILS -->
     <div id="tab-camp" class="tab-panel">
       <div class="page-header">
         <h1 class="page-title">Camp <span>Details</span></h1>
@@ -567,76 +517,26 @@ tr.saving td{opacity:0.55}
           <button class="btn-refresh" onclick="campRefresh()"><i class="fas fa-rotate-right"></i> Refresh</button>
         </div>
       </div>
-
-      <!-- ── FILTERS ── -->
       <div class="filters">
-        <div class="filter-group">
-          <span class="filter-label"><i class="fas fa-search"></i> Search</span>
-          <input type="text" id="camp-search" class="f-input" placeholder="ID, name, designation…" oninput="campFilterRender()">
-        </div>
-        <div class="filter-group">
-          <span class="filter-label"><i class="fas fa-tent"></i> Camp</span>
-          <select id="cf-camp" class="f-input" onchange="campFilterRender()">
-            <option value="all">All Camps</option>
-            <option>Safah</option>
-            <option>Wadi Latham</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label"><i class="fas fa-layer-group"></i> Category</span>
-          <select id="cf-cat" class="f-input" onchange="campFilterRender()">
-            <option value="all">All Categories</option>
-            <option>Manpower</option>
-            <option>Equipment</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label"><i class="fas fa-circle-dot"></i> Status</span>
-          <select id="cf-status" class="f-input" onchange="campFilterRender()">
-            <option value="all">All Statuses</option>
-            <option>POB</option>
-            <option>POB-A</option>
-            <option>POB-B</option>
-            <option>POB-C</option>
-            <option>POB-D</option>
-            <option>POL</option>
-            <option>POR</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label"><i class="fas fa-globe"></i> Nationality</span>
-          <select id="cf-nat" class="f-input" onchange="campFilterRender()">
-            <option value="all">All</option>
-            <option>Expats</option>
-            <option>Nationals</option>
-          </select>
-        </div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-search"></i> Search</span><input type="text" id="camp-search" class="f-input" placeholder="ID, name, designation…" oninput="campFilterRender()"></div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-tent"></i> Camp</span><select id="cf-camp" class="f-input" onchange="campFilterRender()"><option value="all">All Camps</option><option>Safah</option><option>Wadi Latham</option></select></div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-layer-group"></i> Category</span><select id="cf-cat" class="f-input" onchange="campFilterRender()"><option value="all">All Categories</option><option>Manpower</option><option>Equipment</option></select></div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-circle-dot"></i> Status</span><select id="cf-status" class="f-input" onchange="campFilterRender()"><option value="all">All Statuses</option><option>POB</option><option>POB-A</option><option>POB-B</option><option>POB-C</option><option>POB-D</option><option>POL</option><option>POR</option></select></div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-globe"></i> Nationality</span><select id="cf-nat" class="f-input" onchange="campFilterRender()"><option value="all">All</option><option>Expats</option><option>Nationals</option></select></div>
       </div>
-
-      <!-- ── DYNAMIC STATS (update on filter) ── -->
       <div id="camp-stats-wrap"></div>
-
-      <!-- ── TABLE ── -->
       <div class="table-wrap">
         <div class="table-header">
           <div class="table-title">Employee Records</div>
-          <div class="table-header-right">
-            <div class="table-badge" id="camp-badge">0 records</div>
-          </div>
+          <div class="table-header-right"><div class="table-badge" id="camp-badge">0 records</div></div>
         </div>
         <div class="table-scroll">
           <table class="data-table camp-table" id="camp-table">
             <thead>
               <tr>
-                <th>#</th>
-                <th>ID</th>
-                <th>Employee Name</th>
-                <th>Designation</th>
-                <th>Category</th>
-                <th>Nationality</th>
-                <th>Date of Joining</th>
-                <th>Camp</th>
-                <th>Status</th>
+                <th>#</th><th>ID</th><th>Employee Name</th><th>Designation</th>
+                <th>Category</th><th>Nationality</th><th>Date of Joining</th>
+                <th>Camp</th><th>Status</th>
                 <th style="text-align:right;min-width:110px">Actions</th>
               </tr>
             </thead>
@@ -646,19 +546,17 @@ tr.saving td{opacity:0.55}
           </table>
         </div>
       </div>
-    </div><!-- /tab-camp -->
+    </div>
 
-  </div><!-- /content -->
-</div><!-- /dashboard -->
+  </div>
+</div>
 
 <button id="back-to-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 <div id="pdf-overlay"><div class="pdf-modal"><div class="spinner"></div><div class="pdf-modal-title">Generating PDF</div><div class="pdf-modal-sub" id="pdf-progress-text">Preparing work reports…</div></div></div>
 <div id="camp-toast"></div>
 
 <script>
-/* ══════════════════════════════════════════════
-   THEME
-══════════════════════════════════════════════ */
+/* ══ THEME ══ */
 let currentTheme = localStorage.getItem('gps-theme') || 'light';
 document.documentElement.setAttribute('data-theme', currentTheme);
 function applyTheme(t) {
@@ -679,9 +577,7 @@ function updateChartDefaults() {
 }
 window.addEventListener('scroll', () => document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 300), { passive: true });
 
-/* ══════════════════════════════════════════════
-   CONFIG
-══════════════════════════════════════════════ */
+/* ══ CONFIG ══ */
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRMvKP4HfM5zZpM3RjdpPcX0DZA3yWpGhXt_lqpzblpbIQW7vcJswPPm8gMdmVZ366FCUwZGLCsF1fb/pub?gid=0&single=true&output=csv';
 const CREDS = { u:'\x67\x70\x73\x6f\x6d\x61\x6e', p:'\x67\x70\x73\x6f\x6d\x61\x6e' };
 const CAMP_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxGg9Po53AcOewECTemCdx6kWgDbS8zNjjS8fjuSBbKtTHloK3tN2B8r5AWYRw0cFJw/exec';
@@ -701,8 +597,62 @@ Chart.defaults.font.family = "'DM Mono', monospace";
 Chart.defaults.font.size = 11;
 
 /* ══════════════════════════════════════════════
-   AUTH
+   DOJ HELPERS  ← THE TWO KEY FIXES ARE HERE
 ══════════════════════════════════════════════ */
+const DOJ_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/**
+ * parseDOJ — accept any reasonable date string from the sheet and return
+ * a YYYY-MM-DD string suitable for an <input type="date"> value.
+ * Handles: YYYY-MM-DD, DD-Mon-YYYY, D/M/YYYY, ISO timestamps, serial numbers.
+ * Returns '' if the value cannot be parsed.
+ */
+function parseDOJ(raw) {
+  if (!raw || raw === '—') return '';
+  const s = String(raw).trim();
+
+  // Already YYYY-MM-DD (possibly with time suffix like T00:00:00)
+  const isoM = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (isoM) {
+    const [,y,m,d] = isoM;
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+
+  // DD-Mon-YYYY  e.g. 01-Jan-2026
+  const dmonM = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+  if (dmonM) {
+    const mIdx = DOJ_MONTHS.findIndex(m => m.toLowerCase() === dmonM[2].toLowerCase());
+    if (mIdx >= 0) return `${dmonM[3]}-${String(mIdx+1).padStart(2,'0')}-${dmonM[1].padStart(2,'0')}`;
+  }
+
+  // D/M/YYYY or M/D/YYYY — treat as D/M/YYYY (common in Gulf region)
+  const slashM = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashM) {
+    return `${slashM[3]}-${slashM[2].padStart(2,'0')}-${slashM[1].padStart(2,'0')}`;
+  }
+
+  // JavaScript Date parse fallback (handles ISO 8601 with time)
+  const parsed = new Date(s);
+  if (!isNaN(parsed)) {
+    return `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`;
+  }
+
+  return '';
+}
+
+/**
+ * fmtDOJ — convert a YYYY-MM-DD string (as stored in r.doj) to DD-MMM-YYYY
+ * for display in the table cell.  Returns '—' for empty/invalid values.
+ */
+function fmtDOJ(ymd) {
+  if (!ymd) return '—';
+  const m = ymd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return ymd; // fallback: show as-is
+  const [,y,mo,d] = m;
+  return `${d}-${DOJ_MONTHS[parseInt(mo,10)-1]}-${y}`;
+}
+
+/* ══ AUTH ══ */
 function doLogin() {
   const u = document.getElementById('u').value.trim(), p = document.getElementById('p').value.trim();
   const err = document.getElementById('login-err');
@@ -720,9 +670,7 @@ function doLogout() {
   document.getElementById('login-err').style.display = 'none';
 }
 
-/* ══════════════════════════════════════════════
-   BOOTSTRAP
-══════════════════════════════════════════════ */
+/* ══ BOOTSTRAP ══ */
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.theme-opt').forEach(el => {
     el.classList.toggle('active', el.dataset.t === currentTheme);
@@ -759,9 +707,7 @@ function hideLoaders() {
 }
 function renderAll() { renderSummary(); renderKPI(); renderReports(); renderRepSum(); renderStatus(); renderResource(); }
 
-/* ══════════════════════════════════════════════
-   FETCH & PARSE
-══════════════════════════════════════════════ */
+/* ══ FETCH & PARSE ══ */
 function fetchData() {
   fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
     DATA = parseCSV(csv); dataReady = true;
@@ -783,9 +729,7 @@ function parseCSV(csv) {
   return rows.slice(1).map(r=>{ const o={};hdr.forEach((h,i)=>o[h]=(r[i]||'').trim());return o; }).filter(r=>Object.values(r).some(v=>v));
 }
 
-/* ══════════════════════════════════════════════
-   DATE HELPERS
-══════════════════════════════════════════════ */
+/* ══ DATE HELPERS ══ */
 const MN={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
 const MNA=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function parseRowDate(s){
@@ -803,9 +747,7 @@ function setDateVal(id,d){ document.getElementById(id).value=toKey(d); }
 function getDate(id){ const v=document.getElementById(id).value;return v?new Date(v+'T00:00:00'):null; }
 function matchDiscipline(rowDisc,filterVal){ if(filterVal==='all')return true; if(filterVal==='__other__')return !KNOWN_DISCIPLINES.includes(rowDisc); return rowDisc===filterVal; }
 
-/* ══════════════════════════════════════════════
-   GROUP DATA
-══════════════════════════════════════════════ */
+/* ══ GROUP DATA ══ */
 function groupByProject(dateKey,area='all',disc='all',wiSearch='') {
   const map={},uniqueResources=new Set(),uniqueForemen=new Set();
   DATA.forEach(row=>{
@@ -846,9 +788,7 @@ function groupByProjectForDate(dateKey,area='all',disc='all') {
   return Object.values(map).sort((a,b)=>a.area.localeCompare(b.area));
 }
 
-/* ══════════════════════════════════════════════
-   CHART HELPERS
-══════════════════════════════════════════════ */
+/* ══ CHART HELPERS ══ */
 function mkChart(id,type,labels,datasets,opts={}){
   if(charts[id]) charts[id].destroy();
   const ctx=document.getElementById(id).getContext('2d');
@@ -862,9 +802,7 @@ function mkDoughnut(id,labels,data,colors){
   charts[id]=new Chart(document.getElementById(id).getContext('2d'),{ type:'doughnut', data:{labels,datasets:[{data,backgroundColor:colors,borderColor:d?'#1c2333':'#fff',borderWidth:3}]}, options:{ responsive:true,maintainAspectRatio:false,cutout:'60%', plugins:{ legend:{position:'right',labels:{boxWidth:11,padding:12,usePointStyle:true}}, tooltip:{backgroundColor:d?'#1c2333':'#fff',titleColor:d?'#e3e8f0':'#1a2236',bodyColor:d?'#8b96ab':'#5a6880',borderColor:d?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)',borderWidth:1,padding:10} } } });
 }
 
-/* ══════════════════════════════════════════════
-   ANALYTICS
-══════════════════════════════════════════════ */
+/* ══ ANALYTICS ══ */
 function renderSummary(){
   if(!dataReady) return;
   const start=getDate('sum-start'),end=getDate('sum-end');
@@ -902,9 +840,7 @@ function renderSummary(){
   document.getElementById('recent-body').innerHTML=Object.values(actByDay).sort((a,b)=>b.date-a.date).slice(0,12).map(d=>`<tr><td class="mono">${fmtDisplay(d.date)}</td><td>${d.foremen.size}</td><td>${d.crew.size}</td><td><span class="dot ${d.active?'dot-green':'dot-amber'}"></span>${d.active?'Active':'No Activity'}</td></tr>`).join('')||'<tr><td colspan="4" class="no-data">No data</td></tr>';
 }
 
-/* ══════════════════════════════════════════════
-   KPI
-══════════════════════════════════════════════ */
+/* ══ KPI ══ */
 function renderKPI(){
   if(!dataReady) return;
   const start=getDate('kpi-start'),end=getDate('kpi-end');
@@ -968,9 +904,7 @@ function renderKPI(){
   document.getElementById('kpi-day-body').innerHTML=Object.values(dayStats).sort((a,b)=>b.date-a.date).map(d=>`<tr><td class="mono">${fmtDisplay(d.date)}</td><td>${d.areas.size}</td><td>${d.foremen.size}</td><td><strong>${d.crew.size}</strong></td><td>${d.projects.size}</td><td>${d.mp}</td><td>${d.eq}</td><td><span class="dot dot-green"></span>Active</td></tr>`).join('')||'<tr><td colspan="8" class="no-data">No data</td></tr>';
 }
 
-/* ══════════════════════════════════════════════
-   DAILY REPORTS
-══════════════════════════════════════════════ */
+/* ══ DAILY REPORTS ══ */
 function renderReports(){
   if(!dataReady) return;
   const d=getDate('r-date'),area=document.getElementById('r-area').value;
@@ -1003,9 +937,7 @@ function renderReports(){
   cards.innerHTML=html;
 }
 
-/* ══════════════════════════════════════════════
-   PDF EXPORT
-══════════════════════════════════════════════ */
+/* ══ PDF ══ */
 async function downloadReportsPDF() {
   if(!lastRepGroups.length){alert('No reports to export.');return;}
   const overlay=document.getElementById('pdf-overlay'),progressTxt=document.getElementById('pdf-progress-text');
@@ -1036,9 +968,7 @@ async function downloadReportsPDF() {
   finally{overlay.classList.remove('visible');}
 }
 
-/* ══════════════════════════════════════════════
-   REPORT SUMMARY
-══════════════════════════════════════════════ */
+/* ══ REPORT SUMMARY ══ */
 function renderRepSum(){
   if(!dataReady) return;
   const d=getDate('rs-date'),area=document.getElementById('rs-area').value,disc=document.getElementById('rs-disc').value;
@@ -1053,9 +983,7 @@ function renderRepSum(){
 }
 function formatProgressFlat(p){ if(!p)return ''; return p.replace(/"/g,'').split('\n').map(l=>l.trim()).filter(Boolean).join(' | '); }
 
-/* ══════════════════════════════════════════════
-   PROJECT STATUS
-══════════════════════════════════════════════ */
+/* ══ PROJECT STATUS ══ */
 function renderStatus(){
   if(!dataReady) return;
   const d=getDate('st-date'),area=document.getElementById('st-area').value,disc=document.getElementById('st-disc').value;
@@ -1070,9 +998,7 @@ function renderStatus(){
   document.getElementById('st-body').innerHTML=groups.map((g,i)=>{ const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length; return `<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(g.id)}</td><td>${escHtml(g.crewLead)}</td><td class="mono">${escHtml(g.wi)}</td><td>${escHtml(g.area)}</td><td><strong>${g.resources.size}</strong></td><td>${mp}</td><td>${eq}</td><td>${escHtml(g.discipline)}</td></tr>`; }).join('');
 }
 
-/* ══════════════════════════════════════════════
-   RESOURCES
-══════════════════════════════════════════════ */
+/* ══ RESOURCES ══ */
 function renderResource(){
   if(!dataReady) return;
   const d=getDate('res-date'),area=document.getElementById('res-area').value;
@@ -1096,14 +1022,15 @@ async function campLoadData() {
     const json=await res.json();
     if(json.status!=='ok') throw new Error(json.message||'Load failed');
     campAllRows=json.rows.map(r=>({
-      _row: r._row,
-      id:   String(r['ID']||r['id']||''),
-      name: String(r['Employee Name']||r['EMPLOYEE NAME']||r['Name']||''),
-      desig:String(r['Designation']||r['DESIGNATION']||''),
-      cat:  String(r['Category']||r['CATEGORY']||''),
-      nat:  String(r['Nationality']||r['NATIONALITY']||''),
-      doj:  String(r['Date of Joining']||r['DATE OF JOINING']||r['DOJ']||''),
-      camp: String(r['Camp']||r['CAMP']||''),
+      _row:  r._row,
+      id:    String(r['ID']||r['id']||''),
+      name:  String(r['Employee Name']||r['EMPLOYEE NAME']||r['Name']||''),
+      desig: String(r['Designation']||r['DESIGNATION']||''),
+      cat:   String(r['Category']||r['CATEGORY']||''),
+      nat:   String(r['Nationality']||r['NATIONALITY']||''),
+      // ── FIX 1: normalise DOJ to YYYY-MM-DD on load ──
+      doj:   parseDOJ(r['Date of Joining']||r['DATE OF JOINING']||r['DOJ']||''),
+      camp:  String(r['Camp']||r['CAMP']||''),
       status:String(r['Status']||r['STATUS']||''),
     }));
     campFilteredRows=[...campAllRows];
@@ -1118,125 +1045,90 @@ async function campLoadData() {
 }
 async function campRefresh(){ await campLoadData(); }
 
-/* ══════════════════════════════════════════════
-   CAMP — DYNAMIC STATS (filter-aware)
-══════════════════════════════════════════════ */
+/* ══ CAMP — STATS ══ */
 function campUpdateStats(rows) {
-  // rows = currently filtered rows
-  const mp = r => r.cat === 'Manpower';
-  const eq = r => r.cat === 'Equipment';
-  const isPOB = r => POB_STATUSES.includes(r.status);
-  const isSafah = r => r.camp === 'Safah';
-  const isWadi  = r => r.camp === 'Wadi Latham';
-
-  // Safah Total Employees = POB statuses, Camp=Safah, Cat=Manpower
-  const safahTotal = rows.filter(r => mp(r) && isSafah(r) && isPOB(r)).length;
-  // Wadi Total Employees = POB statuses, Camp=Wadi Latham, Cat=Manpower
-  const wadiTotal  = rows.filter(r => mp(r) && isWadi(r)  && isPOB(r)).length;
-
-  // POB breakdown (Manpower only)
-  const pobCount  = rows.filter(r => mp(r) && r.status==='POB').length;
-  const pobACount = rows.filter(r => mp(r) && r.status==='POB-A').length;
-  const pobBCount = rows.filter(r => mp(r) && r.status==='POB-B').length;
-  const pobCCount = rows.filter(r => mp(r) && r.status==='POB-C').length;
-  const pobDCount = rows.filter(r => mp(r) && r.status==='POB-D').length;
-
-  // POL — Manpower only
-  const polCount  = rows.filter(r => mp(r) && r.status==='POL').length;
-
-  // Camp-wise manpower (sum of all POB variants, Manpower only)
-  const safahMP = safahTotal; // same as safahTotal defined above
-  const wadiMP  = wadiTotal;
-
-  // Equipment POB per camp
-  const safahEQ = rows.filter(r => eq(r) && isSafah(r) && r.status==='POB').length;
-  const wadiEQ  = rows.filter(r => eq(r) && isWadi(r)  && r.status==='POB').length;
-
-  const wrap = document.getElementById('camp-stats-wrap');
-  wrap.innerHTML = `
-    <!-- Row 1: Total Employees per Camp -->
+  const mp=r=>r.cat==='Manpower', eq=r=>r.cat==='Equipment';
+  const isPOB=r=>POB_STATUSES.includes(r.status);
+  const isSafah=r=>r.camp==='Safah', isWadi=r=>r.camp==='Wadi Latham';
+  const safahTotal=rows.filter(r=>mp(r)&&isSafah(r)&&isPOB(r)).length;
+  const wadiTotal =rows.filter(r=>mp(r)&&isWadi(r) &&isPOB(r)).length;
+  const pobCount  =rows.filter(r=>mp(r)&&r.status==='POB').length;
+  const pobACount =rows.filter(r=>mp(r)&&r.status==='POB-A').length;
+  const pobBCount =rows.filter(r=>mp(r)&&r.status==='POB-B').length;
+  const pobCCount =rows.filter(r=>mp(r)&&r.status==='POB-C').length;
+  const pobDCount =rows.filter(r=>mp(r)&&r.status==='POB-D').length;
+  const polCount  =rows.filter(r=>mp(r)&&r.status==='POL').length;
+  const safahEQ   =rows.filter(r=>eq(r)&&isSafah(r)&&r.status==='POB').length;
+  const wadiEQ    =rows.filter(r=>eq(r)&&isWadi(r) &&r.status==='POB').length;
+  document.getElementById('camp-stats-wrap').innerHTML=`
     <div class="camp-stats-section">
       <div class="camp-stats-section-label"><i class="fas fa-users"></i> Total Employees (Manpower · POB)</div>
       <div class="stats-row" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
-        ${sc('Safah Total Employees', safahTotal, 'c-accent2', 'fas fa-tent')}
-        ${sc('Wadi Latham Total Employees', wadiTotal, 'c-accent', 'fas fa-tent')}
+        ${sc('Safah Total Employees',safahTotal,'c-accent2','fas fa-tent')}
+        ${sc('Wadi Latham Total Employees',wadiTotal,'c-accent','fas fa-tent')}
       </div>
     </div>
-    <!-- Row 2: POB breakdown -->
     <div class="camp-stats-section">
       <div class="camp-stats-section-label"><i class="fas fa-circle-check"></i> POB Status Breakdown (Manpower Only)</div>
       <div class="stats-row" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">
-        ${sc('POB',   pobCount,  'c-accent3', 'fas fa-user-check')}
-        ${sc('POB-A', pobACount, 'c-accent3', 'fas fa-user-check')}
-        ${sc('POB-B', pobBCount, 'c-accent2', 'fas fa-user-check')}
-        ${sc('POB-C', pobCCount, '',          'fas fa-user-check', '#9b5de5')}
-        ${sc('POB-D', pobDCount, '',          'fas fa-user-check', '#17b8c4')}
-        ${sc('POL',   polCount,  'c-warn',    'fas fa-user-clock')}
+        ${sc('POB',  pobCount, 'c-accent3','fas fa-user-check')}
+        ${sc('POB-A',pobACount,'c-accent3','fas fa-user-check')}
+        ${sc('POB-B',pobBCount,'c-accent2','fas fa-user-check')}
+        ${sc('POB-C',pobCCount,'',         'fas fa-user-check','#9b5de5')}
+        ${sc('POB-D',pobDCount,'',         'fas fa-user-check','#17b8c4')}
+        ${sc('POL',  polCount, 'c-warn',   'fas fa-user-clock')}
       </div>
     </div>
-    <!-- Row 3: Camp-wise Manpower + Equipment -->
     <div class="camp-stats-section">
       <div class="camp-stats-section-label"><i class="fas fa-map-pin"></i> Camp-wise Resources</div>
       <div class="stats-row" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
-        ${sc('Safah Manpower',       safahMP, 'c-accent3', 'fas fa-person-digging')}
-        ${sc('Wadi Latham Manpower', wadiMP,  'c-accent',  'fas fa-person-digging')}
-        ${sc('Safah Equipment',       safahEQ, 'c-accent2', 'fas fa-gear')}
-        ${sc('Wadi Latham Equipment', wadiEQ,  'c-accent2', 'fas fa-gear')}
+        ${sc('Safah Manpower',      safahTotal,'c-accent3','fas fa-person-digging')}
+        ${sc('Wadi Latham Manpower',wadiTotal, 'c-accent', 'fas fa-person-digging')}
+        ${sc('Safah Equipment',     safahEQ,   'c-accent2','fas fa-gear')}
+        ${sc('Wadi Latham Equipment',wadiEQ,   'c-accent2','fas fa-gear')}
       </div>
     </div>`;
 }
-
-function sc(label, value, colorCls, icon, customColor) {
-  const colorStyle = customColor ? `style="color:${customColor}"` : '';
-  return `<div class="stat-card">
-    <div class="stat-label"><i class="${icon}" style="margin-right:5px;font-size:0.65rem;opacity:0.7"></i>${label}</div>
-    <div class="stat-value ${colorCls}" ${colorStyle}>${value}</div>
-  </div>`;
+function sc(label,value,colorCls,icon,customColor){
+  const cs=customColor?`style="color:${customColor}"`:'';
+  return `<div class="stat-card"><div class="stat-label"><i class="${icon}" style="margin-right:5px;font-size:0.65rem;opacity:0.7"></i>${label}</div><div class="stat-value ${colorCls}" ${cs}>${value}</div></div>`;
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — FILTER & RENDER
-══════════════════════════════════════════════ */
+/* ══ CAMP — FILTER & RENDER ══ */
 function campFilterRender() {
-  const q      = (document.getElementById('camp-search').value||'').toLowerCase().trim();
-  const fCamp  = document.getElementById('cf-camp').value;
-  const fCat   = document.getElementById('cf-cat').value;
-  const fStat  = document.getElementById('cf-status').value;
-  const fNat   = document.getElementById('cf-nat').value;
-
-  campFilteredRows = campAllRows.filter(r => {
-    if (fCamp !== 'all' && r.camp   !== fCamp) return false;
-    if (fCat  !== 'all' && r.cat    !== fCat)  return false;
-    if (fStat !== 'all' && r.status !== fStat) return false;
-    if (fNat  !== 'all' && r.nat    !== fNat)  return false;
-    if (q) { const hay=`${r.id} ${r.name} ${r.desig} ${r.cat} ${r.nat} ${r.doj} ${r.camp} ${r.status}`.toLowerCase(); if(!hay.includes(q))return false; }
+  const q    =(document.getElementById('camp-search').value||'').toLowerCase().trim();
+  const fCamp= document.getElementById('cf-camp').value;
+  const fCat = document.getElementById('cf-cat').value;
+  const fStat= document.getElementById('cf-status').value;
+  const fNat = document.getElementById('cf-nat').value;
+  campFilteredRows=campAllRows.filter(r=>{
+    if(fCamp!=='all'&&r.camp  !==fCamp) return false;
+    if(fCat !=='all'&&r.cat   !==fCat)  return false;
+    if(fStat!=='all'&&r.status!==fStat) return false;
+    if(fNat !=='all'&&r.nat   !==fNat)  return false;
+    if(q){ const hay=`${r.id} ${r.name} ${r.desig} ${r.cat} ${r.nat} ${r.doj} ${r.camp} ${r.status}`.toLowerCase(); if(!hay.includes(q))return false; }
     return true;
   });
-
-  campUpdateStats(campFilteredRows);  // stats always reflect filtered data
+  campUpdateStats(campFilteredRows);
   campRenderTable(campFilteredRows);
 }
-
 function campRenderTable(rows) {
   document.getElementById('camp-badge').textContent=`${rows.length} record${rows.length!==1?'s':''}`;
   if(!rows.length){ document.getElementById('camp-tbody').innerHTML='<tr><td colspan="10" class="no-data">No records match the current filters.</td></tr>'; return; }
   document.getElementById('camp-tbody').innerHTML=rows.map((r,i)=>campRowHTML(r,i+1)).join('');
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — STATUS / CATEGORY BADGES
-══════════════════════════════════════════════ */
-function campStatusBadge(s) {
-  const m = { 'POB':'s-pob','POB-A':'s-pob-a','POB-B':'s-pob-b','POB-C':'s-pob-c','POB-D':'s-pob-d','POL':'s-pol','POR':'s-por' };
-  const cls = m[s] || 's-def';
-  return `<span class="status-pill ${cls}">${escHtml(s||'—')}</span>`;
+/* ══ CAMP — BADGES ══ */
+function campStatusBadge(s){
+  const m={'POB':'s-pob','POB-A':'s-pob-a','POB-B':'s-pob-b','POB-C':'s-pob-c','POB-D':'s-pob-d','POL':'s-pol','POR':'s-por'};
+  return `<span class="status-pill ${m[s]||'s-def'}">${escHtml(s||'—')}</span>`;
 }
-function campCatBadge(c) {
+function campCatBadge(c){
   if(c==='Manpower') return `<span class="cat-mp">Manpower</span>`;
-  if(c==='Equipment') return `<span class="cat-eq">Equipment</span>`;
+  if(c==='Equipment')return `<span class="cat-eq">Equipment</span>`;
   return `<span class="cat-def">${escHtml(c||'—')}</span>`;
 }
-function campNatBadge(n) {
+function campNatBadge(n){
   if(n==='Expats')   return `<span class="nat-exp">Expats</span>`;
   if(n==='Nationals')return `<span class="nat-nat">Nationals</span>`;
   return `<span class="cat-def">${escHtml(n||'—')}</span>`;
@@ -1244,10 +1136,15 @@ function campNatBadge(n) {
 
 /* ══════════════════════════════════════════════
    CAMP — ROW HTML
+   FIX 2: display uses fmtDOJ (DD-MMM-YYYY)
+           edit input uses r.doj (YYYY-MM-DD, already normalised on load)
+           so the date picker always gets a valid value — nothing is lost
 ══════════════════════════════════════════════ */
-function campRowHTML(r, idx) {
-  const rid = r._row;
-  const statusOptions = ['POB','POB-A','POB-B','POB-C','POB-D','POL','POR'].map(o=>`<option ${r.status===o?'selected':''}>${o}</option>`).join('');
+function campRowHTML(r,idx){
+  const rid=r._row;
+  const statusOpts=['POB','POB-A','POB-B','POB-C','POB-D','POL','POR'].map(o=>`<option ${r.status===o?'selected':''}>${o}</option>`).join('');
+  // r.doj is YYYY-MM-DD (or '') — safe for <input type="date">
+  // fmtDOJ(r.doj) is DD-MMM-YYYY — shown in the read-only cell
   return `
   <tr id="camp-row-${rid}" data-rowid="${rid}">
     <td class="mono">${idx}</td>
@@ -1280,8 +1177,10 @@ function campRowHTML(r, idx) {
       </select>
     </td>
     <td>
-      <span class="cell-view mono">${escHtml(r.doj||'—')}</span>
-      <input class="inline-input cell-edit" id="ci-doj-${rid}" type="date" value="${escHtml(r.doj||'')}" style="min-width:130px">
+      <span class="cell-view mono">${fmtDOJ(r.doj)}</span>
+      <input class="inline-input cell-edit" id="ci-doj-${rid}" type="date"
+             value="${escHtml(r.doj)}"
+             style="min-width:140px">
     </td>
     <td>
       <span class="cell-view">${escHtml(r.camp)}</span>
@@ -1295,7 +1194,7 @@ function campRowHTML(r, idx) {
       <span class="cell-view">${campStatusBadge(r.status)}</span>
       <select class="inline-input cell-edit" id="ci-status-${rid}" style="min-width:100px">
         <option value="">— Select —</option>
-        ${statusOptions}
+        ${statusOpts}
       </select>
     </td>
     <td style="text-align:right">
@@ -1313,25 +1212,21 @@ function campRowHTML(r, idx) {
   </tr>`;
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — EDIT / CANCEL
-══════════════════════════════════════════════ */
-function campEditRow(rid) { const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('editing'); }
-function campCancelEdit(rid, isNew) {
+/* ══ CAMP — EDIT / CANCEL ══ */
+function campEditRow(rid){ const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('editing'); }
+function campCancelEdit(rid,isNew){
   if(isNew){ const tr=document.getElementById('camp-row-'+rid); if(tr)tr.remove(); return; }
   const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.remove('editing');
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — ADD ROW
-══════════════════════════════════════════════ */
-function campAddRow() {
+/* ══ CAMP — ADD ROW ══ */
+function campAddRow(){
   campNewRowCounter--;
   const tid='new_'+Math.abs(campNewRowCounter);
   const tbody=document.getElementById('camp-tbody');
   const nd=tbody.querySelector('.no-data'); if(nd)nd.closest('tr').remove();
   const statusOpts=['POB','POB-A','POB-B','POB-C','POB-D','POL','POR'].map(o=>`<option>${o}</option>`).join('');
-  const html=`
+  tbody.insertAdjacentHTML('afterbegin',`
   <tr id="camp-row-${tid}" data-rowid="${tid}" class="new-row editing">
     <td class="mono">★</td>
     <td><input class="inline-input cell-edit" id="ci-id-${tid}" placeholder="ID" style="min-width:80px"></td>
@@ -1339,7 +1234,7 @@ function campAddRow() {
     <td><input class="inline-input cell-edit" id="ci-desig-${tid}" placeholder="Designation" style="min-width:110px"></td>
     <td><select class="inline-input cell-edit" id="ci-cat-${tid}" style="min-width:110px"><option value="">— Category —</option><option>Manpower</option><option>Equipment</option></select></td>
     <td><select class="inline-input cell-edit" id="ci-nat-${tid}" style="min-width:110px"><option value="">— Nationality —</option><option>Expats</option><option>Nationals</option></select></td>
-    <td><input class="inline-input cell-edit" id="ci-doj-${tid}" type="date" style="min-width:130px"></td>
+    <td><input class="inline-input cell-edit" id="ci-doj-${tid}" type="date" style="min-width:140px"></td>
     <td><select class="inline-input cell-edit" id="ci-camp-${tid}" style="min-width:120px"><option value="">— Camp —</option><option>Safah</option><option>Wadi Latham</option></select></td>
     <td><select class="inline-input cell-edit" id="ci-status-${tid}" style="min-width:100px"><option value="">— Status —</option>${statusOpts}</select></td>
     <td style="text-align:right">
@@ -1351,74 +1246,57 @@ function campAddRow() {
         </div>
       </div>
     </td>
-  </tr>`;
-  tbody.insertAdjacentHTML('afterbegin',html);
+  </tr>`);
   document.getElementById('ci-id-'+tid).focus();
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — SAVE ROW
-══════════════════════════════════════════════ */
-async function campSaveRow(rid, isNew) {
-  const g = id => { const el=document.getElementById(id); return el?el.value.trim():''; };
-  const empId  = g(`ci-id-${rid}`);
-  const name   = g(`ci-name-${rid}`);
-  const desig  = g(`ci-desig-${rid}`);
-  const cat    = g(`ci-cat-${rid}`);
-  const nat    = g(`ci-nat-${rid}`);
-  const doj    = g(`ci-doj-${rid}`);
-  const camp   = g(`ci-camp-${rid}`);
-  const status = g(`ci-status-${rid}`);
-
+/* ══ CAMP — SAVE ══ */
+async function campSaveRow(rid,isNew){
+  const g=id=>{ const el=document.getElementById(id); return el?el.value.trim():''; };
+  const empId=g(`ci-id-${rid}`),name=g(`ci-name-${rid}`),desig=g(`ci-desig-${rid}`);
+  const cat=g(`ci-cat-${rid}`),nat=g(`ci-nat-${rid}`),doj=g(`ci-doj-${rid}`);
+  const camp=g(`ci-camp-${rid}`),status=g(`ci-status-${rid}`);
   if(!name)  { campToast('Employee Name is required','error'); return; }
   if(!cat)   { campToast('Please select a Category','error');  return; }
   if(!camp)  { campToast('Please select a Camp','error');      return; }
   if(!status){ campToast('Please select a Status','error');    return; }
-
-  const tr=document.getElementById('camp-row-'+rid);
-  if(tr) tr.classList.add('saving');
-
-  const payload = isNew
-    ? { action:'add', 'ID':empId, 'Employee Name':name, 'Designation':desig, 'Category':cat, 'Nationality':nat, 'Date of Joining':doj, 'Camp':camp, 'Status':status }
-    : { action:'update', _row:rid, 'ID':empId, 'Employee Name':name, 'Designation':desig, 'Category':cat, 'Nationality':nat, 'Date of Joining':doj, 'Camp':camp, 'Status':status };
-
+  const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('saving');
+  const payload=isNew
+    ?{ action:'add','ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status }
+    :{ action:'update',_row:rid,'ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status };
   try {
-    const res=await fetch(CAMP_WEBAPP_URL,{ method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
+    const res=await fetch(CAMP_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
     const json=await res.json();
     if(json.status!=='ok') throw new Error(json.message||'Save failed');
     campToast(isNew?'✓ Employee added':'✓ Record updated','success');
     await campLoadData();
-  } catch(e) {
+  } catch(e){
     console.error(e); campToast('Save failed: '+e.message,'error');
-    if(tr) tr.classList.remove('saving');
+    if(tr)tr.classList.remove('saving');
   }
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — DELETE ROW
-══════════════════════════════════════════════ */
-async function campDeleteRow(rid) {
+/* ══ CAMP — DELETE ══ */
+async function campDeleteRow(rid){
   if(!confirm('Delete this record? This cannot be undone.')) return;
   const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('saving');
   try {
-    const res=await fetch(CAMP_WEBAPP_URL,{ method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:'delete',_row:rid}) });
+    const res=await fetch(CAMP_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',_row:rid})});
     const json=await res.json();
     if(json.status!=='ok') throw new Error(json.message||'Delete failed');
     campToast('Record deleted','info');
     await campLoadData();
-  } catch(e) {
+  } catch(e){
     console.error(e); campToast('Delete failed: '+e.message,'error');
     if(tr)tr.classList.remove('saving');
   }
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — EXCEL EXPORT
-══════════════════════════════════════════════ */
-function exportCampExcel() {
-  if(!campAllRows.length){ alert('No data to export.'); return; }
+/* ══ CAMP — EXCEL ══ */
+function exportCampExcel(){
+  if(!campAllRows.length){alert('No data to export.');return;}
   const hdr=['#','ID','Employee Name','Designation','Category','Nationality','Date of Joining','Camp','Status'];
-  const toRow=(r,i)=>[i+1,r.id,r.name,r.desig,r.cat,r.nat,r.doj,r.camp,r.status];
+  const toRow=(r,i)=>[i+1,r.id,r.name,r.desig,r.cat,r.nat,fmtDOJ(r.doj),r.camp,r.status];
   const wsData=[hdr,...campAllRows.map(toRow)];
   const ws=XLSX.utils.aoa_to_sheet(wsData);
   ws['!cols']=[{wch:4},{wch:12},{wch:26},{wch:20},{wch:12},{wch:12},{wch:14},{wch:14},{wch:10}];
@@ -1426,16 +1304,14 @@ function exportCampExcel() {
   XLSX.utils.book_append_sheet(wb,ws,'All Employees');
   ['Safah','Wadi Latham'].forEach(camp=>{
     const rows=campAllRows.filter(r=>r.camp===camp);
-    if(!rows.length) return;
+    if(!rows.length)return;
     const cws=XLSX.utils.aoa_to_sheet([hdr,...rows.map(toRow)]);
     cws['!cols']=ws['!cols'];
     XLSX.utils.book_append_sheet(wb,cws,camp.replace(' ','_'));
   });
-  // POB summary sheet
   const pobData=[['Status','Safah MP','Wadi Latham MP','Safah EQ','Wadi EQ']];
   [...POB_STATUSES,'POL','POR'].forEach(st=>{
-    pobData.push([
-      st,
+    pobData.push([st,
       campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Manpower').length,
       campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Manpower').length,
       campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Equipment').length,
@@ -1448,10 +1324,8 @@ function exportCampExcel() {
   XLSX.writeFile(wb,`GPS_CampDetails_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — TOAST
-══════════════════════════════════════════════ */
-function campToast(msg,type='info') {
+/* ══ CAMP — TOAST ══ */
+function campToast(msg,type='info'){
   const icons={success:'✓',error:'⚠',info:'ℹ'};
   const c=document.getElementById('camp-toast');
   const t=document.createElement('div');
@@ -1461,9 +1335,7 @@ function campToast(msg,type='info') {
   setTimeout(()=>{ t.style.opacity='0';t.style.transition='opacity 0.4s';setTimeout(()=>t.remove(),400); },3200);
 }
 
-/* ══════════════════════════════════════════════
-   EXCEL EXPORTS (other tabs)
-══════════════════════════════════════════════ */
+/* ══ EXCEL EXPORTS (other tabs) ══ */
 function exportRepSumExcel(){
   if(!lastRepSumRows.length){alert('No data to export.');return;}
   const ws=XLSX.utils.aoa_to_sheet([['#','Foreman Name','Foreman ID','Area / Block','Discipline','WI No.','Crew Size','Work Description','Progress Details'],...lastRepSumRows.map((g,i)=>[i+1,g.crewLead,g.id,g.area,g.discipline,g.wi,g.resources.size,g.desc||'—',formatProgressFlat(g.progress)||'—'])]);
@@ -1473,7 +1345,7 @@ function exportRepSumExcel(){
 }
 function exportStatusExcel(){
   if(!lastStatusGroups.length){alert('No data to export.');return;}
-  const ws=XLSX.utils.aoa_to_sheet([['#','Foreman ID','Crew Lead','WI No.','Area / Block','Crew Size','Manpower','Equipment','Discipline'],...lastStatusGroups.map((g,i)=>{const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;return[i+1,g.id,g.crewLead,g.wi,g.area,g.resources.size,mp,eq,g.discipline];})]);
+  const ws=XLSX.utils.aoa_to_sheet([['#','Foreman ID','Crew Lead','WI No.','Area / Block','Crew Size','Manpower','Equipment','Discipline'],...lastStatusGroups.map((g,i)=>{ const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length; return [i+1,g.id,g.crewLead,g.wi,g.area,g.resources.size,mp,eq,g.discipline]; })]);
   ws['!cols']=[{wch:4},{wch:14},{wch:22},{wch:16},{wch:22},{wch:10},{wch:10},{wch:10},{wch:20}];
   const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Project Status');
   XLSX.writeFile(wb,`GPS_ProjectStatus_${lastStatusDate?toKey(lastStatusDate):'export'}.xlsx`);
@@ -1490,9 +1362,7 @@ function exportResourceExcel(){
   XLSX.writeFile(wb,`GPS_Resources_${lastResDate?toKey(lastResDate):'export'}.xlsx`);
 }
 
-/* ══════════════════════════════════════════════
-   TAB NAVIGATION
-══════════════════════════════════════════════ */
+/* ══ TAB NAVIGATION ══ */
 function triggerTabRender(t){
   if(t==='summary')      renderSummary();
   else if(t==='kpi')     renderKPI();
@@ -1500,12 +1370,9 @@ function triggerTabRender(t){
   else if(t==='repsum')  renderRepSum();
   else if(t==='status')  renderStatus();
   else if(t==='resource')renderResource();
-  // camp auto-loads on page init; refresh re-renders on tab visit if needed
 }
 
-/* ══════════════════════════════════════════════
-   UTILITIES
-══════════════════════════════════════════════ */
+/* ══ UTILITIES ══ */
 function show(id){ const el=document.getElementById(id); if(el)el.style.display='block'; }
 function hide(id){ const el=document.getElementById(id); if(el)el.style.display='none'; }
 function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
