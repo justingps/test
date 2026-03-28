@@ -104,7 +104,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .nav-tab:hover{color:var(--text)}
 .nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .nav-tab i{font-size:0.78rem;opacity:0.85}
-.nav-tab[data-tab="camp"].active{color:var(--accent);border-bottom-color:var(--accent)}
 .content{flex:1;padding:24px 28px;width:100%}
 .tab-panel{display:none;animation:fadein 0.22s ease}
 .tab-panel.active{display:block}
@@ -231,9 +230,106 @@ option{background:var(--surface2);color:var(--text)}
 .btn-refresh:hover{background:rgba(58,123,213,0.18);border-color:rgba(58,123,213,0.5)}
 
 /* ══ CAMP STYLES ══ */
-.camp-stats-section{margin-bottom:20px}
-.camp-stats-section-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.camp-stats-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Compact single-row stats bar */
+.camp-stats-bar{
+  display:flex;
+  align-items:stretch;
+  gap:0;
+  margin-bottom:16px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  overflow-x:auto;
+  transition:background var(--transition);
+}
+.camp-stats-bar::-webkit-scrollbar{height:3px}
+.camp-stats-bar::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:10px}
+
+/* Divider groups inside the bar */
+.camp-stats-group{
+  display:flex;
+  align-items:stretch;
+  flex-shrink:0;
+}
+.camp-stats-group+.camp-stats-group{
+  border-left:2px solid var(--border-br);
+}
+.camp-stats-group-label{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  transform:rotate(180deg);
+  font-family:var(--font-mono);
+  font-size:0.55rem;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  color:var(--text-dim);
+  padding:0 7px;
+  background:var(--surface2);
+  border-right:1px solid var(--border);
+  white-space:nowrap;
+  min-width:22px;
+}
+
+/* Individual stat pill inside the bar */
+.camp-stat-pill{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:10px 16px;
+  border-right:1px solid var(--border);
+  min-width:88px;
+  gap:3px;
+  transition:background 0.15s;
+  cursor:default;
+}
+.camp-stat-pill:last-child{border-right:none}
+.camp-stat-pill:hover{background:var(--card-hover)}
+.camp-stat-pill-icon{
+  font-size:0.7rem;
+  color:var(--text-dim);
+  margin-bottom:2px;
+}
+.camp-stat-pill-value{
+  font-family:var(--font-display);
+  font-size:1.25rem;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-0.02em;
+}
+.camp-stat-pill-label{
+  font-family:var(--font-mono);
+  font-size:0.58rem;
+  color:var(--text-sub);
+  text-transform:uppercase;
+  letter-spacing:0.07em;
+  text-align:center;
+  white-space:nowrap;
+}
+
+/* colour variants */
+.csp-orange .camp-stat-pill-value{color:var(--accent)}
+.csp-blue   .camp-stat-pill-value{color:var(--accent2)}
+.csp-green  .camp-stat-pill-value{color:var(--accent3)}
+.csp-warn   .camp-stat-pill-value{color:var(--warning)}
+.csp-purple .camp-stat-pill-value{color:#9b5de5}
+.csp-teal   .camp-stat-pill-value{color:#17b8c4}
+.csp-dim    .camp-stat-pill-value{color:var(--text-sub)}
+
+/* accent top-border on hover per colour */
+.csp-orange:hover{border-top:2px solid var(--accent);padding-top:8px}
+.csp-blue:hover  {border-top:2px solid var(--accent2);padding-top:8px}
+.csp-green:hover {border-top:2px solid var(--accent3);padding-top:8px}
+.csp-warn:hover  {border-top:2px solid var(--warning);padding-top:8px}
+.csp-purple:hover{border-top:2px solid #9b5de5;padding-top:8px}
+.csp-teal:hover  {border-top:2px solid #17b8c4;padding-top:8px}
+
+/* ── remaining camp styles (unchanged) ── */
 .camp-table tr.editing{background:rgba(224,123,57,0.04) !important}
 .camp-table tr.new-row{background:rgba(46,170,126,0.04) !important}
 .camp-table .cell-edit{display:none}
@@ -294,7 +390,7 @@ tr.saving td{opacity:0.55}
 
 @media(max-width:1200px){.chart-grid{grid-template-columns:1fr}.chart-grid-3{grid-template-columns:1fr 1fr}.insight-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:900px){.chart-grid,.chart-grid-3,.chart-grid-2{grid-template-columns:1fr}.insight-grid{grid-template-columns:1fr}.chart-card.span2{grid-column:span 1}}
-@media(max-width:600px){.content{padding:14px 14px}.topbar{padding:0 14px}.nav{padding:0 14px}.login-card{width:calc(100% - 28px);padding:30px 22px}.work-meta{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:1fr 1fr}.topbar-date{display:none}}
+@media(max-width:600px){.content{padding:14px 14px}.topbar{padding:0 14px}.nav{padding:0 14px}.login-card{width:calc(100% - 28px);padding:30px 22px}.work-meta{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:1fr 1fr}.topbar-date{display:none}.camp-stat-pill{min-width:72px;padding:8px 10px}.camp-stat-pill-value{font-size:1.05rem}}
 </style>
 </head>
 <body>
@@ -524,7 +620,10 @@ tr.saving td{opacity:0.55}
         <div class="filter-group"><span class="filter-label"><i class="fas fa-circle-dot"></i> Status</span><select id="cf-status" class="f-input" onchange="campFilterRender()"><option value="all">All Statuses</option><option>POB</option><option>POB-A</option><option>POB-B</option><option>POB-C</option><option>POB-D</option><option>POL</option><option>POR</option></select></div>
         <div class="filter-group"><span class="filter-label"><i class="fas fa-globe"></i> Nationality</span><select id="cf-nat" class="f-input" onchange="campFilterRender()"><option value="all">All</option><option>Expats</option><option>Nationals</option></select></div>
       </div>
+
+      <!-- Compact horizontal stats bar -->
       <div id="camp-stats-wrap"></div>
+
       <div class="table-wrap">
         <div class="table-header">
           <div class="table-title">Employee Records</div>
@@ -597,57 +696,38 @@ Chart.defaults.font.family = "'DM Mono', monospace";
 Chart.defaults.font.size = 11;
 
 /* ══════════════════════════════════════════════
-   DOJ HELPERS  ← THE TWO KEY FIXES ARE HERE
+   DOJ HELPERS
 ══════════════════════════════════════════════ */
 const DOJ_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-/**
- * parseDOJ — accept any reasonable date string from the sheet and return
- * a YYYY-MM-DD string suitable for an <input type="date"> value.
- * Handles: YYYY-MM-DD, DD-Mon-YYYY, D/M/YYYY, ISO timestamps, serial numbers.
- * Returns '' if the value cannot be parsed.
- */
 function parseDOJ(raw) {
   if (!raw || raw === '—') return '';
   const s = String(raw).trim();
-
-  // Already YYYY-MM-DD (possibly with time suffix like T00:00:00)
   const isoM = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
   if (isoM) {
     const [,y,m,d] = isoM;
     return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
   }
-
-  // DD-Mon-YYYY  e.g. 01-Jan-2026
   const dmonM = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
   if (dmonM) {
     const mIdx = DOJ_MONTHS.findIndex(m => m.toLowerCase() === dmonM[2].toLowerCase());
     if (mIdx >= 0) return `${dmonM[3]}-${String(mIdx+1).padStart(2,'0')}-${dmonM[1].padStart(2,'0')}`;
   }
-
-  // D/M/YYYY or M/D/YYYY — treat as D/M/YYYY (common in Gulf region)
   const slashM = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (slashM) {
     return `${slashM[3]}-${slashM[2].padStart(2,'0')}-${slashM[1].padStart(2,'0')}`;
   }
-
-  // JavaScript Date parse fallback (handles ISO 8601 with time)
   const parsed = new Date(s);
   if (!isNaN(parsed)) {
     return `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`;
   }
-
   return '';
 }
 
-/**
- * fmtDOJ — convert a YYYY-MM-DD string (as stored in r.doj) to DD-MMM-YYYY
- * for display in the table cell.  Returns '—' for empty/invalid values.
- */
 function fmtDOJ(ymd) {
   if (!ymd) return '—';
   const m = ymd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!m) return ymd; // fallback: show as-is
+  if (!m) return ymd;
   const [,y,mo,d] = m;
   return `${d}-${DOJ_MONTHS[parseInt(mo,10)-1]}-${y}`;
 }
@@ -1028,7 +1108,6 @@ async function campLoadData() {
       desig: String(r['Designation']||r['DESIGNATION']||''),
       cat:   String(r['Category']||r['CATEGORY']||''),
       nat:   String(r['Nationality']||r['NATIONALITY']||''),
-      // ── FIX 1: normalise DOJ to YYYY-MM-DD on load ──
       doj:   parseDOJ(r['Date of Joining']||r['DATE OF JOINING']||r['DOJ']||''),
       camp:  String(r['Camp']||r['CAMP']||''),
       status:String(r['Status']||r['STATUS']||''),
@@ -1045,53 +1124,71 @@ async function campLoadData() {
 }
 async function campRefresh(){ await campLoadData(); }
 
-/* ══ CAMP — STATS ══ */
+/* ══════════════════════════════════════════════
+   CAMP — COMPACT HORIZONTAL STATS BAR
+   All metrics in one scrollable bar, grouped
+   with a vertical label divider for each section
+══════════════════════════════════════════════ */
 function campUpdateStats(rows) {
-  const mp=r=>r.cat==='Manpower', eq=r=>r.cat==='Equipment';
-  const isPOB=r=>POB_STATUSES.includes(r.status);
-  const isSafah=r=>r.camp==='Safah', isWadi=r=>r.camp==='Wadi Latham';
-  const safahTotal=rows.filter(r=>mp(r)&&isSafah(r)&&isPOB(r)).length;
-  const wadiTotal =rows.filter(r=>mp(r)&&isWadi(r) &&isPOB(r)).length;
-  const pobCount  =rows.filter(r=>mp(r)&&r.status==='POB').length;
-  const pobACount =rows.filter(r=>mp(r)&&r.status==='POB-A').length;
-  const pobBCount =rows.filter(r=>mp(r)&&r.status==='POB-B').length;
-  const pobCCount =rows.filter(r=>mp(r)&&r.status==='POB-C').length;
-  const pobDCount =rows.filter(r=>mp(r)&&r.status==='POB-D').length;
-  const polCount  =rows.filter(r=>mp(r)&&r.status==='POL').length;
-  const safahEQ   =rows.filter(r=>eq(r)&&isSafah(r)&&r.status==='POB').length;
-  const wadiEQ    =rows.filter(r=>eq(r)&&isWadi(r) &&r.status==='POB').length;
-  document.getElementById('camp-stats-wrap').innerHTML=`
-    <div class="camp-stats-section">
-      <div class="camp-stats-section-label"><i class="fas fa-users"></i> Total Employees (Manpower · POB)</div>
-      <div class="stats-row" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
-        ${sc('Safah Total Employees',safahTotal,'c-accent2','fas fa-tent')}
-        ${sc('Wadi Latham Total Employees',wadiTotal,'c-accent','fas fa-tent')}
-      </div>
-    </div>
-    <div class="camp-stats-section">
-      <div class="camp-stats-section-label"><i class="fas fa-circle-check"></i> POB Status Breakdown (Manpower Only)</div>
-      <div class="stats-row" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">
-        ${sc('POB',  pobCount, 'c-accent3','fas fa-user-check')}
-        ${sc('POB-A',pobACount,'c-accent3','fas fa-user-check')}
-        ${sc('POB-B',pobBCount,'c-accent2','fas fa-user-check')}
-        ${sc('POB-C',pobCCount,'',         'fas fa-user-check','#9b5de5')}
-        ${sc('POB-D',pobDCount,'',         'fas fa-user-check','#17b8c4')}
-        ${sc('POL',  polCount, 'c-warn',   'fas fa-user-clock')}
-      </div>
-    </div>
-    <div class="camp-stats-section">
-      <div class="camp-stats-section-label"><i class="fas fa-map-pin"></i> Camp-wise Resources</div>
-      <div class="stats-row" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
-        ${sc('Safah Manpower',      safahTotal,'c-accent3','fas fa-person-digging')}
-        ${sc('Wadi Latham Manpower',wadiTotal, 'c-accent', 'fas fa-person-digging')}
-        ${sc('Safah Equipment',     safahEQ,   'c-accent2','fas fa-gear')}
-        ${sc('Wadi Latham Equipment',wadiEQ,   'c-accent2','fas fa-gear')}
-      </div>
+  const mp  = r => r.cat === 'Manpower';
+  const eq  = r => r.cat === 'Equipment';
+  const isPOB = r => POB_STATUSES.includes(r.status);
+  const isSafah = r => r.camp === 'Safah';
+  const isWadi  = r => r.camp === 'Wadi Latham';
+
+  // Group 1: Total Employees (POB manpower per camp)
+  const safahTotal = rows.filter(r => mp(r) && isSafah(r) && isPOB(r)).length;
+  const wadiTotal  = rows.filter(r => mp(r) && isWadi(r)  && isPOB(r)).length;
+
+  // Group 2: POB Status Breakdown (manpower)
+  const pobCount  = rows.filter(r => mp(r) && r.status === 'POB').length;
+  const pobACount = rows.filter(r => mp(r) && r.status === 'POB-A').length;
+  const pobBCount = rows.filter(r => mp(r) && r.status === 'POB-B').length;
+  const pobCCount = rows.filter(r => mp(r) && r.status === 'POB-C').length;
+  const pobDCount = rows.filter(r => mp(r) && r.status === 'POB-D').length;
+  const polCount  = rows.filter(r => mp(r) && r.status === 'POL').length;
+
+  // Group 3: Camp-wise resources
+  const safahMP = rows.filter(r => mp(r) && isSafah(r) && isPOB(r)).length;
+  const wadiMP  = rows.filter(r => mp(r) && isWadi(r)  && isPOB(r)).length;
+  const safahEQ = rows.filter(r => eq(r) && isSafah(r) && r.status === 'POB').length;
+  const wadiEQ  = rows.filter(r => eq(r) && isWadi(r)  && r.status === 'POB').length;
+
+  function pill(label, value, colorCls, icon) {
+    return `<div class="camp-stat-pill ${colorCls}">
+      <div class="camp-stat-pill-icon"><i class="fas ${icon}"></i></div>
+      <div class="camp-stat-pill-value">${value}</div>
+      <div class="camp-stat-pill-label">${label}</div>
     </div>`;
-}
-function sc(label,value,colorCls,icon,customColor){
-  const cs=customColor?`style="color:${customColor}"`:'';
-  return `<div class="stat-card"><div class="stat-label"><i class="${icon}" style="margin-right:5px;font-size:0.65rem;opacity:0.7"></i>${label}</div><div class="stat-value ${colorCls}" ${cs}>${value}</div></div>`;
+  }
+
+  document.getElementById('camp-stats-wrap').innerHTML = `
+  <div class="camp-stats-bar">
+    <!-- Group 1: Total Employees -->
+    <div class="camp-stats-group">
+      <div class="camp-stats-group-label">Total POB</div>
+      ${pill('Safah', safahTotal, 'csp-blue', 'fa-tent')}
+      ${pill('Wadi Latham', wadiTotal, 'csp-orange', 'fa-tent')}
+    </div>
+    <!-- Group 2: Status Breakdown -->
+    <div class="camp-stats-group">
+      <div class="camp-stats-group-label">POB Status</div>
+      ${pill('POB', pobCount, 'csp-green', 'fa-user-check')}
+      ${pill('POB-A', pobACount, 'csp-green', 'fa-user-check')}
+      ${pill('POB-B', pobBCount, 'csp-blue', 'fa-user-check')}
+      ${pill('POB-C', pobCCount, 'csp-purple', 'fa-user-check')}
+      ${pill('POB-D', pobDCount, 'csp-teal', 'fa-user-check')}
+      ${pill('POL', polCount, 'csp-warn', 'fa-user-clock')}
+    </div>
+    <!-- Group 3: Camp Resources -->
+    <div class="camp-stats-group">
+      <div class="camp-stats-group-label">Camp Resources</div>
+      ${pill('Safah MP', safahMP, 'csp-green', 'fa-person-digging')}
+      ${pill('Wadi MP', wadiMP, 'csp-orange', 'fa-person-digging')}
+      ${pill('Safah EQ', safahEQ, 'csp-blue', 'fa-gear')}
+      ${pill('Wadi EQ', wadiEQ, 'csp-teal', 'fa-gear')}
+    </div>
+  </div>`;
 }
 
 /* ══ CAMP — FILTER & RENDER ══ */
@@ -1134,17 +1231,10 @@ function campNatBadge(n){
   return `<span class="cat-def">${escHtml(n||'—')}</span>`;
 }
 
-/* ══════════════════════════════════════════════
-   CAMP — ROW HTML
-   FIX 2: display uses fmtDOJ (DD-MMM-YYYY)
-           edit input uses r.doj (YYYY-MM-DD, already normalised on load)
-           so the date picker always gets a valid value — nothing is lost
-══════════════════════════════════════════════ */
+/* ══ CAMP — ROW HTML ══ */
 function campRowHTML(r,idx){
   const rid=r._row;
   const statusOpts=['POB','POB-A','POB-B','POB-C','POB-D','POL','POR'].map(o=>`<option ${r.status===o?'selected':''}>${o}</option>`).join('');
-  // r.doj is YYYY-MM-DD (or '') — safe for <input type="date">
-  // fmtDOJ(r.doj) is DD-MMM-YYYY — shown in the read-only cell
   return `
   <tr id="camp-row-${rid}" data-rowid="${rid}">
     <td class="mono">${idx}</td>
