@@ -291,23 +291,19 @@ tr.saving td{opacity:0.55}
 @keyframes slideInRight{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
 
 /* ══ SANKEY ══ */
-#sankey-svg{width:100%;overflow:visible}
-.sankey-node rect{cursor:pointer;transition:opacity 0.2s}
-.sankey-node rect:hover{opacity:0.85}
-.sankey-link{fill:none;transition:opacity 0.2s}
-.sankey-link:hover{opacity:0.7 !important}
-.sankey-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;transition:background var(--transition)}
+.sankey-outer{width:100%;overflow-x:auto;overflow-y:visible}
+.sankey-svg-wrap{display:block;min-width:0}
+.sankey-ribbon{transition:opacity 0.18s;cursor:default}
+.sankey-node-bar{cursor:pointer;transition:opacity 0.18s}
+.sankey-node-bar:hover{opacity:0.78 !important}
+.sankey-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 14px;margin-bottom:16px;transition:background var(--transition);overflow:hidden}
 .sankey-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .sankey-legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub)}
 .sankey-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-.sankey-tooltip{position:fixed;z-index:500;background:var(--surface);border:1px solid var(--border-br);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.78rem;color:var(--text);box-shadow:var(--shadow);pointer-events:none;display:none;max-width:240px;line-height:1.5}
+.sankey-tooltip{position:fixed;z-index:500;background:var(--surface);border:1px solid var(--border-br);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.78rem;color:var(--text);box-shadow:var(--shadow);pointer-events:none;display:none;max-width:260px;line-height:1.55}
 .sankey-tooltip strong{color:var(--accent);display:block;margin-bottom:3px;font-family:var(--font-display)}
 .sankey-no-data{text-align:center;padding:80px 20px;color:var(--text-dim);font-size:0.84rem;font-family:var(--font-mono)}
 .sankey-no-data i{display:block;font-size:2rem;margin-bottom:12px;opacity:0.4}
-.flow-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:16px}
-.flow-stage-header{display:flex;gap:0;border-bottom:2px solid var(--border)}
-.flow-stage-col{flex:1;padding:10px 16px;font-family:var(--font-mono);font-size:0.65rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.08em;background:var(--surface2);border-right:1px solid var(--border)}
-.flow-stage-col:last-child{border-right:none}
 
 /* ══ MISC ══ */
 .prog-cell{max-width:280px;font-size:0.78rem;line-height:1.55;white-space:pre-line}
@@ -547,8 +543,8 @@ tr.saving td{opacity:0.55}
       <div id="sk-content">
         <div class="sankey-card">
           <div class="chart-card-title">Area → Discipline → Work Instruction</div>
-          <div class="chart-card-sub">Flow values represent crew / resource count. Hover over nodes and flows for details.</div>
-          <div id="sankey-container" style="width:100%;min-height:420px;"></div>
+          <div class="chart-card-sub">Flow width = crew / resource count. Hover nodes and ribbons for details.</div>
+          <div class="sankey-outer"><div id="sankey-container"></div></div>
           <div class="sankey-legend" id="sankey-legend"></div>
         </div>
         <div class="section-label">Flow Detail Table</div>
@@ -1145,51 +1141,50 @@ function renderResource(){
 }
 
 /* ════════════════════════════════════════════════════════════
-   SANKEY / ALLUVIAL FLOW DIAGRAM
-   Custom D3-based implementation with no external Sankey lib
+   SANKEY / ALLUVIAL FLOW DIAGRAM  —  v2 (fully rewritten)
+   Fixes: ribbon fill (was fill:none), label overflow, width=0
+   bug, proportional height accumulation, and responsive layout.
 ════════════════════════════════════════════════════════════ */
 function renderSankey() {
   if (!dataReady) return;
   const d = getDate('sk-date');
-  const catFilter = document.getElementById('sk-cat').value; // all|manpower|equipment|unclassified
+  const catFilter = document.getElementById('sk-cat').value;
   const container = document.getElementById('sankey-container');
-  const tooltip = document.getElementById('sk-tooltip');
+  const tooltip   = document.getElementById('sk-tooltip');
 
+  /* ── No date selected ── */
   if (!d) {
     container.innerHTML = `<div class="sankey-no-data"><i class="fas fa-calendar"></i>Select a date to view the flow diagram</div>`;
     document.getElementById('sk-stats-bar').innerHTML = '';
     document.getElementById('sk-flow-body').innerHTML = '';
     document.getElementById('sk-flow-badge').textContent = '0 flows';
+    document.getElementById('sankey-legend').innerHTML = '';
     return;
   }
 
   const dateKey = toKey(d);
 
-  /* ── Collect raw path data (Area → Discipline → WI) ── */
-  const pathMap = {}; // key: "area|disc|wi" → { mp, eq, nf, total, resIds }
-
+  /* ── 1. Aggregate flows: unique resource IDs per (area, disc, wi) path ── */
+  const pathMap = {};
   DATA.forEach(row => {
     const rd = parseRowDate(row.DATE);
     if (!rd || toKey(rd) !== dateKey) return;
-    const area = row['AREA / BLOCK'] || 'Unknown';
-    const disc = row['DISCIPLINE'] || 'Other';
-    const wi   = row['WI NO'] || '—';
-    const res  = row['RESOURCE ID'];
+    const area = (row['AREA / BLOCK'] || 'Unknown').trim();
+    const disc = (row['DISCIPLINE']   || 'Other').trim();
+    const wi   = (row['WI NO']        || '—').trim();
+    const res  = (row['RESOURCE ID']  || '').trim();
     if (!res) return;
     const type = (row['MANPOWER / EQUIPMENT'] || '').toLowerCase().trim();
-    const isMP  = type === 'manpower';
-    const isEQ  = type === 'equipment';
-    const isNF  = !isMP && !isEQ;
-
-    // Apply category filter
+    const isMP = type === 'manpower';
+    const isEQ = type === 'equipment';
+    const isNF = !isMP && !isEQ;
     if (catFilter === 'manpower'     && !isMP) return;
     if (catFilter === 'equipment'    && !isEQ) return;
     if (catFilter === 'unclassified' && !isNF) return;
-
-    const key = `${area}|||${disc}|||${wi}`;
-    if (!pathMap[key]) pathMap[key] = { area, disc, wi, mp: 0, eq: 0, nf: 0, total: 0, resIds: new Set() };
-    if (!pathMap[key].resIds.has(res)) {
-      pathMap[key].resIds.add(res);
+    const key = `${area}\x00${disc}\x00${wi}`;
+    if (!pathMap[key]) pathMap[key] = { area, disc, wi, mp:0, eq:0, nf:0, total:0, seen: new Set() };
+    if (!pathMap[key].seen.has(res)) {
+      pathMap[key].seen.add(res);
       pathMap[key].total++;
       if (isMP) pathMap[key].mp++;
       else if (isEQ) pathMap[key].eq++;
@@ -1197,40 +1192,39 @@ function renderSankey() {
     }
   });
 
-  const flows = Object.values(pathMap).filter(f => f.total > 0).sort((a, b) => b.total - a.total);
+  const flows = Object.values(pathMap)
+    .filter(f => f.total > 0)
+    .sort((a, b) => a.disc.localeCompare(b.disc) || b.total - a.total);
   lastSankeyFlows = flows;
 
-  // Stats bar
-  const totalRes  = flows.reduce((s, f) => s + f.total, 0);
-  const totalMP   = flows.reduce((s, f) => s + f.mp, 0);
-  const totalEQ   = flows.reduce((s, f) => s + f.eq, 0);
-  const totalNF   = flows.reduce((s, f) => s + f.nf, 0);
-  const uniqueAreas = new Set(flows.map(f => f.area)).size;
-  const uniqueDiscs = new Set(flows.map(f => f.disc)).size;
-  const uniqueWIs   = new Set(flows.map(f => f.wi)).size;
-
-  document.getElementById('sk-stats-bar').innerHTML = buildStatsBar([{ label: '', pills: [
-    { label: 'Total Resources', value: totalRes,    icon: 'fa-people-group',    color: 'sp-orange' },
-    { label: 'Manpower',        value: totalMP,     icon: 'fa-person-digging',  color: 'sp-green' },
-    { label: 'Equipment',       value: totalEQ,     icon: 'fa-gear',            color: 'sp-blue' },
-    { label: 'Unclassified',    value: totalNF,     icon: 'fa-circle-question', color: 'sp-warn' },
-    { label: 'Areas',           value: uniqueAreas, icon: 'fa-map-pin',         color: 'sp-teal' },
-    { label: 'Disciplines',     value: uniqueDiscs, icon: 'fa-gears',           color: 'sp-purple' },
-    { label: 'WI Count',        value: uniqueWIs,   icon: 'fa-clipboard-list',  color: 'sp-dim' },
+  /* ── 2. Stats bar ── */
+  const totalRes    = flows.reduce((s,f)=>s+f.total,0);
+  const totalMP     = flows.reduce((s,f)=>s+f.mp,0);
+  const totalEQ     = flows.reduce((s,f)=>s+f.eq,0);
+  const totalNF     = flows.reduce((s,f)=>s+f.nf,0);
+  const uniqueAreas = new Set(flows.map(f=>f.area)).size;
+  const uniqueDiscs = new Set(flows.map(f=>f.disc)).size;
+  const uniqueWIs   = new Set(flows.map(f=>f.wi)).size;
+  document.getElementById('sk-stats-bar').innerHTML = buildStatsBar([{ label:'', pills:[
+    { label:'Total Resources', value:totalRes,    icon:'fa-people-group',    color:'sp-orange' },
+    { label:'Manpower',        value:totalMP,     icon:'fa-person-digging',  color:'sp-green'  },
+    { label:'Equipment',       value:totalEQ,     icon:'fa-gear',            color:'sp-blue'   },
+    { label:'Unclassified',    value:totalNF,     icon:'fa-circle-question', color:'sp-warn'   },
+    { label:'Areas',           value:uniqueAreas, icon:'fa-map-pin',         color:'sp-teal'   },
+    { label:'Disciplines',     value:uniqueDiscs, icon:'fa-gears',           color:'sp-purple' },
+    { label:'WI Count',        value:uniqueWIs,   icon:'fa-clipboard-list',  color:'sp-dim'    },
   ]}]);
 
-  // Flow detail table
+  /* ── 3. Flow detail table ── */
   document.getElementById('sk-flow-badge').textContent = `${flows.length} flows`;
   document.getElementById('sk-flow-body').innerHTML = flows.length
-    ? flows.map((f, i) => `<tr>
-        <td class="mono">${i + 1}</td>
+    ? flows.map((f,i)=>`<tr>
+        <td class="mono">${i+1}</td>
         <td>${escHtml(f.area)}</td>
         <td><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${discColor(f.disc)};margin-right:6px;vertical-align:middle"></span>${escHtml(f.disc)}</td>
         <td class="mono">${escHtml(f.wi)}</td>
         <td><strong>${f.total}</strong></td>
-        <td>${f.mp}</td>
-        <td>${f.eq}</td>
-        <td>${f.nf}</td>
+        <td>${f.mp}</td><td>${f.eq}</td><td>${f.nf}</td>
       </tr>`).join('')
     : '<tr><td colspan="8" class="no-data">No data for selected date and filters.</td></tr>';
 
@@ -1240,292 +1234,374 @@ function renderSankey() {
     return;
   }
 
-  /* ── Build Sankey nodes & links ── */
-  const isDark = currentTheme === 'dark';
-  const textColor = isDark ? '#e3e8f0' : '#1a2236';
-  const subColor  = isDark ? '#8b96ab' : '#5a6880';
-  const borderClr = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-  const bgColor   = isDark ? '#1c2333' : '#ffffff';
+  /* ── 4. Layout geometry ── */
+  const isDark    = currentTheme === 'dark';
+  const textClr   = isDark ? '#e3e8f0' : '#1a2236';
+  const subClr    = isDark ? '#8b96ab' : '#5a6880';
+  const gridClr   = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
 
-  // Deduplicate nodes per stage
-  const areaNames = [...new Set(flows.map(f => f.area))].sort();
-  const discNames = [...new Set(flows.map(f => f.disc))].sort();
-  const wiNames   = [...new Set(flows.map(f => f.wi))].sort();
+  // Measure true pixel width of the card — wait one tick if needed
+  const cardW = document.querySelector('.sankey-outer').clientWidth || 860;
 
-  // Layout constants
-  const W = container.clientWidth || 900;
-  const NODE_W = 18;
-  const PADDING = 10; // vertical gap between nodes in same column
-  const COL_X = [40, Math.round(W * 0.38), Math.round(W * 0.72)];
-  const LABEL_PAD = 8;
-  const minH = 480;
+  /*
+   * Fixed column layout (all coords are SVG-internal pixels):
+   *   LEFT_LABEL_W  : reserved on the left for Area labels
+   *   NODE_W        : width of each node bar
+   *   MID_GAP       : space between node bar and next column label area
+   *   RIGHT_LABEL_W : reserved on the right for WI labels
+   *
+   * Columns:
+   *   col0 (Area node bar)  starts at LEFT_LABEL_W
+   *   col1 (Disc node bar)  at midX
+   *   col2 (WI node bar)    at rightNodeX
+   *
+   * SVG internal width = TOTAL_W  (we then scale with viewBox)
+  */
+  const LEFT_LABEL_W  = 160;   // px left of area node for text
+  const RIGHT_LABEL_W = 170;   // px right of wi node for text
+  const NODE_W        = 16;
+  const TOTAL_W       = 860;   // fixed internal SVG width — scales via viewBox
+  const RIBBON_ZONE_W = TOTAL_W - LEFT_LABEL_W - RIGHT_LABEL_W - NODE_W * 3;
+  const col0x  = LEFT_LABEL_W;                                    // area node left edge
+  const col1x  = col0x + NODE_W + Math.round(RIBBON_ZONE_W * 0.45); // disc node left edge
+  const col2x  = col1x + NODE_W + Math.round(RIBBON_ZONE_W * 0.55); // wi node left edge
 
-  /* Compute node heights proportional to total flow through each node */
-  function nodeTotals(names, keyFn) {
-    return names.map(name => ({
+  const NODE_GAP  = 8;   // vertical px gap between sibling nodes
+  const ROW_MIN_H = 18;  // minimum node bar height (px)
+  const TOP_PAD   = 44;  // space above nodes for stage labels
+
+  /* Build per-column totals sorted by discipline color for grouping */
+  const areaNames = [...new Set(flows.map(f=>f.area))].sort();
+  const discNames = [...new Set(flows.map(f=>f.disc))].sort();
+  const wiNames   = [...new Set(flows.map(f=>f.wi))].sort();
+
+  function colTotal(names, keyFn) {
+    return names.map(name=>({
       name,
-      total: flows.filter(f => keyFn(f) === name).reduce((s, f) => s + f.total, 0),
+      total: flows.filter(f=>keyFn(f)===name).reduce((s,f)=>s+f.total,0),
     }));
   }
+  const areaTotals = colTotal(areaNames, f=>f.area);
+  const discTotals = colTotal(discNames, f=>f.disc);
+  const wiTotals   = colTotal(wiNames,   f=>f.wi);
 
-  const areaTotals = nodeTotals(areaNames, f => f.area);
-  const discTotals = nodeTotals(discNames, f => f.disc);
-  const wiTotals   = nodeTotals(wiNames,   f => f.wi);
-
-  function layoutColumn(items, totalH, paddingPx) {
-    const usable  = totalH - paddingPx * (items.length - 1);
-    const grandTotal = items.reduce((s, n) => s + n.total, 0) || 1;
-    let y = 0;
+  /* Layout: distribute available height proportionally */
+  function layoutNodes(items, availH) {
+    const grand = items.reduce((s,n)=>s+n.total,0) || 1;
+    const usable = availH - NODE_GAP * (items.length - 1);
+    let y = TOP_PAD;
     return items.map(item => {
-      const h = Math.max(12, Math.round((item.total / grandTotal) * usable));
+      const h = Math.max(ROW_MIN_H, Math.round((item.total / grand) * usable));
       const node = { ...item, y, h };
-      y += h + paddingPx;
+      y += h + NODE_GAP;
       return node;
     });
   }
 
-  const totalH = Math.max(minH, areaNames.length * 48, discNames.length * 36, wiNames.length * 28);
-  const svgH = totalH + 60; // + header room
+  /* Dynamic height: ensure each column has room for its nodes */
+  const minColH = (count) => count * (ROW_MIN_H + NODE_GAP) + TOP_PAD + 20;
+  const CONTENT_H = Math.max(
+    520,
+    minColH(areaNames.length),
+    minColH(discNames.length),
+    minColH(wiNames.length)
+  );
+  const SVG_H = CONTENT_H + 20;
 
-  const areaNodes = layoutColumn(areaTotals, totalH, PADDING);
-  const discNodes = layoutColumn(discTotals, totalH, PADDING);
-  const wiNodes   = layoutColumn(wiTotals,   totalH, PADDING);
+  const areaNodes = layoutNodes(areaTotals, CONTENT_H);
+  const discNodes = layoutNodes(discTotals, CONTENT_H);
+  const wiNodes   = layoutNodes(wiTotals,   CONTENT_H);
 
-  /* Map name → node object */
-  const areaMap = Object.fromEntries(areaNodes.map(n => [n.name, n]));
-  const discMap = Object.fromEntries(discNodes.map(n => [n.name, n]));
-  const wiMap   = Object.fromEntries(wiNodes.map(n => [n.name, n]));
+  const areaMap = Object.fromEntries(areaNodes.map(n=>[n.name,n]));
+  const discMap = Object.fromEntries(discNodes.map(n=>[n.name,n]));
+  const wiMap   = Object.fromEntries(wiNodes.map(n=>[n.name,n]));
 
-  /* For ribbon drawing: track how much of each node's height is already "used" */
-  const areaUsed = Object.fromEntries(areaNames.map(n => [n, 0]));
-  const discUsedLeft  = Object.fromEntries(discNames.map(n => [n, 0]));
-  const discUsedRight = Object.fromEntries(discNames.map(n => [n, 0]));
-  const wiUsed  = Object.fromEntries(wiNames.map(n => [n, 0]));
+  /* ── 5. Build ribbon segments ──
+     Each ribbon is a closed cubic-bezier quadrilateral.
+     We track "cursor" offsets into each node's bar separately
+     for the left-entry and right-exit sides.
+  */
+  const cur = {
+    areaR:  Object.fromEntries(areaNames.map(n=>[n,0])),  // right edge of area node
+    discL:  Object.fromEntries(discNames.map(n=>[n,0])),  // left  edge of disc node
+    discR:  Object.fromEntries(discNames.map(n=>[n,0])),  // right edge of disc node
+    wiL:    Object.fromEntries(wiNames.map(n=>[n,0])),    // left  edge of wi node
+  };
 
-  /* Build ribbon data: Area→Disc links and Disc→WI links */
-  // Sort flows by disc for consistent color grouping
-  const sortedFlows = [...flows].sort((a, b) => a.disc.localeCompare(b.disc) || a.area.localeCompare(b.area) || a.wi.localeCompare(b.wi));
-
-  // Compute ribbon height per flow (proportional)
-  function ribbonH(node, flowTotal) {
-    return Math.max(2, Math.round((flowTotal / node.total) * node.h));
+  /* Proportional slice height within a node */
+  function sliceH(node, flowCount) {
+    return Math.max(2, Math.round((flowCount / node.total) * node.h));
   }
 
-  const links1 = []; // Area → Disc
-  const links2 = []; // Disc → WI
+  const ribbons1 = []; // Area → Disc
+  const ribbons2 = []; // Disc → WI
 
-  sortedFlows.forEach(f => {
-    const aN = areaMap[f.area];
-    const dN = discMap[f.disc];
-    const wN = wiMap[f.wi];
-    const color = discColor(f.disc);
+  flows.forEach(f => {
+    const aN = areaMap[f.area], dN = discMap[f.disc], wN = wiMap[f.wi];
+    const col = discColor(f.disc);
 
-    // Area → Disc ribbon
-    const h1a = ribbonH(aN, f.total);
-    const h1d = ribbonH(dN, f.total);
-    links1.push({
-      x0: COL_X[0] + NODE_W, y0: aN.y + areaUsed[f.area],
-      x1: COL_X[1],          y1: dN.y + discUsedLeft[f.disc],
-      h0: h1a, h1: h1d, color, flow: f, label: `${f.area} → ${f.disc}: ${f.total}`,
+    /* Slice heights — clamped so we never spill past the node bar */
+    const ha1 = Math.min(sliceH(aN, f.total), aN.h - cur.areaR[f.area]);
+    const hd1 = Math.min(sliceH(dN, f.total), dN.h - cur.discL[f.disc]);
+
+    ribbons1.push({
+      // source (right edge of area node)
+      x0: col0x + NODE_W, y0: aN.y + cur.areaR[f.area], h0: ha1,
+      // target (left edge of disc node)
+      x1: col1x,          y1: dN.y + cur.discL[f.disc],  h1: hd1,
+      color: col, flow: f,
     });
-    areaUsed[f.area]   += h1a;
-    discUsedLeft[f.disc] += h1d;
+    cur.areaR[f.area]  += ha1;
+    cur.discL[f.disc]  += hd1;
 
-    // Disc → WI ribbon
-    const h2d = ribbonH(dN, f.total);
-    const h2w = ribbonH(wN, f.total);
-    links2.push({
-      x0: COL_X[1] + NODE_W, y0: dN.y + discUsedRight[f.disc],
-      x1: COL_X[2],           y1: wN.y + wiUsed[f.wi],
-      h0: h2d, h1: h2w, color, flow: f, label: `${f.disc} → ${f.wi}: ${f.total}`,
+    const hd2 = Math.min(sliceH(dN, f.total), dN.h - cur.discR[f.disc]);
+    const hw2 = Math.min(sliceH(wN, f.total), wN.h - cur.wiL[f.wi]);
+
+    ribbons2.push({
+      x0: col1x + NODE_W, y0: dN.y + cur.discR[f.disc], h0: hd2,
+      x1: col2x,          y1: wN.y + cur.wiL[f.wi],      h1: hw2,
+      color: col, flow: f,
     });
-    discUsedRight[f.disc] += h2d;
-    wiUsed[f.wi]          += h2w;
+    cur.discR[f.disc] += hd2;
+    cur.wiL[f.wi]     += hw2;
   });
 
-  /* ── Render SVG ── */
+  /* ── 6. Render ── */
   container.innerHTML = '';
-  const OFFSET_Y = 36; // top margin for stage labels
 
+  /*
+   * Use a fixed internal viewBox (TOTAL_W × SVG_H) and let the SVG
+   * scale to the card width via width="100%".  This guarantees labels
+   * placed at known internal coordinates are always visible regardless
+   * of the actual pixel width of the container.
+   */
   const svg = d3.select(container)
     .append('svg')
-    .attr('width', W)
-    .attr('height', svgH + OFFSET_Y)
-    .attr('id', 'sankey-svg')
-    .style('display', 'block');
+    .attr('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`)
+    .attr('width', '100%')
+    .attr('height', null)              // let aspect-ratio determine height
+    .style('display', 'block')
+    .style('overflow', 'visible');     // stage labels may sit at y<0 if TOP_PAD shrinks
 
-  /* Stage labels */
-  const stageLabels = ['Area', 'Discipline', 'Work Instruction (WI)'];
-  COL_X.forEach((x, i) => {
+  /* Stage header labels */
+  const stageLabels = [
+    { x: col0x + NODE_W / 2, anchor: 'middle', text: 'AREA' },
+    { x: col1x + NODE_W / 2, anchor: 'middle', text: 'DISCIPLINE' },
+    { x: col2x + NODE_W / 2, anchor: 'middle', text: 'WORK INSTRUCTION (WI)' },
+  ];
+  stageLabels.forEach(sl => {
     svg.append('text')
-      .attr('x', x + NODE_W / 2)
-      .attr('y', 22)
-      .attr('text-anchor', i === 2 ? 'start' : 'middle')
-      .attr('font-family', "'DM Mono', monospace")
-      .attr('font-size', 10)
-      .attr('font-weight', '600')
-      .attr('letter-spacing', '0.08em')
-      .attr('text-transform', 'uppercase')
-      .attr('fill', subColor)
-      .text(stageLabels[i].toUpperCase());
+      .attr('x', sl.x).attr('y', 22)
+      .attr('text-anchor', sl.anchor)
+      .attr('font-family', "'DM Mono',monospace")
+      .attr('font-size', 9).attr('font-weight', 600)
+      .attr('letter-spacing', '0.09em')
+      .attr('fill', subClr)
+      .text(sl.text);
   });
 
-  const g = svg.append('g').attr('transform', `translate(0, ${OFFSET_Y})`);
-
-  /* Helper: cubic bezier ribbon path */
-  function ribbonPath(lk) {
-    const { x0, y0, x1, y1, h0, h1 } = lk;
+  /* Cubic-bezier ribbon path (closed quadrilateral) */
+  function ribbonPath(r) {
+    const { x0, y0, h0, x1, y1, h1 } = r;
     const mx = (x0 + x1) / 2;
-    return `M${x0},${y0}
-      C${mx},${y0} ${mx},${y1} ${x1},${y1}
-      L${x1},${y1 + h1}
-      C${mx},${y1 + h1} ${mx},${y0 + h0} ${x0},${y0 + h0}
-      Z`;
+    // top edge: source-top → target-top
+    // bottom edge: target-bottom → source-bottom  (reversed for closure)
+    return [
+      `M ${x0} ${y0}`,
+      `C ${mx} ${y0}, ${mx} ${y1}, ${x1} ${y1}`,      // top bezier
+      `L ${x1} ${y1 + h1}`,
+      `C ${mx} ${y1 + h1}, ${mx} ${y0 + h0}, ${x0} ${y0 + h0}`, // bottom bezier
+      'Z'
+    ].join(' ');
   }
 
-  /* Draw ribbons (Area→Disc) */
-  g.selectAll('.ribbon1')
-    .data(links1)
-    .join('path')
-    .attr('class', 'sankey-link')
-    .attr('d', ribbonPath)
-    .attr('fill', lk => lk.color)
-    .attr('opacity', 0.28)
-    .on('mousemove', function(event, lk) {
-      d3.select(this).attr('opacity', 0.55);
-      showTooltip(event, lk.flow, 'area→disc');
-    })
-    .on('mouseleave', function() {
-      d3.select(this).attr('opacity', 0.28);
-      hideTooltip();
-    });
+  /* Draw ribbon layers (behind nodes) */
+  const ribbonGroup = svg.append('g').attr('class', 'ribbon-layer');
 
-  /* Draw ribbons (Disc→WI) */
-  g.selectAll('.ribbon2')
-    .data(links2)
-    .join('path')
-    .attr('class', 'sankey-link')
-    .attr('d', ribbonPath)
-    .attr('fill', lk => lk.color)
-    .attr('opacity', 0.28)
-    .on('mousemove', function(event, lk) {
-      d3.select(this).attr('opacity', 0.55);
-      showTooltip(event, lk.flow, 'disc→wi');
-    })
-    .on('mouseleave', function() {
-      d3.select(this).attr('opacity', 0.28);
-      hideTooltip();
-    });
+  function drawRibbons(data, cls) {
+    ribbonGroup.selectAll('.' + cls)
+      .data(data)
+      .join('path')
+      .attr('class', cls)
+      .attr('d', ribbonPath)
+      .attr('fill', r => r.color)
+      .attr('stroke', r => r.color)
+      .attr('stroke-width', 0.5)
+      .attr('opacity', 0.25)
+      .attr('fill-opacity', 0.25)
+      .style('cursor', 'default')
+      .on('mouseenter', function(event, r) {
+        d3.select(this).attr('opacity', 0.6).attr('fill-opacity', 0.6);
+        showFlowTooltip(event, r.flow);
+      })
+      .on('mousemove', function(event, r) { positionTooltip(event); })
+      .on('mouseleave', function() {
+        d3.select(this).attr('opacity', 0.25).attr('fill-opacity', 0.25);
+        hideTooltip();
+      });
+  }
+  drawRibbons(ribbons1, 'sk-r1');
+  drawRibbons(ribbons2, 'sk-r2');
 
-  /* Draw Area nodes */
+  /* Node layer (on top of ribbons) */
+  const nodeGroup = svg.append('g').attr('class', 'node-layer');
+
+  /* Area nodes — label on the LEFT */
   areaNodes.forEach((n, i) => {
-    const ng = g.append('g').attr('class', 'sankey-node');
-    ng.append('rect')
-      .attr('x', COL_X[0]).attr('y', n.y).attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', PALETTE[i % PALETTE.length]).attr('opacity', 0.92)
-      .on('mousemove', (event) => showTooltipNode(event, n.name, 'Area', n.total))
+    const color = PALETTE[i % PALETTE.length];
+    const g = nodeGroup.append('g');
+
+    g.append('rect')
+      .attr('class', 'sankey-node-bar')
+      .attr('x', col0x).attr('y', n.y)
+      .attr('width', NODE_W).attr('height', n.h)
+      .attr('rx', 3).attr('fill', color).attr('opacity', 0.95)
+      .on('mouseenter', (ev) => showNodeTooltip(ev, n.name, 'Area', n.total, color))
+      .on('mousemove',  (ev) => positionTooltip(ev))
       .on('mouseleave', hideTooltip);
 
-    const label = n.name.length > 22 ? n.name.slice(0, 21) + '…' : n.name;
-    ng.append('text')
-      .attr('x', COL_X[0] - LABEL_PAD).attr('y', n.y + n.h / 2)
+    // Truncate label to fit LEFT_LABEL_W  (approx 7px/char at 11px font)
+    const maxChars = Math.floor((LEFT_LABEL_W - 12) / 6.8);
+    const label    = n.name.length > maxChars ? n.name.slice(0, maxChars - 1) + '…' : n.name;
+    const midY     = n.y + n.h / 2;
+
+    g.append('text')
+      .attr('x', col0x - 6).attr('y', midY - 5)
       .attr('text-anchor', 'end').attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Sans', sans-serif").attr('font-size', 11).attr('fill', textColor)
+      .attr('font-family', "'DM Sans',sans-serif")
+      .attr('font-size', 10).attr('fill', textClr)
       .text(label);
 
-    ng.append('text')
-      .attr('x', COL_X[0] - LABEL_PAD).attr('y', n.y + n.h / 2 + 13)
+    g.append('text')
+      .attr('x', col0x - 6).attr('y', midY + 7)
       .attr('text-anchor', 'end').attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Mono', monospace").attr('font-size', 9).attr('fill', subColor)
+      .attr('font-family', "'DM Mono',monospace")
+      .attr('font-size', 9).attr('fill', subClr)
       .text(n.total);
   });
 
-  /* Draw Disc nodes */
+  /* Discipline nodes — label INSIDE bar when tall enough, else above */
   discNodes.forEach(n => {
     const color = discColor(n.name);
-    const ng = g.append('g').attr('class', 'sankey-node');
-    ng.append('rect')
-      .attr('x', COL_X[1]).attr('y', n.y).attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', color).attr('opacity', 0.92)
-      .on('mousemove', (event) => showTooltipNode(event, n.name, 'Discipline', n.total))
+    const g = nodeGroup.append('g');
+
+    g.append('rect')
+      .attr('class', 'sankey-node-bar')
+      .attr('x', col1x).attr('y', n.y)
+      .attr('width', NODE_W).attr('height', n.h)
+      .attr('rx', 3).attr('fill', color).attr('opacity', 0.95)
+      .on('mouseenter', (ev) => showNodeTooltip(ev, n.name, 'Discipline', n.total, color))
+      .on('mousemove',  (ev) => positionTooltip(ev))
       .on('mouseleave', hideTooltip);
 
-    const label = n.name.length > 20 ? n.name.slice(0, 19) + '…' : n.name;
-    ng.append('text')
-      .attr('x', COL_X[1] + NODE_W / 2).attr('y', n.y + n.h / 2)
+    // Label floats between Area and Disc columns
+    const midY = n.y + n.h / 2;
+    const lx   = col0x + NODE_W + (col1x - col0x - NODE_W) / 2;
+    const maxLabelChars = Math.floor((col1x - col0x - NODE_W - 6) / 6.5);
+    const label = n.name.length > maxLabelChars ? n.name.slice(0, maxLabelChars - 1) + '…' : n.name;
+
+    g.append('text')
+      .attr('x', lx).attr('y', midY - 4)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Sans', sans-serif").attr('font-size', 10)
-      .attr('fill', '#fff').attr('pointer-events', 'none')
-      .text(n.h > 20 ? label : '');
-  });
-
-  /* Draw WI nodes */
-  wiNodes.forEach(n => {
-    const ng = g.append('g').attr('class', 'sankey-node');
-    // Determine color from discipline
-    const disc = flows.find(f => f.wi === n.name)?.disc || 'Other';
-    const color = discColor(disc);
-    ng.append('rect')
-      .attr('x', COL_X[2]).attr('y', n.y).attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', color).attr('opacity', 0.88)
-      .on('mousemove', (event) => showTooltipNode(event, n.name, 'Work Instruction', n.total))
-      .on('mouseleave', hideTooltip);
-
-    const label = n.name.length > 18 ? n.name.slice(0, 17) + '…' : n.name;
-    ng.append('text')
-      .attr('x', COL_X[2] + NODE_W + LABEL_PAD).attr('y', n.y + n.h / 2)
-      .attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Mono', monospace").attr('font-size', 10).attr('fill', textColor)
+      .attr('font-family', "'DM Sans',sans-serif")
+      .attr('font-size', 9).attr('fill', color)
+      .attr('font-weight', 600)
       .text(label);
 
-    ng.append('text')
-      .attr('x', COL_X[2] + NODE_W + LABEL_PAD).attr('y', n.y + n.h / 2 + 12)
-      .attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Mono', monospace").attr('font-size', 9).attr('fill', subColor)
+    g.append('text')
+      .attr('x', lx).attr('y', midY + 8)
+      .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
+      .attr('font-family', "'DM Mono',monospace")
+      .attr('font-size', 8).attr('fill', subClr)
       .text(n.total);
   });
 
-  /* ── Legend ── */
-  const legendDiscs = [...new Set(flows.map(f => f.disc))].sort();
-  document.getElementById('sankey-legend').innerHTML = legendDiscs.map(d =>
-    `<div class="sankey-legend-item"><div class="sankey-legend-dot" style="background:${discColor(d)}"></div>${escHtml(d)}</div>`
+  /* WI nodes — label on the RIGHT */
+  wiNodes.forEach(n => {
+    const disc  = flows.find(f => f.wi === n.name)?.disc || 'Other';
+    const color = discColor(disc);
+    const g = nodeGroup.append('g');
+
+    g.append('rect')
+      .attr('class', 'sankey-node-bar')
+      .attr('x', col2x).attr('y', n.y)
+      .attr('width', NODE_W).attr('height', n.h)
+      .attr('rx', 3).attr('fill', color).attr('opacity', 0.9)
+      .on('mouseenter', (ev) => showNodeTooltip(ev, n.name, 'Work Instruction', n.total, color))
+      .on('mousemove',  (ev) => positionTooltip(ev))
+      .on('mouseleave', hideTooltip);
+
+    const maxChars = Math.floor((RIGHT_LABEL_W - 10) / 6.5);
+    const label    = n.name.length > maxChars ? n.name.slice(0, maxChars - 1) + '…' : n.name;
+    const midY     = n.y + n.h / 2;
+    const lx       = col2x + NODE_W + 6;
+
+    g.append('text')
+      .attr('x', lx).attr('y', midY - 5)
+      .attr('dominant-baseline', 'central')
+      .attr('font-family', "'DM Mono',monospace")
+      .attr('font-size', 10).attr('fill', textClr)
+      .text(label);
+
+    g.append('text')
+      .attr('x', lx).attr('y', midY + 7)
+      .attr('dominant-baseline', 'central')
+      .attr('font-family', "'DM Mono',monospace")
+      .attr('font-size', 9).attr('fill', subClr)
+      .text(n.total);
+  });
+
+  /* ── 7. Legend ── */
+  const legendDiscs = [...new Set(flows.map(f=>f.disc))].sort();
+  document.getElementById('sankey-legend').innerHTML = legendDiscs.map(disc =>
+    `<div class="sankey-legend-item">
+       <div class="sankey-legend-dot" style="background:${discColor(disc)}"></div>
+       ${escHtml(disc)}
+     </div>`
   ).join('');
 
-  /* ── Tooltip helpers ── */
-  function showTooltip(event, flow, stage) {
+  /* ── 8. Tooltip helpers ── */
+  let _ttListener = null;
+
+  function showFlowTooltip(event, flow) {
     tooltip.style.display = 'block';
     tooltip.innerHTML = `
       <strong>${escHtml(flow.wi)}</strong>
       <span style="color:var(--text-sub)">Area: ${escHtml(flow.area)}</span><br>
-      <span style="color:var(--text-sub)">Discipline: <span style="color:${discColor(flow.disc)};font-weight:600">${escHtml(flow.disc)}</span></span><br>
-      <span style="margin-top:6px;display:block;font-family:var(--font-mono)">Resources: <strong>${flow.total}</strong> &nbsp;·&nbsp; MP: ${flow.mp} &nbsp;·&nbsp; EQ: ${flow.eq} &nbsp;·&nbsp; NF: ${flow.nf}</span>
-    `;
+      <span style="color:var(--text-sub)">Discipline: </span><span style="color:${discColor(flow.disc)};font-weight:600">${escHtml(flow.disc)}</span><br>
+      <span style="display:block;margin-top:5px;font-family:var(--font-mono)">
+        Total <strong>${flow.total}</strong> &nbsp;·&nbsp; MP ${flow.mp} &nbsp;·&nbsp; EQ ${flow.eq} &nbsp;·&nbsp; NF ${flow.nf}
+      </span>`;
     positionTooltip(event);
   }
 
-  function showTooltipNode(event, name, stage, total) {
+  function showNodeTooltip(event, name, stage, total, color) {
     tooltip.style.display = 'block';
-    tooltip.innerHTML = `<strong>${escHtml(name)}</strong><span style="color:var(--text-sub)">${stage}</span><br><span style="font-family:var(--font-mono)">Total resources: <strong>${total}</strong></span>`;
+    tooltip.innerHTML = `
+      <strong style="color:${color}">${escHtml(name)}</strong>
+      <span style="color:var(--text-sub);font-size:0.72rem">${stage}</span><br>
+      <span style="font-family:var(--font-mono)">Resources: <strong>${total}</strong></span>`;
     positionTooltip(event);
   }
 
   function positionTooltip(event) {
     const vw = window.innerWidth;
-    let left = event.clientX + 14;
-    if (left + 250 > vw) left = event.clientX - 264;
-    tooltip.style.left = left + 'px';
-    tooltip.style.top  = (event.clientY - 20) + 'px';
+    let lx = event.clientX + 16;
+    if (lx + 270 > vw) lx = event.clientX - 275;
+    tooltip.style.left = lx + 'px';
+    tooltip.style.top  = (event.clientY - 16) + 'px';
   }
 
-  function hideTooltip() {
-    tooltip.style.display = 'none';
-  }
+  function hideTooltip() { tooltip.style.display = 'none'; }
 
-  document.addEventListener('mousemove', (e) => {
-    if (tooltip.style.display !== 'none') {
-      positionTooltip(e);
-    }
-  });
+  // Clean up any old global mousemove listener before adding a new one
+  if (window._skTooltipListener) {
+    document.removeEventListener('mousemove', window._skTooltipListener);
+  }
+  window._skTooltipListener = (e) => {
+    if (tooltip.style.display !== 'none') positionTooltip(e);
+  };
+  document.addEventListener('mousemove', window._skTooltipListener);
 }
 
 /* ══ SANKEY EXCEL EXPORT ══ */
