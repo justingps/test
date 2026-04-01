@@ -290,20 +290,28 @@ tr.saving td{opacity:0.55}
 .c-toast.success{border-color:var(--accent3)}.c-toast.error{border-color:var(--danger)}.c-toast.info{border-color:var(--accent2)}
 @keyframes slideInRight{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-/* ══ SANKEY ══ */
-.sankey-outer{width:100%;overflow-x:auto;overflow-y:visible}
-.sankey-svg-wrap{display:block;min-width:0}
-.sankey-ribbon{transition:opacity 0.18s;cursor:default}
-.sankey-node-bar{cursor:pointer;transition:opacity 0.18s}
-.sankey-node-bar:hover{opacity:0.78 !important}
-.sankey-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 14px;margin-bottom:16px;transition:background var(--transition);overflow:hidden}
-.sankey-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
-.sankey-legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub)}
-.sankey-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-.sankey-tooltip{position:fixed;z-index:500;background:var(--surface);border:1px solid var(--border-br);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.78rem;color:var(--text);box-shadow:var(--shadow);pointer-events:none;display:none;max-width:260px;line-height:1.55}
-.sankey-tooltip strong{color:var(--accent);display:block;margin-bottom:3px;font-family:var(--font-display)}
-.sankey-no-data{text-align:center;padding:80px 20px;color:var(--text-dim);font-size:0.84rem;font-family:var(--font-mono)}
+/* ══ SANKEY — IMPROVED ══ */
+.sankey-outer{width:100%;overflow:visible;position:relative}
+.sankey-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 14px;margin-bottom:16px;transition:background var(--transition)}
+.sankey-card-header{margin-bottom:16px}
+.sankey-card-title{font-family:var(--font-display);font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.sankey-card-sub{font-family:var(--font-mono);font-size:0.65rem;color:var(--text-sub)}
+.sankey-svg-container{width:100%;overflow:hidden;border-radius:var(--radius-sm)}
+.sankey-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.sankey-legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.67rem;color:var(--text-sub);padding:3px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;transition:all 0.15s}
+.sankey-legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.sankey-tooltip{position:fixed;z-index:500;background:var(--surface);border:1px solid var(--border-br);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.78rem;color:var(--text);box-shadow:var(--shadow);pointer-events:none;display:none;max-width:240px;line-height:1.55;font-family:var(--font-body)}
+.sankey-tooltip strong{color:var(--accent);display:block;margin-bottom:3px;font-family:var(--font-display);font-size:0.85rem}
+.sankey-tooltip .sk-tt-disc{font-weight:600;font-family:var(--font-mono);font-size:0.72rem}
+.sankey-tooltip .sk-tt-stats{display:flex;gap:10px;margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.sankey-tooltip .sk-tt-stat{text-align:center}
+.sankey-tooltip .sk-tt-stat-val{font-family:var(--font-mono);font-size:0.85rem;font-weight:600;color:var(--text);display:block}
+.sankey-tooltip .sk-tt-stat-lbl{font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em}
+.sankey-no-data{text-align:center;padding:80px 20px;color:var(--text-dim);font-size:0.82rem;font-family:var(--font-mono)}
 .sankey-no-data i{display:block;font-size:2rem;margin-bottom:12px;opacity:0.4}
+/* Active filter pill on sankey legend */
+.sankey-active-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:0}
+.sankey-filter-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(224,123,57,0.08);border:1px solid rgba(224,123,57,0.2);border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;color:var(--accent)}
 
 /* ══ MISC ══ */
 .prog-cell{max-width:280px;font-size:0.78rem;line-height:1.55;white-space:pre-line}
@@ -357,7 +365,7 @@ tr.saving td{opacity:0.55}
     <button class="btn-login" id="btn-login">Sign In</button>
     <div class="login-error" id="login-err"><i class="fas fa-circle-exclamation"></i> Invalid username or password</div>
     <div class="login-footer">Gulf Petrochemical Services LLC. © 2025 — All Rights Reserved</div>
-    <div class="login-version">v3.5.0</div>
+    <div class="login-version">v3.5.1</div>
   </div>
 </div>
 
@@ -522,7 +530,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- ══ SANKEY / ALLUVIAL FLOW DIAGRAM ══ -->
+    <!-- ══ SANKEY / FLOW DIAGRAM ══ -->
     <div id="tab-sankey" class="tab-panel">
       <div class="page-header">
         <h1 class="page-title">Resource <span>Flow Diagram</span></h1>
@@ -530,7 +538,7 @@ tr.saving td{opacity:0.55}
       </div>
       <div class="filters">
         <div class="filter-group"><span class="filter-label"><i class="far fa-calendar"></i> Date</span><input type="date" id="sk-date" class="f-input" style="max-width:175px" onchange="renderSankey()"></div>
-        <div class="filter-group"><span class="filter-label"><i class="fas fa-boxes-stacked"></i> Category</span>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-boxes-stacked"></i> Resource Type</span>
           <select id="sk-cat" class="f-input" onchange="renderSankey()">
             <option value="all">All Resources</option>
             <option value="manpower">Manpower</option>
@@ -538,13 +546,32 @@ tr.saving td{opacity:0.55}
             <option value="unclassified">Unclassified</option>
           </select>
         </div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-map-pin"></i> Area</span>
+          <select id="sk-area" class="f-input" onchange="renderSankey()">
+            <option value="all">All Areas</option>
+            <option>Safha (Block-9)</option><option>Block-62</option><option>Other</option>
+            <option>Wadi Latham (Block-9)</option><option>Infrastructure Project</option>
+            <option>Khamila (Bock-27)</option><option>FRT Project</option><option>Power Project</option>
+          </select>
+        </div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-gears"></i> Discipline</span>
+          <select id="sk-disc" class="f-input" onchange="renderSankey()">
+            <option value="all">All Disciplines</option>
+            <option>Piping &amp; Mechanical</option><option>Electrical</option>
+            <option>Civil</option><option>Instrumentation</option><option>OHL</option>
+            <option value="__other__">Other</option>
+          </select>
+        </div>
       </div>
       <div id="sk-stats-bar"></div>
       <div id="sk-content">
         <div class="sankey-card">
-          <div class="chart-card-title">Area → Discipline → Work Instruction</div>
-          <div class="chart-card-sub">Flow width = crew / resource count. Hover nodes and ribbons for details.</div>
-          <div class="sankey-outer"><div id="sankey-container"></div></div>
+          <div class="sankey-card-header">
+            <div class="sankey-card-title">Area → Discipline → Work Instruction</div>
+            <div class="sankey-card-sub">Flow width proportional to crew / resource count · Hover nodes and ribbons for details</div>
+          </div>
+          <div id="sankey-active-filters" class="sankey-active-filters"></div>
+          <div class="sankey-svg-container" id="sankey-container"></div>
           <div class="sankey-legend" id="sankey-legend"></div>
         </div>
         <div class="section-label">Flow Detail Table</div>
@@ -595,8 +622,8 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /content -->
+</div><!-- /dashboard -->
 
 <div class="sankey-tooltip" id="sk-tooltip"></div>
 <button id="back-to-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
@@ -641,7 +668,6 @@ const POB_STATUSES = ['POB','POB-A','POB-B','POB-C','POB-D'];
 const KNOWN_DISCIPLINES = ['Piping & Mechanical','Electrical','Civil','Instrumentation','OHL'];
 const PALETTE = ['#e07b39','#3a7bd5','#2eaa7e','#d4922b','#9b5de5','#d94f4f','#17b8c4','#a3b18a'];
 
-/* Discipline color map — consistent across all views */
 const DISC_COLORS = {
   'Piping & Mechanical': '#e07b39',
   'Electrical':          '#3a7bd5',
@@ -650,9 +676,7 @@ const DISC_COLORS = {
   'OHL':                 '#9b5de5',
   'Other':               '#8b96ab',
 };
-function discColor(disc) {
-  return DISC_COLORS[disc] || DISC_COLORS['Other'];
-}
+function discColor(disc) { return DISC_COLORS[disc] || DISC_COLORS['Other']; }
 
 const palA = (i,a=0.82) => hexA(PALETTE[i%PALETTE.length],a);
 function hexA(hex,a){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
@@ -724,6 +748,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (dataReady) triggerTabRender(btn.dataset.tab);
     });
   });
+
+  // Responsive sankey on resize
+  let _skResizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(_skResizeTimer);
+    _skResizeTimer = setTimeout(() => {
+      const sankeyTab = document.getElementById('tab-sankey');
+      if (sankeyTab && sankeyTab.classList.contains('active') && dataReady) renderSankey();
+    }, 180);
+  });
+
   fetchData();
   campLoadData();
 });
@@ -983,9 +1018,7 @@ function renderReports(){
   cards.innerHTML=html;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   LOGO FETCH HELPER
-══════════════════════════════════════════════════════════════ */
+/* ══ LOGO FETCH HELPER ══ */
 let _cachedLogoB64 = null;
 async function fetchLogoBase64() {
   if (_cachedLogoB64) return _cachedLogoB64;
@@ -997,51 +1030,33 @@ async function fetchLogoBase64() {
       reader.onloadend = () => { _cachedLogoB64 = reader.result; resolve(_cachedLogoB64); };
       reader.readAsDataURL(blob);
     });
-  } catch (e) {
-    console.warn('Logo fetch failed:', e);
-    return null;
-  }
+  } catch (e) { console.warn('Logo fetch failed:', e); return null; }
 }
 
 /* ══ PDF GENERATION ══ */
 async function downloadReportsPDF() {
   if (!lastRepGroups.length) { alert('No reports to export.'); return; }
-  const overlay     = document.getElementById('pdf-overlay');
-  const progressTxt = document.getElementById('pdf-progress-text');
+  const overlay=document.getElementById('pdf-overlay'),progressTxt=document.getElementById('pdf-progress-text');
   overlay.classList.add('visible');
   try {
-    progressTxt.textContent = 'Loading company logo…';
-    const logoB64 = await fetchLogoBase64();
-    const { jsPDF } = window.jspdf;
-    const pdf   = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const M     = 36;
-    const inner = pageW - M * 2;
-    const dateVal = getDate('r-date');
-    const dateStr = dateVal ? fmtDisplay(dateVal) : '—';
-    const genDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-    const C = { accent:[224,123,57],text:[26,34,54],sub:[90,104,128],dim:[160,172,190],surface:[244,246,249],surface2:[235,238,243],border:[210,215,224],white:[255,255,255],green:[46,170,126],blue:[58,123,213],line:[224,226,232] };
-    const setFill=c=>pdf.setFillColor(...c);const setDraw=c=>pdf.setDrawColor(...c);const setTxtClr=c=>pdf.setTextColor(...c);const bold=()=>pdf.setFont('helvetica','bold');const normal=()=>pdf.setFont('helvetica','normal');
+    progressTxt.textContent='Loading company logo…';
+    const logoB64=await fetchLogoBase64();
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
+    const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight();
+    const M=36,inner=pageW-M*2;
+    const dateVal=getDate('r-date'),dateStr=dateVal?fmtDisplay(dateVal):'—';
+    const genDate=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const C={accent:[224,123,57],text:[26,34,54],sub:[90,104,128],dim:[160,172,190],surface:[244,246,249],surface2:[235,238,243],border:[210,215,224],white:[255,255,255],green:[46,170,126],blue:[58,123,213],line:[224,226,232]};
+    const setFill=c=>pdf.setFillColor(...c),setDraw=c=>pdf.setDrawColor(...c),setTxtClr=c=>pdf.setTextColor(...c),bold=()=>pdf.setFont('helvetica','bold'),normal=()=>pdf.setFont('helvetica','normal');
     const LOGO_SIZE=36;
-    function drawPageHeader(reportNo,wi,isContinued){
-      const headerH=72;setFill(C.surface);pdf.rect(0,0,pageW,headerH,'F');setFill(C.accent);pdf.rect(0,0,4,headerH,'F');
-      const logoX=M+4,logoY=(headerH-LOGO_SIZE)/2;
-      if(logoB64){setFill([255,255,255]);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');const pad=3;pdf.addImage(logoB64,'PNG',logoX+pad,logoY+pad,LOGO_SIZE-pad*2,LOGO_SIZE-pad*2);}
-      else{setFill(C.surface2);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');bold();pdf.setFontSize(9);setTxtClr(C.accent);pdf.text('GPS',logoX+LOGO_SIZE/2,logoY+LOGO_SIZE/2+3,{align:'center'});}
-      const textX=logoX+LOGO_SIZE+10;bold();pdf.setFontSize(13);setTxtClr(C.text);pdf.text('Gulf Petrochemical Services',textX,28);normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text('OXY OMAN · CONTRACT #24000110790',textX,40);
-      if(isContinued){pdf.setFontSize(7);setTxtClr(C.dim);pdf.text(`Work Report #${reportNo}  (continued)`,textX,52);}
-      const badgeLabel=`Work Report #${reportNo}`;bold();pdf.setFontSize(9);setTxtClr(C.white);const bw=pdf.getTextWidth(badgeLabel)+22;const bx=pageW-M-bw;setFill(C.accent);pdf.roundedRect(bx,10,bw,19,3,3,'F');pdf.text(badgeLabel,bx+bw/2,23,{align:'center'});
-      normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text(`WI: ${wi}`,pageW-M,40,{align:'right'});pdf.text(`Date: ${dateStr}`,pageW-M,51,{align:'right'});
-      setDraw(C.border);pdf.setLineWidth(0.5);pdf.line(0,headerH,pageW,headerH);
-      return headerH+10;
-    }
+    function drawPageHeader(reportNo,wi,isContinued){const headerH=72;setFill(C.surface);pdf.rect(0,0,pageW,headerH,'F');setFill(C.accent);pdf.rect(0,0,4,headerH,'F');const logoX=M+4,logoY=(headerH-LOGO_SIZE)/2;if(logoB64){setFill([255,255,255]);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');const pad=3;pdf.addImage(logoB64,'PNG',logoX+pad,logoY+pad,LOGO_SIZE-pad*2,LOGO_SIZE-pad*2);}else{setFill(C.surface2);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');bold();pdf.setFontSize(9);setTxtClr(C.accent);pdf.text('GPS',logoX+LOGO_SIZE/2,logoY+LOGO_SIZE/2+3,{align:'center'});}const textX=logoX+LOGO_SIZE+10;bold();pdf.setFontSize(13);setTxtClr(C.text);pdf.text('Gulf Petrochemical Services',textX,28);normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text('OXY OMAN · CONTRACT #24000110790',textX,40);if(isContinued){pdf.setFontSize(7);setTxtClr(C.dim);pdf.text(`Work Report #${reportNo}  (continued)`,textX,52);}const badgeLabel=`Work Report #${reportNo}`;bold();pdf.setFontSize(9);setTxtClr(C.white);const bw=pdf.getTextWidth(badgeLabel)+22,bx=pageW-M-bw;setFill(C.accent);pdf.roundedRect(bx,10,bw,19,3,3,'F');pdf.text(badgeLabel,bx+bw/2,23,{align:'center'});normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text(`WI: ${wi}`,pageW-M,40,{align:'right'});pdf.text(`Date: ${dateStr}`,pageW-M,51,{align:'right'});setDraw(C.border);pdf.setLineWidth(0.5);pdf.line(0,headerH,pageW,headerH);return headerH+10;}
     function checkPage(y,needed,reportNo,wi){const bottomGuard=pageH-24;if(y+needed>bottomGuard){pdf.addPage();drawPageFooter();y=drawPageHeader(reportNo,wi,true);}return y;}
     function sectionBar(y,title){setFill(C.surface2);pdf.rect(M,y,inner,18,'F');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+18);pdf.setLineWidth(0.5);bold();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(title.toUpperCase(),M+8,y+12);normal();return y+18;}
-    function tableRow(y,cells,widths,rowH,isHeader,isAlt){if(isHeader){setFill(C.surface2);}else if(isAlt){setFill([248,250,253]);}else{setFill(C.white);}pdf.rect(M,y,inner,rowH,'F');setDraw(C.line);pdf.setLineWidth(0.3);pdf.line(M,y+rowH,M+inner,y+rowH);let x=M;cells.forEach((cell,ci)=>{const w=widths[ci];if(isHeader){bold();pdf.setFontSize(6.5);setTxtClr(C.sub);}else{normal();pdf.setFontSize(7.5);setTxtClr(C.text);}const lines=pdf.splitTextToSize(String(cell||'—'),w-8);pdf.text(lines[0],x+4,y+rowH/2+(isHeader?2:2.5));x+=w;});return y+rowH;}
-    function metaGrid(y,items){const cols=3;const cellW=inner/cols;const cellH=32;const rows=Math.ceil(items.length/cols);const totalH=rows*cellH;for(let ri=0;ri<rows;ri++){for(let ci=0;ci<cols;ci++){const idx=ri*cols+ci;if(idx>=items.length)continue;const cx=M+ci*cellW;const cy=y+ri*cellH;setFill(ci%2===0?C.surface:C.surface2);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(cx,cy,cellW,cellH,'FD');bold();pdf.setFontSize(6);setTxtClr(C.dim);pdf.text(String(items[idx][0]).toUpperCase(),cx+5,cy+10);normal();pdf.setFontSize(8);setTxtClr(C.text);const val=pdf.splitTextToSize(String(items[idx][1]||'—'),cellW-10);pdf.text(val[0],cx+5,cy+22);}}return y+totalH;}
-    function descBox(y,text){if(!text)return y;normal();pdf.setFontSize(8);setTxtClr(C.sub);const lines=pdf.splitTextToSize(text,inner-16);const boxH=lines.length*11+14;setFill([250,251,254]);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(M,y,inner,boxH,'FD');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+boxH);pdf.setLineWidth(0.3);pdf.text(lines,M+10,y+11);return y+boxH+6;}
-    function signatureSection(y){const sigBoxH=88;y=sectionBar(y,'Approval & Signatures');setDraw(C.border);pdf.setLineWidth(0.5);pdf.rect(M,y,inner,sigBoxH,'S');const colW=inner/3;const roles=[{title:'Site Engineer',color:C.green},{title:'Site Manager',color:C.blue},{title:'Client Representative',color:C.accent}];roles.forEach((role,ci)=>{const cx=M+ci*colW;if(ci>0){setDraw(C.border);pdf.setLineWidth(0.4);pdf.line(cx,y,cx,y+sigBoxH);}pdf.setFillColor(...role.color);pdf.rect(cx,y,colW,14,'F');bold();pdf.setFontSize(7.5);setTxtClr(C.white);pdf.text(role.title,cx+colW/2,y+10,{align:'center'});const fieldY=y+22;const fieldGap=18;const fields=['Name:','Designation:','Signature:','Date:'];fields.forEach((lbl,fi)=>{normal();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(lbl,cx+6,fieldY+fi*fieldGap);setDraw(C.line);pdf.setLineWidth(0.4);pdf.line(cx+38,fieldY+fi*fieldGap+1,cx+colW-6,fieldY+fi*fieldGap+1);});});return y+sigBoxH+10;}
+    function tableRow(y,cells,widths,rowH,isHeader,isAlt){if(isHeader)setFill(C.surface2);else if(isAlt)setFill([248,250,253]);else setFill(C.white);pdf.rect(M,y,inner,rowH,'F');setDraw(C.line);pdf.setLineWidth(0.3);pdf.line(M,y+rowH,M+inner,y+rowH);let x=M;cells.forEach((cell,ci)=>{const w=widths[ci];if(isHeader){bold();pdf.setFontSize(6.5);setTxtClr(C.sub);}else{normal();pdf.setFontSize(7.5);setTxtClr(C.text);}const lines=pdf.splitTextToSize(String(cell||'—'),w-8);pdf.text(lines[0],x+4,y+rowH/2+(isHeader?2:2.5));x+=w;});return y+rowH;}
+    function metaGrid(y,items){const cols=3,cellW=inner/cols,cellH=32,rows=Math.ceil(items.length/cols),totalH=rows*cellH;for(let ri=0;ri<rows;ri++){for(let ci=0;ci<cols;ci++){const idx=ri*cols+ci;if(idx>=items.length)continue;const cx=M+ci*cellW,cy=y+ri*cellH;setFill(ci%2===0?C.surface:C.surface2);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(cx,cy,cellW,cellH,'FD');bold();pdf.setFontSize(6);setTxtClr(C.dim);pdf.text(String(items[idx][0]).toUpperCase(),cx+5,cy+10);normal();pdf.setFontSize(8);setTxtClr(C.text);const val=pdf.splitTextToSize(String(items[idx][1]||'—'),cellW-10);pdf.text(val[0],cx+5,cy+22);}}return y+totalH;}
+    function descBox(y,text){if(!text)return y;normal();pdf.setFontSize(8);setTxtClr(C.sub);const lines=pdf.splitTextToSize(text,inner-16),boxH=lines.length*11+14;setFill([250,251,254]);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(M,y,inner,boxH,'FD');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+boxH);pdf.setLineWidth(0.3);pdf.text(lines,M+10,y+11);return y+boxH+6;}
+    function signatureSection(y){const sigBoxH=88;y=sectionBar(y,'Approval & Signatures');setDraw(C.border);pdf.setLineWidth(0.5);pdf.rect(M,y,inner,sigBoxH,'S');const colW=inner/3,roles=[{title:'Site Engineer',color:C.green},{title:'Site Manager',color:C.blue},{title:'Client Representative',color:C.accent}];roles.forEach((role,ci)=>{const cx=M+ci*colW;if(ci>0){setDraw(C.border);pdf.setLineWidth(0.4);pdf.line(cx,y,cx,y+sigBoxH);}pdf.setFillColor(...role.color);pdf.rect(cx,y,colW,14,'F');bold();pdf.setFontSize(7.5);setTxtClr(C.white);pdf.text(role.title,cx+colW/2,y+10,{align:'center'});const fieldY=y+22,fieldGap=18,fields=['Name:','Designation:','Signature:','Date:'];fields.forEach((lbl,fi)=>{normal();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(lbl,cx+6,fieldY+fi*fieldGap);setDraw(C.line);pdf.setLineWidth(0.4);pdf.line(cx+38,fieldY+fi*fieldGap+1,cx+colW-6,fieldY+fi*fieldGap+1);});});return y+sigBoxH+10;}
     function drawPageFooter(pageLabel){const pNum=pdf.internal.getCurrentPageInfo().pageNumber;setFill(C.accent);pdf.rect(0,pageH-5,pageW,5,'F');setDraw(C.border);pdf.setLineWidth(0.3);pdf.line(0,pageH-18,pageW,pageH-18);normal();pdf.setFontSize(6.5);setTxtClr(C.dim);pdf.text(`Gulf Petrochemical Services LLC · Generated ${genDate}${pageLabel?' · '+pageLabel:''}`,pageW/2,pageH-8,{align:'center'});}
     const totalReports=lastRepGroups.length;
     for(let i=0;i<totalReports;i++){
@@ -1049,29 +1064,26 @@ async function downloadReportsPDF() {
       const reportStartPage=pdf.internal.getCurrentPageInfo().pageNumber;
       let y=drawPageHeader(i+1,g.wi,false);
       if(g.desc){y=checkPage(y,40,i+1,g.wi);y=sectionBar(y,'Work Description');y=descBox(y,g.desc);y+=4;}
-      const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length;const eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;
+      const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;
       const metaItems=[['Foreman ID',g.id],['Foreman Name',g.crewLead],['Area / Block',g.area],['Discipline',g.discipline],['Permit No.',g.permitNo],['Work Hours',`${g.timeIn} → ${g.timeOut}`],['Manpower',String(mp)],['Equipment',String(eq)],['Crew Size',String(g.resources.size)]];
       y=checkPage(y,20,i+1,g.wi);y=sectionBar(y,'Report Details');y=checkPage(y,Math.ceil(metaItems.length/3)*32+4,i+1,g.wi);y=metaGrid(y,metaItems);y+=10;
       const progressLines=g.progress.replace(/"/g,'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const idx=l.lastIndexOf('=');return idx!==-1?[l.slice(0,idx).trim(),l.slice(idx+1).trim()]:[l,'—'];});
       y=checkPage(y,36,i+1,g.wi);y=sectionBar(y,`Progress Details (${progressLines.length} item${progressLines.length!==1?'s':''})`);
       const progWidths=[30,inner-80,50];y=tableRow(y,['#','Description','Quantity'],progWidths,16,true);
-      if(progressLines.length){progressLines.forEach((pl,j)=>{y=checkPage(y,16,i+1,g.wi);y=tableRow(y,[j+1,pl[0],pl[1]],progWidths,16,false,j%2===1);});}
-      else{y=checkPage(y,16,i+1,g.wi);normal();pdf.setFontSize(7.5);setTxtClr(C.dim);pdf.text('No progress data recorded.',M+8,y+11);y+=16;}
+      if(progressLines.length){progressLines.forEach((pl,j)=>{y=checkPage(y,16,i+1,g.wi);y=tableRow(y,[j+1,pl[0],pl[1]],progWidths,16,false,j%2===1);});}else{y=checkPage(y,16,i+1,g.wi);normal();pdf.setFontSize(7.5);setTxtClr(C.dim);pdf.text('No progress data recorded.',M+8,y+11);y+=16;}
       y+=10;
       y=checkPage(y,36,i+1,g.wi);y=sectionBar(y,`Resources (${g.resourceRows.length} record${g.resourceRows.length!==1?'s':''})`);
       const resColW=[30,80,inner-310,75,60,65];y=tableRow(y,['#','Resource ID','Designation','Type','Time-In','Time-Out'],resColW,16,true);
-      if(g.resourceRows.length){g.resourceRows.forEach((r,j)=>{y=checkPage(y,16,i+1,g.wi);const typeLabel=r.type.toLowerCase()==='manpower'?'Manpower':r.type.toLowerCase()==='equipment'?'Equipment':r.type||'—';y=tableRow(y,[j+1,r.id,r.desig,typeLabel,r.tin,r.tout],resColW,16,false,j%2===1);});}
-      else{normal();pdf.setFontSize(7.5);setTxtClr(C.dim);pdf.text('No resource records found.',M+8,y+11);y+=16;}
+      if(g.resourceRows.length){g.resourceRows.forEach((r,j)=>{y=checkPage(y,16,i+1,g.wi);const typeLabel=r.type.toLowerCase()==='manpower'?'Manpower':r.type.toLowerCase()==='equipment'?'Equipment':r.type||'—';y=tableRow(y,[j+1,r.id,r.desig,typeLabel,r.tin,r.tout],resColW,16,false,j%2===1);});}else{normal();pdf.setFontSize(7.5);setTxtClr(C.dim);pdf.text('No resource records found.',M+8,y+11);y+=16;}
       y+=12;
       const SIG_NEEDED=18+88+10+30;
       if(y+SIG_NEEDED>pageH-24){pdf.addPage();drawPageFooter();y=drawPageHeader(i+1,g.wi,true);}
       y=signatureSection(y);
-      const reportEndPage=pdf.internal.getCurrentPageInfo().pageNumber;const reportPageCount=reportEndPage-reportStartPage+1;
+      const reportEndPage=pdf.internal.getCurrentPageInfo().pageNumber,reportPageCount=reportEndPage-reportStartPage+1;
       for(let p=reportStartPage;p<=reportEndPage;p++){pdf.setPage(p);const pageLabel=reportPageCount>1?`Report ${i+1} of ${totalReports} · Page ${p-reportStartPage+1} of ${reportPageCount}`:`Report ${i+1} of ${totalReports}`;drawPageFooter(pageLabel);}
       pdf.setPage(reportEndPage);
     }
-    const filename=`GPS_DailyReports_${dateVal?toKey(dateVal):'export'}.pdf`;
-    pdf.save(filename);
+    pdf.save(`GPS_DailyReports_${dateVal?toKey(dateVal):'export'}.pdf`);
   } catch(err){console.error(err);alert('PDF generation failed: '+err.message);}
   finally{overlay.classList.remove('visible');}
 }
@@ -1084,12 +1096,7 @@ function renderRepSum(){
   const rows=groupByProjectForDate(toKey(d),area,disc);
   lastRepSumRows=rows;
   const uF=new Set(rows.map(r=>r.id)).size,uA=new Set(rows.map(r=>r.area)).size,tC=rows.reduce((s,r)=>s+r.resources.size,0);
-  document.getElementById('rs-stats-bar').innerHTML = buildStatsBar([{label:'', pills:[
-    {label:'Work Groups', value:rows.length, icon:'fa-clipboard-list',   color:'sp-orange'},
-    {label:'Foremen',     value:uF,          icon:'fa-hard-hat',          color:'sp-blue'},
-    {label:'Areas',       value:uA,          icon:'fa-map-location-dot',  color:'sp-teal'},
-    {label:'Total Crew',  value:tC,          icon:'fa-people-group',      color:'sp-green'},
-  ]}]);
+  document.getElementById('rs-stats-bar').innerHTML=buildStatsBar([{label:'',pills:[{label:'Work Groups',value:rows.length,icon:'fa-clipboard-list',color:'sp-orange'},{label:'Foremen',value:uF,icon:'fa-hard-hat',color:'sp-blue'},{label:'Areas',value:uA,icon:'fa-map-location-dot',color:'sp-teal'},{label:'Total Crew',value:tC,icon:'fa-people-group',color:'sp-green'}]}]);
   document.getElementById('rs-badge').textContent=`${rows.length} entries`;
   if(!rows.length){document.getElementById('rs-body').innerHTML='<tr><td colspan="9" class="no-data">No records found.</td></tr>';return;}
   document.getElementById('rs-body').innerHTML=rows.map((g,i)=>`<tr><td class="mono">${i+1}</td><td>${escHtml(g.crewLead)}</td><td class="mono">${escHtml(g.id)}</td><td>${escHtml(g.area)}</td><td>${escHtml(g.discipline)}</td><td class="mono">${escHtml(g.wi)}</td><td><strong>${g.resources.size}</strong></td><td class="desc-cell">${escHtml(g.desc||'—')}</td><td class="prog-cell">${escHtml(formatProgressFlat(g.progress)||'—')}</td></tr>`).join('');
@@ -1104,19 +1111,11 @@ function renderStatus(){
   const {groups,uniqueResources}=groupByProject(toKey(d),area,disc);
   lastStatusGroups=groups; lastStatusDate=d;
   document.getElementById('st-table-title').textContent=`Active Projects on ${fmtDisplay(d)}`;
-  const uA=new Set(groups.map(g=>g.area)).size;
-  const mpT=groups.reduce((s,g)=>s+g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,0);
-  const eqT=groups.reduce((s,g)=>s+g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length,0);
-  document.getElementById('st-stats-bar').innerHTML = buildStatsBar([{label:'', pills:[
-    {label:'Total Projects', value:groups.length,         icon:'fa-clipboard-list',   color:'sp-orange'},
-    {label:'Total Crew',     value:uniqueResources.size,  icon:'fa-people-group',     color:'sp-blue'},
-    {label:'Active Areas',   value:uA,                    icon:'fa-map-location-dot', color:'sp-teal'},
-    {label:'Manpower',       value:mpT,                   icon:'fa-person-digging',   color:'sp-green'},
-    {label:'Equipment',      value:eqT,                   icon:'fa-gear',             color:'sp-purple'},
-  ]}]);
+  const uA=new Set(groups.map(g=>g.area)).size,mpT=groups.reduce((s,g)=>s+g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,0),eqT=groups.reduce((s,g)=>s+g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length,0);
+  document.getElementById('st-stats-bar').innerHTML=buildStatsBar([{label:'',pills:[{label:'Total Projects',value:groups.length,icon:'fa-clipboard-list',color:'sp-orange'},{label:'Total Crew',value:uniqueResources.size,icon:'fa-people-group',color:'sp-blue'},{label:'Active Areas',value:uA,icon:'fa-map-location-dot',color:'sp-teal'},{label:'Manpower',value:mpT,icon:'fa-person-digging',color:'sp-green'},{label:'Equipment',value:eqT,icon:'fa-gear',color:'sp-purple'}]}]);
   document.getElementById('st-badge').textContent=`${groups.length} entries`;
   if(!groups.length){document.getElementById('st-body').innerHTML='<tr><td colspan="9" class="no-data">No records found.</td></tr>';return;}
-  document.getElementById('st-body').innerHTML=groups.map((g,i)=>{ const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length; return `<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(g.id)}</td><td>${escHtml(g.crewLead)}</td><td class="mono">${escHtml(g.wi)}</td><td>${escHtml(g.area)}</td><td><strong>${g.resources.size}</strong></td><td>${mp}</td><td>${eq}</td><td>${escHtml(g.discipline)}</td></tr>`; }).join('');
+  document.getElementById('st-body').innerHTML=groups.map((g,i)=>{const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;return `<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(g.id)}</td><td>${escHtml(g.crewLead)}</td><td class="mono">${escHtml(g.wi)}</td><td>${escHtml(g.area)}</td><td><strong>${g.resources.size}</strong></td><td>${mp}</td><td>${eq}</td><td>${escHtml(g.discipline)}</td></tr>`;}).join('');
 }
 
 /* ══ RESOURCES ══ */
@@ -1127,32 +1126,40 @@ function renderResource(){
   const {groups}=groupByProject(toKey(d),area);
   const all=[]; groups.forEach(g=>g.resourceRows.forEach(r=>all.push({...r,wi:g.wi,area:g.area,foreman:g.crewLead,discipline:g.discipline})));
   lastResAllRows=all; lastResDate=d;
-  const mp=all.filter(r=>r.type.toLowerCase()==='manpower');
-  const eq=all.filter(r=>r.type.toLowerCase()==='equipment');
-  const nf=all.filter(r=>!['manpower','equipment'].includes(r.type.toLowerCase()));
-  document.getElementById('res-stats-bar').innerHTML = buildStatsBar([{label:'', pills:[
-    {label:'All Resources', value:all.length, icon:'fa-boxes-stacked',   color:'sp-blue'},
-    {label:'Manpower',      value:mp.length,  icon:'fa-person-digging',  color:'sp-green'},
-    {label:'Equipment',     value:eq.length,  icon:'fa-gear',            color:'sp-teal'},
-    {label:'Unclassified',  value:nf.length,  icon:'fa-circle-question', color:'sp-warn'},
-  ]}]);
-  function mkT(title,rows,bc,bl){ return `<div class="table-wrap" style="margin-bottom:14px"><div class="table-header"><div class="table-title">${title}</div><div class="table-header-right"><div class="table-badge">${rows.length}</div><button class="btn-excel" onclick="exportResourceExcel()"><i class="fas fa-file-excel"></i> Excel</button></div></div>${rows.length?`<div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>Resource ID</th><th>Designation</th><th>Type</th><th>WI No.</th><th>Area</th><th>Foreman</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(r.id)}</td><td>${escHtml(r.desig)}</td><td><span class="badge ${bc}">${bl}</span></td><td class="mono">${escHtml(r.wi)}</td><td>${escHtml(r.area)}</td><td>${escHtml(r.foreman)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="no-data">No records found.</div>'}</div>`; }
+  const mp=all.filter(r=>r.type.toLowerCase()==='manpower'),eq=all.filter(r=>r.type.toLowerCase()==='equipment'),nf=all.filter(r=>!['manpower','equipment'].includes(r.type.toLowerCase()));
+  document.getElementById('res-stats-bar').innerHTML=buildStatsBar([{label:'',pills:[{label:'All Resources',value:all.length,icon:'fa-boxes-stacked',color:'sp-blue'},{label:'Manpower',value:mp.length,icon:'fa-person-digging',color:'sp-green'},{label:'Equipment',value:eq.length,icon:'fa-gear',color:'sp-teal'},{label:'Unclassified',value:nf.length,icon:'fa-circle-question',color:'sp-warn'}]}]);
+  function mkT(title,rows,bc,bl){return `<div class="table-wrap" style="margin-bottom:14px"><div class="table-header"><div class="table-title">${title}</div><div class="table-header-right"><div class="table-badge">${rows.length}</div><button class="btn-excel" onclick="exportResourceExcel()"><i class="fas fa-file-excel"></i> Excel</button></div></div>${rows.length?`<div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>Resource ID</th><th>Designation</th><th>Type</th><th>WI No.</th><th>Area</th><th>Foreman</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(r.id)}</td><td>${escHtml(r.desig)}</td><td><span class="badge ${bc}">${bl}</span></td><td class="mono">${escHtml(r.wi)}</td><td>${escHtml(r.area)}</td><td>${escHtml(r.foreman)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="no-data">No records found.</div>'}</div>`;}
   document.getElementById('res-tables').innerHTML=mkT('Manpower',mp,'badge-mp','Manpower')+mkT('Equipment',eq,'badge-eq','Equipment')+mkT('Unclassified',nf,'badge-nf','Other');
 }
 
-/* ════════════════════════════════════════════════════════════
-   SANKEY / ALLUVIAL FLOW DIAGRAM  —  v2 (fully rewritten)
-   Fixes: ribbon fill (was fill:none), label overflow, width=0
-   bug, proportional height accumulation, and responsive layout.
-════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   SANKEY / ALLUVIAL FLOW DIAGRAM — v3
+   Improvements:
+   - Fonts match DM Sans / DM Mono design system
+   - Better horizontal space utilisation, reduced vertical expansion
+   - Responsive: auto-redraws on resize
+   - Smarter label truncation, no overflow
+   - Area + Discipline filter dropdowns added
+   - Compact node heights with better proportional spacing
+══════════════════════════════════════════════════════════════ */
 function renderSankey() {
   if (!dataReady) return;
-  const d = getDate('sk-date');
-  const catFilter = document.getElementById('sk-cat').value;
-  const container = document.getElementById('sankey-container');
-  const tooltip   = document.getElementById('sk-tooltip');
+  const d         = getDate('sk-date');
+  const catFilter  = document.getElementById('sk-cat').value;
+  const areaFilter = document.getElementById('sk-area').value;
+  const discFilter = document.getElementById('sk-disc').value;
+  const container  = document.getElementById('sankey-container');
+  const tooltip    = document.getElementById('sk-tooltip');
+  const activeFiltersEl = document.getElementById('sankey-active-filters');
 
-  /* ── No date selected ── */
+  /* Active filter tags */
+  const filterTags = [];
+  if (catFilter  !== 'all') filterTags.push(`<span class="sankey-filter-tag"><i class="fas fa-boxes-stacked"></i> ${catFilter}</span>`);
+  if (areaFilter !== 'all') filterTags.push(`<span class="sankey-filter-tag"><i class="fas fa-map-pin"></i> ${escHtml(areaFilter)}</span>`);
+  if (discFilter !== 'all' && discFilter !== '__other__') filterTags.push(`<span class="sankey-filter-tag"><i class="fas fa-gears"></i> ${escHtml(discFilter)}</span>`);
+  else if (discFilter === '__other__') filterTags.push(`<span class="sankey-filter-tag"><i class="fas fa-gears"></i> Other disciplines</span>`);
+  activeFiltersEl.innerHTML = filterTags.join('');
+
   if (!d) {
     container.innerHTML = `<div class="sankey-no-data"><i class="fas fa-calendar"></i>Select a date to view the flow diagram</div>`;
     document.getElementById('sk-stats-bar').innerHTML = '';
@@ -1164,7 +1171,7 @@ function renderSankey() {
 
   const dateKey = toKey(d);
 
-  /* ── 1. Aggregate flows: unique resource IDs per (area, disc, wi) path ── */
+  /* ── 1. Aggregate flows ── */
   const pathMap = {};
   DATA.forEach(row => {
     const rd = parseRowDate(row.DATE);
@@ -1174,13 +1181,23 @@ function renderSankey() {
     const wi   = (row['WI NO']        || '—').trim();
     const res  = (row['RESOURCE ID']  || '').trim();
     if (!res) return;
-    const type = (row['MANPOWER / EQUIPMENT'] || '').toLowerCase().trim();
-    const isMP = type === 'manpower';
-    const isEQ = type === 'equipment';
-    const isNF = !isMP && !isEQ;
+
+    const type  = (row['MANPOWER / EQUIPMENT'] || '').toLowerCase().trim();
+    const isMP  = type === 'manpower';
+    const isEQ  = type === 'equipment';
+    const isNF  = !isMP && !isEQ;
+
+    // Resource type filter
     if (catFilter === 'manpower'     && !isMP) return;
     if (catFilter === 'equipment'    && !isEQ) return;
     if (catFilter === 'unclassified' && !isNF) return;
+
+    // Area filter
+    if (areaFilter !== 'all' && area !== areaFilter) return;
+
+    // Discipline filter
+    if (!matchDiscipline(disc, discFilter)) return;
+
     const key = `${area}\x00${disc}\x00${wi}`;
     if (!pathMap[key]) pathMap[key] = { area, disc, wi, mp:0, eq:0, nf:0, total:0, seen: new Set() };
     if (!pathMap[key].seen.has(res)) {
@@ -1226,87 +1243,97 @@ function renderSankey() {
         <td><strong>${f.total}</strong></td>
         <td>${f.mp}</td><td>${f.eq}</td><td>${f.nf}</td>
       </tr>`).join('')
-    : '<tr><td colspan="8" class="no-data">No data for selected date and filters.</td></tr>';
+    : '<tr><td colspan="8" class="no-data">No data for selected filters.</td></tr>';
 
   if (!flows.length) {
-    container.innerHTML = `<div class="sankey-no-data"><i class="fas fa-diagram-project"></i>No resource flow data found for ${fmtDisplay(d)}</div>`;
+    container.innerHTML = `<div class="sankey-no-data"><i class="fas fa-diagram-project"></i>No resource flow data found for the selected filters</div>`;
     document.getElementById('sankey-legend').innerHTML = '';
     return;
   }
 
-  /* ── 4. Layout geometry ── */
-  const isDark    = currentTheme === 'dark';
-  const textClr   = isDark ? '#e3e8f0' : '#1a2236';
-  const subClr    = isDark ? '#8b96ab' : '#5a6880';
-  const gridClr   = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+  /* ── 4. Responsive geometry ── */
+  const isDark   = currentTheme === 'dark';
+  // Pull CSS variable colours for text — match DM Sans design system
+  const rootStyle = getComputedStyle(document.documentElement);
+  const textClr   = rootStyle.getPropertyValue('--text').trim()     || (isDark ? '#e3e8f0' : '#1a2236');
+  const subClr    = rootStyle.getPropertyValue('--text-sub').trim() || (isDark ? '#8b96ab' : '#5a6880');
+  const dimClr    = rootStyle.getPropertyValue('--text-dim').trim() || (isDark ? '#404d63' : '#a0acbe');
+  const bgClr     = rootStyle.getPropertyValue('--surface2').trim() || (isDark ? '#222c3d' : '#f0f2f6');
+  const borderClr = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
 
-  // Measure true pixel width of the card — wait one tick if needed
-  const cardW = document.querySelector('.sankey-outer').clientWidth || 860;
+  // TRUE pixel width from container
+  const containerW = container.clientWidth || 860;
 
   /*
-   * Fixed column layout (all coords are SVG-internal pixels):
-   *   LEFT_LABEL_W  : reserved on the left for Area labels
-   *   NODE_W        : width of each node bar
-   *   MID_GAP       : space between node bar and next column label area
-   *   RIGHT_LABEL_W : reserved on the right for WI labels
+   * Layout constants (SVG internal coordinate space)
+   * We use a viewBox of TOTAL_W × SVG_H and width="100%"
+   * so the SVG scales automatically to containerW.
    *
    * Columns:
-   *   col0 (Area node bar)  starts at LEFT_LABEL_W
-   *   col1 (Disc node bar)  at midX
-   *   col2 (WI node bar)    at rightNodeX
+   *   col0 (Area)  — leftmost node bar
+   *   col1 (Disc)  — middle node bar
+   *   col2 (WI)    — rightmost node bar
    *
-   * SVG internal width = TOTAL_W  (we then scale with viewBox)
+   * Label zones:
+   *   LEFT  : from 0 to col0x  (Area labels, right-aligned)
+   *   MID   : from col0x+NODE_W to col1x  (Disc labels, centred)
+   *   RIGHT : from col2x+NODE_W onwards  (WI labels, left-aligned)
   */
-  const LEFT_LABEL_W  = 160;   // px left of area node for text
-  const RIGHT_LABEL_W = 170;   // px right of wi node for text
-  const NODE_W        = 16;
-  const TOTAL_W       = 860;   // fixed internal SVG width — scales via viewBox
-  const RIBBON_ZONE_W = TOTAL_W - LEFT_LABEL_W - RIGHT_LABEL_W - NODE_W * 3;
-  const col0x  = LEFT_LABEL_W;                                    // area node left edge
-  const col1x  = col0x + NODE_W + Math.round(RIBBON_ZONE_W * 0.45); // disc node left edge
-  const col2x  = col1x + NODE_W + Math.round(RIBBON_ZONE_W * 0.55); // wi node left edge
+  const TOTAL_W       = 920;   // fixed SVG internal width — scales via viewBox
+  const LEFT_ZONE     = 170;   // px for area labels (left of area node)
+  const RIGHT_ZONE    = 180;   // px for WI labels (right of WI node)
+  const NODE_W        = 14;    // node bar width
+  const RIBBON_TOTAL  = TOTAL_W - LEFT_ZONE - RIGHT_ZONE - NODE_W * 3;
+  const col0x = LEFT_ZONE;
+  const col1x = col0x + NODE_W + Math.round(RIBBON_TOTAL * 0.44);
+  const col2x = col1x + NODE_W + Math.round(RIBBON_TOTAL * 0.56);
 
-  const NODE_GAP  = 8;   // vertical px gap between sibling nodes
-  const ROW_MIN_H = 18;  // minimum node bar height (px)
-  const TOP_PAD   = 44;  // space above nodes for stage labels
+  /* Compact vertical sizing */
+  const TOP_PAD    = 38;   // space for stage header labels
+  const NODE_GAP   = 6;    // gap between sibling nodes
+  const NODE_MIN_H = 14;   // minimum bar height (px)
+  const NODE_SCALE = 2.2;  // px per resource unit (larger = taller chart)
 
-  /* Build per-column totals sorted by discipline color for grouping */
+  /* Derive total content height from actual data */
   const areaNames = [...new Set(flows.map(f=>f.area))].sort();
   const discNames = [...new Set(flows.map(f=>f.disc))].sort();
   const wiNames   = [...new Set(flows.map(f=>f.wi))].sort();
 
   function colTotal(names, keyFn) {
-    return names.map(name=>({
+    return names.map(name => ({
       name,
-      total: flows.filter(f=>keyFn(f)===name).reduce((s,f)=>s+f.total,0),
+      total: flows.filter(f=>keyFn(f)===name).reduce((s,f)=>s+f.total, 0),
     }));
   }
   const areaTotals = colTotal(areaNames, f=>f.area);
   const discTotals = colTotal(discNames, f=>f.disc);
   const wiTotals   = colTotal(wiNames,   f=>f.wi);
 
-  /* Layout: distribute available height proportionally */
-  function layoutNodes(items, availH) {
-    const grand = items.reduce((s,n)=>s+n.total,0) || 1;
-    const usable = availH - NODE_GAP * (items.length - 1);
+  /* Height of a column in pixels */
+  function colHeight(totals) {
+    return totals.reduce((s, n) => s + Math.max(NODE_MIN_H, Math.round(n.total * NODE_SCALE)), 0)
+           + NODE_GAP * (totals.length - 1);
+  }
+  const CONTENT_H = Math.max(
+    colHeight(areaTotals),
+    colHeight(discTotals),
+    colHeight(wiTotals),
+    120  // absolute minimum
+  );
+  const SVG_H = CONTENT_H + TOP_PAD + 20;
+
+  /* Layout nodes (distribute proportionally within column height) */
+  function layoutNodes(totals, availH) {
+    const grand = totals.reduce((s,n)=>s+n.total, 0) || 1;
+    const usable = availH - NODE_GAP * (totals.length - 1);
     let y = TOP_PAD;
-    return items.map(item => {
-      const h = Math.max(ROW_MIN_H, Math.round((item.total / grand) * usable));
+    return totals.map(item => {
+      const h = Math.max(NODE_MIN_H, Math.round((item.total / grand) * usable));
       const node = { ...item, y, h };
       y += h + NODE_GAP;
       return node;
     });
   }
-
-  /* Dynamic height: ensure each column has room for its nodes */
-  const minColH = (count) => count * (ROW_MIN_H + NODE_GAP) + TOP_PAD + 20;
-  const CONTENT_H = Math.max(
-    520,
-    minColH(areaNames.length),
-    minColH(discNames.length),
-    minColH(wiNames.length)
-  );
-  const SVG_H = CONTENT_H + 20;
 
   const areaNodes = layoutNodes(areaTotals, CONTENT_H);
   const discNodes = layoutNodes(discTotals, CONTENT_H);
@@ -1316,238 +1343,233 @@ function renderSankey() {
   const discMap = Object.fromEntries(discNodes.map(n=>[n.name,n]));
   const wiMap   = Object.fromEntries(wiNodes.map(n=>[n.name,n]));
 
-  /* ── 5. Build ribbon segments ──
-     Each ribbon is a closed cubic-bezier quadrilateral.
-     We track "cursor" offsets into each node's bar separately
-     for the left-entry and right-exit sides.
-  */
+  /* ── 5. Ribbon segments ── */
   const cur = {
-    areaR:  Object.fromEntries(areaNames.map(n=>[n,0])),  // right edge of area node
-    discL:  Object.fromEntries(discNames.map(n=>[n,0])),  // left  edge of disc node
-    discR:  Object.fromEntries(discNames.map(n=>[n,0])),  // right edge of disc node
-    wiL:    Object.fromEntries(wiNames.map(n=>[n,0])),    // left  edge of wi node
+    areaR: Object.fromEntries(areaNames.map(n=>[n,0])),
+    discL: Object.fromEntries(discNames.map(n=>[n,0])),
+    discR: Object.fromEntries(discNames.map(n=>[n,0])),
+    wiL:   Object.fromEntries(wiNames.map(n=>[n,0])),
   };
 
-  /* Proportional slice height within a node */
   function sliceH(node, flowCount) {
     return Math.max(2, Math.round((flowCount / node.total) * node.h));
   }
 
-  const ribbons1 = []; // Area → Disc
-  const ribbons2 = []; // Disc → WI
+  const ribbons1 = [], ribbons2 = [];
 
   flows.forEach(f => {
     const aN = areaMap[f.area], dN = discMap[f.disc], wN = wiMap[f.wi];
     const col = discColor(f.disc);
 
-    /* Slice heights — clamped so we never spill past the node bar */
     const ha1 = Math.min(sliceH(aN, f.total), aN.h - cur.areaR[f.area]);
     const hd1 = Math.min(sliceH(dN, f.total), dN.h - cur.discL[f.disc]);
-
-    ribbons1.push({
-      // source (right edge of area node)
-      x0: col0x + NODE_W, y0: aN.y + cur.areaR[f.area], h0: ha1,
-      // target (left edge of disc node)
-      x1: col1x,          y1: dN.y + cur.discL[f.disc],  h1: hd1,
-      color: col, flow: f,
-    });
-    cur.areaR[f.area]  += ha1;
-    cur.discL[f.disc]  += hd1;
+    ribbons1.push({ x0:col0x+NODE_W, y0:aN.y+cur.areaR[f.area], h0:ha1, x1:col1x, y1:dN.y+cur.discL[f.disc], h1:hd1, color:col, flow:f });
+    cur.areaR[f.area] += ha1;
+    cur.discL[f.disc] += hd1;
 
     const hd2 = Math.min(sliceH(dN, f.total), dN.h - cur.discR[f.disc]);
     const hw2 = Math.min(sliceH(wN, f.total), wN.h - cur.wiL[f.wi]);
-
-    ribbons2.push({
-      x0: col1x + NODE_W, y0: dN.y + cur.discR[f.disc], h0: hd2,
-      x1: col2x,          y1: wN.y + cur.wiL[f.wi],      h1: hw2,
-      color: col, flow: f,
-    });
+    ribbons2.push({ x0:col1x+NODE_W, y0:dN.y+cur.discR[f.disc], h0:hd2, x1:col2x, y1:wN.y+cur.wiL[f.wi], h1:hw2, color:col, flow:f });
     cur.discR[f.disc] += hd2;
     cur.wiL[f.wi]     += hw2;
   });
 
-  /* ── 6. Render ── */
+  /* ── 6. Render SVG ── */
   container.innerHTML = '';
 
-  /*
-   * Use a fixed internal viewBox (TOTAL_W × SVG_H) and let the SVG
-   * scale to the card width via width="100%".  This guarantees labels
-   * placed at known internal coordinates are always visible regardless
-   * of the actual pixel width of the container.
-   */
   const svg = d3.select(container)
     .append('svg')
     .attr('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`)
     .attr('width', '100%')
-    .attr('height', null)              // let aspect-ratio determine height
+    .attr('preserveAspectRatio', 'xMidYMid meet')
     .style('display', 'block')
-    .style('overflow', 'visible');     // stage labels may sit at y<0 if TOP_PAD shrinks
+    .style('overflow', 'visible');
 
-  /* Stage header labels */
+  /* Background track lines between columns */
+  const trackG = svg.append('g').attr('class', 'track-layer');
+  [[col0x+NODE_W, col1x],[col1x+NODE_W, col2x]].forEach(([x0,x1]) => {
+    trackG.append('rect')
+      .attr('x', x0).attr('y', TOP_PAD)
+      .attr('width', x1-x0).attr('height', CONTENT_H)
+      .attr('fill', borderClr).attr('rx', 0);
+  });
+
+  /* Stage header labels — using DM Mono style */
   const stageLabels = [
-    { x: col0x + NODE_W / 2, anchor: 'middle', text: 'AREA' },
-    { x: col1x + NODE_W / 2, anchor: 'middle', text: 'DISCIPLINE' },
-    { x: col2x + NODE_W / 2, anchor: 'middle', text: 'WORK INSTRUCTION (WI)' },
+    { x: col0x + NODE_W/2, text: 'AREA',             anchor: 'middle' },
+    { x: col1x + NODE_W/2, text: 'DISCIPLINE',        anchor: 'middle' },
+    { x: col2x + NODE_W/2, text: 'WORK INSTRUCTION',  anchor: 'middle' },
   ];
   stageLabels.forEach(sl => {
+    // Accent line under label
+    svg.append('line')
+      .attr('x1', sl.x - 30).attr('x2', sl.x + 30)
+      .attr('y1', TOP_PAD - 5).attr('y2', TOP_PAD - 5)
+      .attr('stroke', '#e07b39').attr('stroke-width', 1.5).attr('opacity', 0.5);
+
     svg.append('text')
-      .attr('x', sl.x).attr('y', 22)
+      .attr('x', sl.x).attr('y', TOP_PAD - 12)
       .attr('text-anchor', sl.anchor)
-      .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', 9).attr('font-weight', 600)
-      .attr('letter-spacing', '0.09em')
-      .attr('fill', subClr)
+      .attr('font-family', "'DM Mono', monospace")
+      .attr('font-size', 9).attr('font-weight', 500)
+      .attr('letter-spacing', '0.1em')
+      .attr('fill', dimClr)
       .text(sl.text);
   });
 
-  /* Cubic-bezier ribbon path (closed quadrilateral) */
+  /* Ribbon layer */
+  const ribbonG = svg.append('g').attr('class', 'ribbon-layer');
+
   function ribbonPath(r) {
     const { x0, y0, h0, x1, y1, h1 } = r;
     const mx = (x0 + x1) / 2;
-    // top edge: source-top → target-top
-    // bottom edge: target-bottom → source-bottom  (reversed for closure)
     return [
       `M ${x0} ${y0}`,
-      `C ${mx} ${y0}, ${mx} ${y1}, ${x1} ${y1}`,      // top bezier
-      `L ${x1} ${y1 + h1}`,
-      `C ${mx} ${y1 + h1}, ${mx} ${y0 + h0}, ${x0} ${y0 + h0}`, // bottom bezier
+      `C ${mx} ${y0}, ${mx} ${y1}, ${x1} ${y1}`,
+      `L ${x1} ${y1+h1}`,
+      `C ${mx} ${y1+h1}, ${mx} ${y0+h0}, ${x0} ${y0+h0}`,
       'Z'
     ].join(' ');
   }
 
-  /* Draw ribbon layers (behind nodes) */
-  const ribbonGroup = svg.append('g').attr('class', 'ribbon-layer');
-
   function drawRibbons(data, cls) {
-    ribbonGroup.selectAll('.' + cls)
-      .data(data)
-      .join('path')
+    ribbonG.selectAll('.' + cls).data(data).join('path')
       .attr('class', cls)
       .attr('d', ribbonPath)
       .attr('fill', r => r.color)
-      .attr('stroke', r => r.color)
-      .attr('stroke-width', 0.5)
-      .attr('opacity', 0.25)
-      .attr('fill-opacity', 0.25)
+      .attr('stroke', 'none')
+      .attr('opacity', 0.22)
       .style('cursor', 'default')
       .on('mouseenter', function(event, r) {
-        d3.select(this).attr('opacity', 0.6).attr('fill-opacity', 0.6);
+        d3.select(this).attr('opacity', 0.55);
         showFlowTooltip(event, r.flow);
       })
-      .on('mousemove', function(event, r) { positionTooltip(event); })
+      .on('mousemove', (event) => positionTooltip(event))
       .on('mouseleave', function() {
-        d3.select(this).attr('opacity', 0.25).attr('fill-opacity', 0.25);
+        d3.select(this).attr('opacity', 0.22);
         hideTooltip();
       });
   }
   drawRibbons(ribbons1, 'sk-r1');
   drawRibbons(ribbons2, 'sk-r2');
 
-  /* Node layer (on top of ribbons) */
-  const nodeGroup = svg.append('g').attr('class', 'node-layer');
+  /* Node layer */
+  const nodeG = svg.append('g').attr('class', 'node-layer');
 
-  /* Area nodes — label on the LEFT */
+  /* Helper: truncate label text to fit in given px width at given font size */
+  function truncLabel(text, maxPx, fontSize=10) {
+    const approxCharW = fontSize * 0.55;
+    const maxChars = Math.floor(maxPx / approxCharW);
+    return text.length > maxChars ? text.slice(0, maxChars - 1) + '…' : text;
+  }
+
+  /* ── Area nodes (label LEFT, right-aligned to node) ── */
   areaNodes.forEach((n, i) => {
     const color = PALETTE[i % PALETTE.length];
-    const g = nodeGroup.append('g');
+    const g = nodeG.append('g');
+    const midY = n.y + n.h / 2;
 
     g.append('rect')
-      .attr('class', 'sankey-node-bar')
       .attr('x', col0x).attr('y', n.y)
       .attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', color).attr('opacity', 0.95)
-      .on('mouseenter', (ev) => showNodeTooltip(ev, n.name, 'Area', n.total, color))
-      .on('mousemove',  (ev) => positionTooltip(ev))
+      .attr('rx', 3).attr('fill', color).attr('opacity', 0.9)
+      .style('cursor', 'default')
+      .on('mouseenter', ev => showNodeTooltip(ev, n.name, 'Area', n.total, color))
+      .on('mousemove',  ev => positionTooltip(ev))
       .on('mouseleave', hideTooltip);
 
-    // Truncate label to fit LEFT_LABEL_W  (approx 7px/char at 11px font)
-    const maxChars = Math.floor((LEFT_LABEL_W - 12) / 6.8);
-    const label    = n.name.length > maxChars ? n.name.slice(0, maxChars - 1) + '…' : n.name;
-    const midY     = n.y + n.h / 2;
+    const maxLabelPx = LEFT_ZONE - 10;
+    const label = truncLabel(n.name, maxLabelPx, 10);
 
     g.append('text')
-      .attr('x', col0x - 6).attr('y', midY - 5)
+      .attr('x', col0x - 6).attr('y', midY - 4)
       .attr('text-anchor', 'end').attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Sans',sans-serif")
-      .attr('font-size', 10).attr('fill', textClr)
+      .attr('font-family', "'DM Sans', sans-serif")
+      .attr('font-size', 10).attr('font-weight', 500)
+      .attr('fill', textClr)
       .text(label);
 
     g.append('text')
-      .attr('x', col0x - 6).attr('y', midY + 7)
+      .attr('x', col0x - 6).attr('y', midY + 9)
       .attr('text-anchor', 'end').attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', 9).attr('fill', subClr)
+      .attr('font-family', "'DM Mono', monospace")
+      .attr('font-size', 9)
+      .attr('fill', color)
+      .attr('font-weight', 500)
       .text(n.total);
   });
 
-  /* Discipline nodes — label INSIDE bar when tall enough, else above */
+  /* ── Discipline nodes (label in mid-ribbon zone) ── */
   discNodes.forEach(n => {
     const color = discColor(n.name);
-    const g = nodeGroup.append('g');
+    const g = nodeG.append('g');
+    const midY = n.y + n.h / 2;
 
     g.append('rect')
-      .attr('class', 'sankey-node-bar')
       .attr('x', col1x).attr('y', n.y)
       .attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', color).attr('opacity', 0.95)
-      .on('mouseenter', (ev) => showNodeTooltip(ev, n.name, 'Discipline', n.total, color))
-      .on('mousemove',  (ev) => positionTooltip(ev))
+      .attr('rx', 3).attr('fill', color).attr('opacity', 0.9)
+      .style('cursor', 'default')
+      .on('mouseenter', ev => showNodeTooltip(ev, n.name, 'Discipline', n.total, color))
+      .on('mousemove',  ev => positionTooltip(ev))
       .on('mouseleave', hideTooltip);
 
-    // Label floats between Area and Disc columns
-    const midY = n.y + n.h / 2;
-    const lx   = col0x + NODE_W + (col1x - col0x - NODE_W) / 2;
-    const maxLabelChars = Math.floor((col1x - col0x - NODE_W - 6) / 6.5);
-    const label = n.name.length > maxLabelChars ? n.name.slice(0, maxLabelChars - 1) + '…' : n.name;
+    // Label centred in the left ribbon zone (between area and disc columns)
+    const midZoneX = col0x + NODE_W + (col1x - col0x - NODE_W) / 2;
+    const midZoneW = col1x - col0x - NODE_W - 8;
+    const label = truncLabel(n.name, midZoneW, 9.5);
 
     g.append('text')
-      .attr('x', lx).attr('y', midY - 4)
+      .attr('x', midZoneX).attr('y', midY - 4)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Sans',sans-serif")
-      .attr('font-size', 9).attr('fill', color)
-      .attr('font-weight', 600)
+      .attr('font-family', "'DM Sans', sans-serif")
+      .attr('font-size', 9.5).attr('font-weight', 600)
+      .attr('fill', color)
       .text(label);
 
     g.append('text')
-      .attr('x', lx).attr('y', midY + 8)
+      .attr('x', midZoneX).attr('y', midY + 9)
       .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', 8).attr('fill', subClr)
+      .attr('font-family', "'DM Mono', monospace")
+      .attr('font-size', 8.5).attr('font-weight', 400)
+      .attr('fill', subClr)
       .text(n.total);
   });
 
-  /* WI nodes — label on the RIGHT */
+  /* ── WI nodes (label RIGHT of node) ── */
   wiNodes.forEach(n => {
     const disc  = flows.find(f => f.wi === n.name)?.disc || 'Other';
     const color = discColor(disc);
-    const g = nodeGroup.append('g');
+    const g = nodeG.append('g');
+    const midY = n.y + n.h / 2;
+    const lx = col2x + NODE_W + 7;
+    const maxLabelPx = RIGHT_ZONE - 14;
 
     g.append('rect')
-      .attr('class', 'sankey-node-bar')
       .attr('x', col2x).attr('y', n.y)
       .attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', color).attr('opacity', 0.9)
-      .on('mouseenter', (ev) => showNodeTooltip(ev, n.name, 'Work Instruction', n.total, color))
-      .on('mousemove',  (ev) => positionTooltip(ev))
+      .attr('rx', 3).attr('fill', color).attr('opacity', 0.85)
+      .style('cursor', 'default')
+      .on('mouseenter', ev => showNodeTooltip(ev, n.name, 'Work Instruction', n.total, color))
+      .on('mousemove',  ev => positionTooltip(ev))
       .on('mouseleave', hideTooltip);
 
-    const maxChars = Math.floor((RIGHT_LABEL_W - 10) / 6.5);
-    const label    = n.name.length > maxChars ? n.name.slice(0, maxChars - 1) + '…' : n.name;
-    const midY     = n.y + n.h / 2;
-    const lx       = col2x + NODE_W + 6;
+    const label = truncLabel(n.name, maxLabelPx, 10);
 
     g.append('text')
-      .attr('x', lx).attr('y', midY - 5)
+      .attr('x', lx).attr('y', midY - 4)
       .attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', 10).attr('fill', textClr)
+      .attr('font-family', "'DM Mono', monospace")
+      .attr('font-size', 10).attr('font-weight', 400)
+      .attr('fill', textClr)
       .text(label);
 
     g.append('text')
-      .attr('x', lx).attr('y', midY + 7)
+      .attr('x', lx).attr('y', midY + 9)
       .attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', 9).attr('fill', subClr)
+      .attr('font-family', "'DM Mono', monospace")
+      .attr('font-size', 9).attr('font-weight', 500)
+      .attr('fill', color)
       .text(n.total);
   });
 
@@ -1560,18 +1582,19 @@ function renderSankey() {
      </div>`
   ).join('');
 
-  /* ── 8. Tooltip helpers ── */
-  let _ttListener = null;
-
+  /* ── 8. Tooltip ── */
   function showFlowTooltip(event, flow) {
     tooltip.style.display = 'block';
     tooltip.innerHTML = `
       <strong>${escHtml(flow.wi)}</strong>
-      <span style="color:var(--text-sub)">Area: ${escHtml(flow.area)}</span><br>
-      <span style="color:var(--text-sub)">Discipline: </span><span style="color:${discColor(flow.disc)};font-weight:600">${escHtml(flow.disc)}</span><br>
-      <span style="display:block;margin-top:5px;font-family:var(--font-mono)">
-        Total <strong>${flow.total}</strong> &nbsp;·&nbsp; MP ${flow.mp} &nbsp;·&nbsp; EQ ${flow.eq} &nbsp;·&nbsp; NF ${flow.nf}
-      </span>`;
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-sub);margin-bottom:4px">${escHtml(flow.area)}</div>
+      <span class="sk-tt-disc" style="color:${discColor(flow.disc)}">${escHtml(flow.disc)}</span>
+      <div class="sk-tt-stats">
+        <div class="sk-tt-stat"><span class="sk-tt-stat-val">${flow.total}</span><span class="sk-tt-stat-lbl">Total</span></div>
+        <div class="sk-tt-stat"><span class="sk-tt-stat-val" style="color:var(--accent3)">${flow.mp}</span><span class="sk-tt-stat-lbl">MP</span></div>
+        <div class="sk-tt-stat"><span class="sk-tt-stat-val" style="color:var(--accent2)">${flow.eq}</span><span class="sk-tt-stat-lbl">EQ</span></div>
+        <div class="sk-tt-stat"><span class="sk-tt-stat-val" style="color:var(--warning)">${flow.nf}</span><span class="sk-tt-stat-lbl">NF</span></div>
+      </div>`;
     positionTooltip(event);
   }
 
@@ -1579,28 +1602,24 @@ function renderSankey() {
     tooltip.style.display = 'block';
     tooltip.innerHTML = `
       <strong style="color:${color}">${escHtml(name)}</strong>
-      <span style="color:var(--text-sub);font-size:0.72rem">${stage}</span><br>
-      <span style="font-family:var(--font-mono)">Resources: <strong>${total}</strong></span>`;
+      <div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub);margin-bottom:2px">${stage}</div>
+      <div style="font-family:var(--font-mono);font-size:0.82rem">Resources: <strong>${total}</strong></div>`;
     positionTooltip(event);
   }
 
   function positionTooltip(event) {
     const vw = window.innerWidth;
     let lx = event.clientX + 16;
-    if (lx + 270 > vw) lx = event.clientX - 275;
+    if (lx + 250 > vw) lx = event.clientX - 255;
     tooltip.style.left = lx + 'px';
-    tooltip.style.top  = (event.clientY - 16) + 'px';
+    tooltip.style.top  = (event.clientY - 12) + 'px';
   }
 
   function hideTooltip() { tooltip.style.display = 'none'; }
 
-  // Clean up any old global mousemove listener before adding a new one
-  if (window._skTooltipListener) {
-    document.removeEventListener('mousemove', window._skTooltipListener);
-  }
-  window._skTooltipListener = (e) => {
-    if (tooltip.style.display !== 'none') positionTooltip(e);
-  };
+  // Clean up previous global listener
+  if (window._skTooltipListener) document.removeEventListener('mousemove', window._skTooltipListener);
+  window._skTooltipListener = (e) => { if (tooltip.style.display !== 'none') positionTooltip(e); };
   document.addEventListener('mousemove', window._skTooltipListener);
 }
 
@@ -1608,14 +1627,14 @@ function renderSankey() {
 function exportSankeyExcel() {
   if (!lastSankeyFlows.length) { alert('No flow data to export.'); return; }
   const ws = XLSX.utils.aoa_to_sheet([
-    ['#', 'Area', 'Discipline', 'WI No.', 'Total Resources', 'Manpower', 'Equipment', 'Unclassified'],
-    ...lastSankeyFlows.map((f, i) => [i + 1, f.area, f.disc, f.wi, f.total, f.mp, f.eq, f.nf])
+    ['#','Area','Discipline','WI No.','Total Resources','Manpower','Equipment','Unclassified'],
+    ...lastSankeyFlows.map((f,i)=>[i+1,f.area,f.disc,f.wi,f.total,f.mp,f.eq,f.nf])
   ]);
-  ws['!cols'] = [{wch:4},{wch:28},{wch:22},{wch:18},{wch:16},{wch:12},{wch:12},{wch:14}];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Flow Paths');
-  const d = document.getElementById('sk-date').value;
-  XLSX.writeFile(wb, `GPS_FlowDiagram_${d || 'export'}.xlsx`);
+  ws['!cols']=[{wch:4},{wch:28},{wch:22},{wch:18},{wch:16},{wch:12},{wch:12},{wch:14}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Flow Paths');
+  const d=document.getElementById('sk-date').value;
+  XLSX.writeFile(wb,`GPS_FlowDiagram_${d||'export'}.xlsx`);
 }
 
 /* ══ CAMP — LOAD ══ */
@@ -1650,56 +1669,37 @@ async function campRefresh(){ await campLoadData(); }
 
 /* ══ CAMP STATS BAR ══ */
 function campUpdateStats(rows) {
-  const mp  = r => r.cat==='Manpower';
-  const eq  = r => r.cat==='Equipment';
-  const isPOB = r => POB_STATUSES.includes(r.status);
-  const isSafah = r => r.camp==='Safah';
-  const isWadi  = r => r.camp==='Wadi Latham';
-  const safahTotal = rows.filter(r=>mp(r)&&isSafah(r)&&isPOB(r)).length;
-  const wadiTotal  = rows.filter(r=>mp(r)&&isWadi(r) &&isPOB(r)).length;
-  const pobCount  = rows.filter(r=>mp(r)&&r.status==='POB').length;
-  const pobACount = rows.filter(r=>mp(r)&&r.status==='POB-A').length;
-  const pobBCount = rows.filter(r=>mp(r)&&r.status==='POB-B').length;
-  const pobCCount = rows.filter(r=>mp(r)&&r.status==='POB-C').length;
-  const pobDCount = rows.filter(r=>mp(r)&&r.status==='POB-D').length;
-  const polCount  = rows.filter(r=>mp(r)&&r.status==='POL').length;
-  const safahEQ   = rows.filter(r=>eq(r)&&isSafah(r)&&r.status==='POB').length;
-  const wadiEQ    = rows.filter(r=>eq(r)&&isWadi(r) &&r.status==='POB').length;
-  document.getElementById('camp-stats-wrap').innerHTML = buildStatsBar([
-    { label:'Total POB', pills:[
-      {label:'Safah',       value:safahTotal, icon:'fa-tent',        color:'sp-blue'},
-      {label:'Wadi Latham', value:wadiTotal,  icon:'fa-tent',        color:'sp-orange'},
-    ]},
-    { label:'POB Status', pills:[
-      {label:'POB',   value:pobCount,  icon:'fa-user-check', color:'sp-green'},
-      {label:'POB-A', value:pobACount, icon:'fa-user-check', color:'sp-green'},
-      {label:'POB-B', value:pobBCount, icon:'fa-user-check', color:'sp-blue'},
-      {label:'POB-C', value:pobCCount, icon:'fa-user-check', color:'sp-purple'},
-      {label:'POB-D', value:pobDCount, icon:'fa-user-check', color:'sp-teal'},
-      {label:'POL',   value:polCount,  icon:'fa-user-clock', color:'sp-warn'},
-    ]},
-    { label:'Camp Resources', pills:[
-      {label:'Safah MP',  value:safahTotal, icon:'fa-person-digging', color:'sp-green'},
-      {label:'Wadi MP',   value:wadiTotal,  icon:'fa-person-digging', color:'sp-orange'},
-      {label:'Safah EQ',  value:safahEQ,    icon:'fa-gear',           color:'sp-blue'},
-      {label:'Wadi EQ',   value:wadiEQ,     icon:'fa-gear',           color:'sp-teal'},
-    ]},
+  const mp=r=>r.cat==='Manpower',eq=r=>r.cat==='Equipment';
+  const isPOB=r=>POB_STATUSES.includes(r.status);
+  const isSafah=r=>r.camp==='Safah',isWadi=r=>r.camp==='Wadi Latham';
+  const safahTotal=rows.filter(r=>mp(r)&&isSafah(r)&&isPOB(r)).length;
+  const wadiTotal=rows.filter(r=>mp(r)&&isWadi(r)&&isPOB(r)).length;
+  const pobCount=rows.filter(r=>mp(r)&&r.status==='POB').length;
+  const pobACount=rows.filter(r=>mp(r)&&r.status==='POB-A').length;
+  const pobBCount=rows.filter(r=>mp(r)&&r.status==='POB-B').length;
+  const pobCCount=rows.filter(r=>mp(r)&&r.status==='POB-C').length;
+  const pobDCount=rows.filter(r=>mp(r)&&r.status==='POB-D').length;
+  const polCount=rows.filter(r=>mp(r)&&r.status==='POL').length;
+  const safahEQ=rows.filter(r=>eq(r)&&isSafah(r)&&r.status==='POB').length;
+  const wadiEQ=rows.filter(r=>eq(r)&&isWadi(r)&&r.status==='POB').length;
+  document.getElementById('camp-stats-wrap').innerHTML=buildStatsBar([
+    {label:'Total POB',pills:[{label:'Safah',value:safahTotal,icon:'fa-tent',color:'sp-blue'},{label:'Wadi Latham',value:wadiTotal,icon:'fa-tent',color:'sp-orange'}]},
+    {label:'POB Status',pills:[{label:'POB',value:pobCount,icon:'fa-user-check',color:'sp-green'},{label:'POB-A',value:pobACount,icon:'fa-user-check',color:'sp-green'},{label:'POB-B',value:pobBCount,icon:'fa-user-check',color:'sp-blue'},{label:'POB-C',value:pobCCount,icon:'fa-user-check',color:'sp-purple'},{label:'POB-D',value:pobDCount,icon:'fa-user-check',color:'sp-teal'},{label:'POL',value:polCount,icon:'fa-user-clock',color:'sp-warn'}]},
+    {label:'Camp Resources',pills:[{label:'Safah MP',value:safahTotal,icon:'fa-person-digging',color:'sp-green'},{label:'Wadi MP',value:wadiTotal,icon:'fa-person-digging',color:'sp-orange'},{label:'Safah EQ',value:safahEQ,icon:'fa-gear',color:'sp-blue'},{label:'Wadi EQ',value:wadiEQ,icon:'fa-gear',color:'sp-teal'}]},
   ]);
 }
 
 /* ══ CAMP FILTER & RENDER ══ */
 function campFilterRender() {
-  const q    =(document.getElementById('camp-search').value||'').toLowerCase().trim();
-  const fCamp= document.getElementById('cf-camp').value;
-  const fCat = document.getElementById('cf-cat').value;
-  const fStat= document.getElementById('cf-status').value;
-  const fNat = document.getElementById('cf-nat').value;
+  const q=(document.getElementById('camp-search').value||'').toLowerCase().trim();
+  const fCamp=document.getElementById('cf-camp').value,fCat=document.getElementById('cf-cat').value;
+  const fStat=document.getElementById('cf-status').value,fNat=document.getElementById('cf-nat').value;
   campFilteredRows=campAllRows.filter(r=>{
-    if(fCamp!=='all'&&r.camp  !==fCamp) return false;
-    if(fCat !=='all'&&r.cat   !==fCat)  return false;
-    if(fStat!=='all'&&r.status!==fStat) return false;
-    if(fNat !=='all'&&r.nat   !==fNat)  return false;
-    if(q){ const hay=`${r.id} ${r.name} ${r.desig} ${r.cat} ${r.nat} ${r.doj} ${r.camp} ${r.status}`.toLowerCase(); if(!hay.includes(q))return false; }
+    if(fCamp!=='all'&&r.camp!==fCamp)return false;
+    if(fCat!=='all'&&r.cat!==fCat)return false;
+    if(fStat!=='all'&&r.status!==fStat)return false;
+    if(fNat!=='all'&&r.nat!==fNat)return false;
+    if(q){const hay=`${r.id} ${r.name} ${r.desig} ${r.cat} ${r.nat} ${r.doj} ${r.camp} ${r.status}`.toLowerCase();if(!hay.includes(q))return false;}
     return true;
   });
   campUpdateStats(campFilteredRows);
@@ -1707,14 +1707,14 @@ function campFilterRender() {
 }
 function campRenderTable(rows) {
   document.getElementById('camp-badge').textContent=`${rows.length} record${rows.length!==1?'s':''}`;
-  if(!rows.length){ document.getElementById('camp-tbody').innerHTML='<tr><td colspan="10" class="no-data">No records match the current filters.</td></tr>'; return; }
+  if(!rows.length){document.getElementById('camp-tbody').innerHTML='<tr><td colspan="10" class="no-data">No records match the current filters.</td></tr>';return;}
   document.getElementById('camp-tbody').innerHTML=rows.map((r,i)=>campRowHTML(r,i+1)).join('');
 }
 
 /* ══ CAMP BADGES ══ */
-function campStatusBadge(s){ const m={'POB':'s-pob','POB-A':'s-pob-a','POB-B':'s-pob-b','POB-C':'s-pob-c','POB-D':'s-pob-d','POL':'s-pol','POR':'s-por'}; return `<span class="status-pill ${m[s]||'s-def'}">${escHtml(s||'—')}</span>`; }
-function campCatBadge(c){ if(c==='Manpower')return `<span class="cat-mp">Manpower</span>`; if(c==='Equipment')return `<span class="cat-eq">Equipment</span>`; return `<span class="cat-def">${escHtml(c||'—')}</span>`; }
-function campNatBadge(n){ if(n==='Expats')return `<span class="nat-exp">Expats</span>`; if(n==='Nationals')return `<span class="nat-nat">Nationals</span>`; return `<span class="cat-def">${escHtml(n||'—')}</span>`; }
+function campStatusBadge(s){const m={'POB':'s-pob','POB-A':'s-pob-a','POB-B':'s-pob-b','POB-C':'s-pob-c','POB-D':'s-pob-d','POL':'s-pol','POR':'s-por'};return `<span class="status-pill ${m[s]||'s-def'}">${escHtml(s||'—')}</span>`;}
+function campCatBadge(c){if(c==='Manpower')return `<span class="cat-mp">Manpower</span>`;if(c==='Equipment')return `<span class="cat-eq">Equipment</span>`;return `<span class="cat-def">${escHtml(c||'—')}</span>`;}
+function campNatBadge(n){if(n==='Expats')return `<span class="nat-exp">Expats</span>`;if(n==='Nationals')return `<span class="nat-nat">Nationals</span>`;return `<span class="cat-def">${escHtml(n||'—')}</span>`;}
 
 /* ══ CAMP ROW HTML ══ */
 function campRowHTML(r,idx){
@@ -1747,15 +1747,15 @@ function campRowHTML(r,idx){
 }
 
 /* ══ CAMP EDIT / CANCEL ══ */
-function campEditRow(rid){ const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('editing'); }
-function campCancelEdit(rid,isNew){ if(isNew){ const tr=document.getElementById('camp-row-'+rid); if(tr)tr.remove(); return; } const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.remove('editing'); }
+function campEditRow(rid){const tr=document.getElementById('camp-row-'+rid);if(tr)tr.classList.add('editing');}
+function campCancelEdit(rid,isNew){if(isNew){const tr=document.getElementById('camp-row-'+rid);if(tr)tr.remove();return;}const tr=document.getElementById('camp-row-'+rid);if(tr)tr.classList.remove('editing');}
 
 /* ══ CAMP ADD ROW ══ */
 function campAddRow(){
   campNewRowCounter--;
   const tid='new_'+Math.abs(campNewRowCounter);
   const tbody=document.getElementById('camp-tbody');
-  const nd=tbody.querySelector('.no-data'); if(nd)nd.closest('tr').remove();
+  const nd=tbody.querySelector('.no-data');if(nd)nd.closest('tr').remove();
   const statusOpts=['POB','POB-A','POB-B','POB-C','POB-D','POL','POR'].map(o=>`<option>${o}</option>`).join('');
   tbody.insertAdjacentHTML('afterbegin',`
   <tr id="camp-row-${tid}" data-rowid="${tid}" class="new-row editing">
@@ -1783,38 +1783,38 @@ function campAddRow(){
 
 /* ══ CAMP SAVE ══ */
 async function campSaveRow(rid,isNew){
-  const g=id=>{ const el=document.getElementById(id); return el?el.value.trim():''; };
+  const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
   const empId=g(`ci-id-${rid}`),name=g(`ci-name-${rid}`),desig=g(`ci-desig-${rid}`);
   const cat=g(`ci-cat-${rid}`),nat=g(`ci-nat-${rid}`),doj=g(`ci-doj-${rid}`);
   const camp=g(`ci-camp-${rid}`),status=g(`ci-status-${rid}`);
-  if(!name)  { campToast('Employee Name is required','error'); return; }
-  if(!cat)   { campToast('Please select a Category','error');  return; }
-  if(!camp)  { campToast('Please select a Camp','error');      return; }
-  if(!status){ campToast('Please select a Status','error');    return; }
-  const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('saving');
+  if(!name){campToast('Employee Name is required','error');return;}
+  if(!cat){campToast('Please select a Category','error');return;}
+  if(!camp){campToast('Please select a Camp','error');return;}
+  if(!status){campToast('Please select a Status','error');return;}
+  const tr=document.getElementById('camp-row-'+rid);if(tr)tr.classList.add('saving');
   const payload=isNew
-    ?{ action:'add','ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status }
-    :{ action:'update',_row:rid,'ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status };
+    ?{action:'add','ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status}
+    :{action:'update',_row:rid,'ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status};
   try {
     const res=await fetch(CAMP_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
     const json=await res.json();
     if(json.status!=='ok') throw new Error(json.message||'Save failed');
     campToast(isNew?'✓ Employee added':'✓ Record updated','success');
     await campLoadData();
-  } catch(e){ console.error(e); campToast('Save failed: '+e.message,'error'); if(tr)tr.classList.remove('saving'); }
+  } catch(e){console.error(e);campToast('Save failed: '+e.message,'error');if(tr)tr.classList.remove('saving');}
 }
 
 /* ══ CAMP DELETE ══ */
 async function campDeleteRow(rid){
   if(!confirm('Delete this record? This cannot be undone.')) return;
-  const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('saving');
+  const tr=document.getElementById('camp-row-'+rid);if(tr)tr.classList.add('saving');
   try {
     const res=await fetch(CAMP_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',_row:rid})});
     const json=await res.json();
     if(json.status!=='ok') throw new Error(json.message||'Delete failed');
     campToast('Record deleted','info');
     await campLoadData();
-  } catch(e){ console.error(e); campToast('Delete failed: '+e.message,'error'); if(tr)tr.classList.remove('saving'); }
+  } catch(e){console.error(e);campToast('Delete failed: '+e.message,'error');if(tr)tr.classList.remove('saving');}
 }
 
 /* ══ CAMP EXCEL ══ */
@@ -1828,19 +1828,13 @@ function exportCampExcel(){
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'All Employees');
   ['Safah','Wadi Latham'].forEach(camp=>{
-    const rows=campAllRows.filter(r=>r.camp===camp);
-    if(!rows.length)return;
-    const cws=XLSX.utils.aoa_to_sheet([hdr,...rows.map(toRow)]); cws['!cols']=ws['!cols'];
+    const rows=campAllRows.filter(r=>r.camp===camp);if(!rows.length)return;
+    const cws=XLSX.utils.aoa_to_sheet([hdr,...rows.map(toRow)]);cws['!cols']=ws['!cols'];
     XLSX.utils.book_append_sheet(wb,cws,camp.replace(' ','_'));
   });
   const pobData=[['Status','Safah MP','Wadi Latham MP','Safah EQ','Wadi EQ']];
   [...POB_STATUSES,'POL','POR'].forEach(st=>{
-    pobData.push([st,
-      campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Manpower').length,
-      campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Manpower').length,
-      campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Equipment').length,
-      campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Equipment').length,
-    ]);
+    pobData.push([st,campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Manpower').length,campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Manpower').length,campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Equipment').length,campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Equipment').length]);
   });
   const wsSummary=XLSX.utils.aoa_to_sheet(pobData);
   wsSummary['!cols']=[{wch:10},{wch:12},{wch:18},{wch:12},{wch:12}];
@@ -1856,7 +1850,7 @@ function campToast(msg,type='info'){
   t.className=`c-toast ${type}`;
   t.innerHTML=`<span>${icons[type]||'•'}</span> ${escHtml(msg)}`;
   c.appendChild(t);
-  setTimeout(()=>{ t.style.opacity='0';t.style.transition='opacity 0.4s';setTimeout(()=>t.remove(),400); },3200);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.4s';setTimeout(()=>t.remove(),400);},3200);
 }
 
 /* ══ EXCEL EXPORTS ══ */
@@ -1864,25 +1858,24 @@ function exportRepSumExcel(){
   if(!lastRepSumRows.length){alert('No data to export.');return;}
   const ws=XLSX.utils.aoa_to_sheet([['#','Foreman Name','Foreman ID','Area / Block','Discipline','WI No.','Crew Size','Work Description','Progress Details'],...lastRepSumRows.map((g,i)=>[i+1,g.crewLead,g.id,g.area,g.discipline,g.wi,g.resources.size,g.desc||'—',formatProgressFlat(g.progress)||'—'])]);
   ws['!cols']=[{wch:4},{wch:22},{wch:14},{wch:22},{wch:20},{wch:16},{wch:10},{wch:40},{wch:50}];
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Report Summary');
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Report Summary');
   XLSX.writeFile(wb,`GPS_ReportSummary_${document.getElementById('rs-date').value}.xlsx`);
 }
 function exportStatusExcel(){
   if(!lastStatusGroups.length){alert('No data to export.');return;}
-  const ws=XLSX.utils.aoa_to_sheet([['#','Foreman ID','Crew Lead','WI No.','Area / Block','Crew Size','Manpower','Equipment','Discipline'],...lastStatusGroups.map((g,i)=>{ const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length; return [i+1,g.id,g.crewLead,g.wi,g.area,g.resources.size,mp,eq,g.discipline]; })]);
+  const ws=XLSX.utils.aoa_to_sheet([['#','Foreman ID','Crew Lead','WI No.','Area / Block','Crew Size','Manpower','Equipment','Discipline'],...lastStatusGroups.map((g,i)=>{const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;return [i+1,g.id,g.crewLead,g.wi,g.area,g.resources.size,mp,eq,g.discipline];})]);
   ws['!cols']=[{wch:4},{wch:14},{wch:22},{wch:16},{wch:22},{wch:10},{wch:10},{wch:10},{wch:20}];
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Project Status');
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Project Status');
   XLSX.writeFile(wb,`GPS_ProjectStatus_${lastStatusDate?toKey(lastStatusDate):'export'}.xlsx`);
 }
 function exportResourceExcel(){
   if(!lastResAllRows.length){alert('No data to export.');return;}
   const allData=[['#','Resource ID','Designation','Type','WI No.','Area','Foreman','Discipline'],...lastResAllRows.map((r,i)=>[i+1,r.id,r.desig,r.type||'—',r.wi,r.area,r.foreman,r.discipline||'—'])];
-  const wsAll=XLSX.utils.aoa_to_sheet(allData); wsAll['!cols']=[{wch:4},{wch:14},{wch:22},{wch:12},{wch:16},{wch:22},{wch:22},{wch:20}];
-  const mpRows=lastResAllRows.filter(r=>r.type.toLowerCase()==='manpower');
-  const eqRows=lastResAllRows.filter(r=>r.type.toLowerCase()==='equipment');
+  const wsAll=XLSX.utils.aoa_to_sheet(allData);wsAll['!cols']=[{wch:4},{wch:14},{wch:22},{wch:12},{wch:16},{wch:22},{wch:22},{wch:20}];
+  const mpRows=lastResAllRows.filter(r=>r.type.toLowerCase()==='manpower'),eqRows=lastResAllRows.filter(r=>r.type.toLowerCase()==='equipment');
   const wsMp=XLSX.utils.aoa_to_sheet([['#','Resource ID','Designation','WI No.','Area','Foreman'],...mpRows.map((r,i)=>[i+1,r.id,r.desig,r.wi,r.area,r.foreman])]);
   const wsEq=XLSX.utils.aoa_to_sheet([['#','Resource ID','Designation','WI No.','Area','Foreman'],...eqRows.map((r,i)=>[i+1,r.id,r.desig,r.wi,r.area,r.foreman])]);
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,wsAll,'All Resources'); XLSX.utils.book_append_sheet(wb,wsMp,'Manpower'); XLSX.utils.book_append_sheet(wb,wsEq,'Equipment');
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,wsAll,'All Resources');XLSX.utils.book_append_sheet(wb,wsMp,'Manpower');XLSX.utils.book_append_sheet(wb,wsEq,'Equipment');
   XLSX.writeFile(wb,`GPS_Resources_${lastResDate?toKey(lastResDate):'export'}.xlsx`);
 }
 
@@ -1898,9 +1891,9 @@ function triggerTabRender(t){
 }
 
 /* ══ UTILS ══ */
-function show(id){ const el=document.getElementById(id); if(el)el.style.display='block'; }
-function hide(id){ const el=document.getElementById(id); if(el)el.style.display='none'; }
-function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function show(id){const el=document.getElementById(id);if(el)el.style.display='block';}
+function hide(id){const el=document.getElementById(id);if(el)el.style.display='none';}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 </script>
 </body>
 </html>
