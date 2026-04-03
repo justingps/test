@@ -290,13 +290,31 @@ tr.saving td{opacity:0.55}
 .c-toast.success{border-color:var(--accent3)}.c-toast.error{border-color:var(--danger)}.c-toast.info{border-color:var(--accent2)}
 @keyframes slideInRight{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-/* ══ SANKEY ══ */
-.sankey-outer{width:100%;overflow-x:auto;overflow-y:visible}
-.sankey-svg-wrap{display:block;min-width:0}
+/* ══ SANKEY — FIXED ══ */
+.sankey-outer{
+  width:100%;
+  /* CRITICAL FIX: remove overflow:hidden so the full SVG height is visible */
+  overflow-x:auto;
+  overflow-y:visible;
+  box-sizing:border-box;
+}
+/* The container must NOT clip height */
+#sankey-container{
+  width:100%;
+  min-height:100px;
+  overflow:visible;
+}
+/* SVG scales to full width, height is determined by viewBox aspect ratio */
+#sankey-container svg{
+  display:block;
+  width:100%;
+  height:auto;         /* CRITICAL FIX: auto height follows viewBox aspect ratio */
+  overflow:visible;    /* prevent internal clipping */
+}
 .sankey-ribbon{transition:opacity 0.18s;cursor:default}
 .sankey-node-bar{cursor:pointer;transition:opacity 0.18s}
 .sankey-node-bar:hover{opacity:0.78 !important}
-.sankey-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 14px;margin-bottom:16px;transition:background var(--transition);overflow:hidden}
+.sankey-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 14px;margin-bottom:16px;transition:background var(--transition);overflow:visible}
 .sankey-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .sankey-legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub)}
 .sankey-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
@@ -522,7 +540,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- ══ SANKEY / ALLUVIAL FLOW DIAGRAM ══ -->
+    <!-- FLOW DIAGRAM (SANKEY) -->
     <div id="tab-sankey" class="tab-panel">
       <div class="page-header">
         <h1 class="page-title">Resource <span>Flow Diagram</span></h1>
@@ -554,7 +572,10 @@ tr.saving td{opacity:0.55}
         <div class="sankey-card">
           <div class="chart-card-title">Area → Discipline → Work Instruction</div>
           <div class="chart-card-sub">Flow width = crew / resource count. Hover nodes and ribbons for details.</div>
-          <div class="sankey-outer" style="width:100%;overflow:hidden;box-sizing:border-box"><div id="sankey-container" style="width:100%;min-height:200px"></div></div>
+          <!-- CRITICAL FIX: removed overflow:hidden, let height be auto -->
+          <div class="sankey-outer">
+            <div id="sankey-container"></div>
+          </div>
           <div class="sankey-legend" id="sankey-legend"></div>
         </div>
         <div class="section-label">Flow Detail Table</div>
@@ -651,7 +672,6 @@ const POB_STATUSES = ['POB','POB-A','POB-B','POB-C','POB-D'];
 const KNOWN_DISCIPLINES = ['Piping & Mechanical','Electrical','Civil','Instrumentation','OHL'];
 const PALETTE = ['#e07b39','#3a7bd5','#2eaa7e','#d4922b','#9b5de5','#d94f4f','#17b8c4','#a3b18a'];
 
-/* Discipline color map — consistent across all views */
 const DISC_COLORS = {
   'Piping & Mechanical': '#e07b39',
   'Electrical':          '#3a7bd5',
@@ -993,9 +1013,7 @@ function renderReports(){
   cards.innerHTML=html;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   LOGO FETCH HELPER
-══════════════════════════════════════════════════════════════ */
+/* ══ LOGO FETCH ══ */
 let _cachedLogoB64 = null;
 async function fetchLogoBase64() {
   if (_cachedLogoB64) return _cachedLogoB64;
@@ -1007,76 +1025,57 @@ async function fetchLogoBase64() {
       reader.onloadend = () => { _cachedLogoB64 = reader.result; resolve(_cachedLogoB64); };
       reader.readAsDataURL(blob);
     });
-  } catch (e) {
-    console.warn('Logo fetch failed:', e);
-    return null;
-  }
+  } catch (e) { console.warn('Logo fetch failed:', e); return null; }
 }
 
 /* ══ PDF GENERATION ══ */
 async function downloadReportsPDF() {
   if (!lastRepGroups.length) { alert('No reports to export.'); return; }
-  const overlay     = document.getElementById('pdf-overlay');
-  const progressTxt = document.getElementById('pdf-progress-text');
+  const overlay=document.getElementById('pdf-overlay'), progressTxt=document.getElementById('pdf-progress-text');
   overlay.classList.add('visible');
   try {
-    progressTxt.textContent = 'Loading company logo…';
-    const logoB64 = await fetchLogoBase64();
-    const { jsPDF } = window.jspdf;
-    const pdf   = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const M     = 36;
-    const inner = pageW - M * 2;
-    const dateVal = getDate('r-date');
-    const dateStr = dateVal ? fmtDisplay(dateVal) : '—';
-    const genDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-    const C = { accent:[224,123,57],text:[26,34,54],sub:[90,104,128],dim:[160,172,190],surface:[244,246,249],surface2:[235,238,243],border:[210,215,224],white:[255,255,255],green:[46,170,126],blue:[58,123,213],line:[224,226,232] };
-    const setFill=c=>pdf.setFillColor(...c);const setDraw=c=>pdf.setDrawColor(...c);const setTxtClr=c=>pdf.setTextColor(...c);const bold=()=>pdf.setFont('helvetica','bold');const normal=()=>pdf.setFont('helvetica','normal');
+    progressTxt.textContent='Loading company logo…';
+    const logoB64=await fetchLogoBase64();
+    const { jsPDF }=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
+    const pageW=pdf.internal.pageSize.getWidth(), pageH=pdf.internal.pageSize.getHeight(), M=36, inner=pageW-M*2;
+    const dateVal=getDate('r-date'), dateStr=dateVal?fmtDisplay(dateVal):'—';
+    const genDate=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const C={accent:[224,123,57],text:[26,34,54],sub:[90,104,128],dim:[160,172,190],surface:[244,246,249],surface2:[235,238,243],border:[210,215,224],white:[255,255,255],green:[46,170,126],blue:[58,123,213],line:[224,226,232]};
+    const setFill=c=>pdf.setFillColor(...c); const setDraw=c=>pdf.setDrawColor(...c); const setTxtClr=c=>pdf.setTextColor(...c); const bold=()=>pdf.setFont('helvetica','bold'); const normal=()=>pdf.setFont('helvetica','normal');
     const LOGO_SIZE=36;
-    function drawPageHeader(reportNo,wi,isContinued){
-      const headerH=72;setFill(C.surface);pdf.rect(0,0,pageW,headerH,'F');setFill(C.accent);pdf.rect(0,0,4,headerH,'F');
-      const logoX=M+4,logoY=(headerH-LOGO_SIZE)/2;
-      if(logoB64){setFill([255,255,255]);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');const pad=3;pdf.addImage(logoB64,'PNG',logoX+pad,logoY+pad,LOGO_SIZE-pad*2,LOGO_SIZE-pad*2);}
-      else{setFill(C.surface2);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');bold();pdf.setFontSize(9);setTxtClr(C.accent);pdf.text('GPS',logoX+LOGO_SIZE/2,logoY+LOGO_SIZE/2+3,{align:'center'});}
-      const textX=logoX+LOGO_SIZE+10;bold();pdf.setFontSize(13);setTxtClr(C.text);pdf.text('Gulf Petrochemical Services',textX,28);normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text('OXY OMAN · CONTRACT #24000110790',textX,40);
-      if(isContinued){pdf.setFontSize(7);setTxtClr(C.dim);pdf.text(`Work Report #${reportNo}  (continued)`,textX,52);}
-      const badgeLabel=`Work Report #${reportNo}`;bold();pdf.setFontSize(9);setTxtClr(C.white);const bw=pdf.getTextWidth(badgeLabel)+22;const bx=pageW-M-bw;setFill(C.accent);pdf.roundedRect(bx,10,bw,19,3,3,'F');pdf.text(badgeLabel,bx+bw/2,23,{align:'center'});
-      normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text(`WI: ${wi}`,pageW-M,40,{align:'right'});pdf.text(`Date: ${dateStr}`,pageW-M,51,{align:'right'});
-      setDraw(C.border);pdf.setLineWidth(0.5);pdf.line(0,headerH,pageW,headerH);
-      return headerH+10;
-    }
-    function checkPage(y,needed,reportNo,wi){const bottomGuard=pageH-24;if(y+needed>bottomGuard){pdf.addPage();drawPageFooter();y=drawPageHeader(reportNo,wi,true);}return y;}
-    function sectionBar(y,title){setFill(C.surface2);pdf.rect(M,y,inner,18,'F');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+18);pdf.setLineWidth(0.5);bold();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(title.toUpperCase(),M+8,y+12);normal();return y+18;}
-    function tableRow(y,cells,widths,rowH,isHeader,isAlt){if(isHeader){setFill(C.surface2);}else if(isAlt){setFill([248,250,253]);}else{setFill(C.white);}pdf.rect(M,y,inner,rowH,'F');setDraw(C.line);pdf.setLineWidth(0.3);pdf.line(M,y+rowH,M+inner,y+rowH);let x=M;cells.forEach((cell,ci)=>{const w=widths[ci];if(isHeader){bold();pdf.setFontSize(6.5);setTxtClr(C.sub);}else{normal();pdf.setFontSize(7.5);setTxtClr(C.text);}const lines=pdf.splitTextToSize(String(cell||'—'),w-8);pdf.text(lines[0],x+4,y+rowH/2+(isHeader?2:2.5));x+=w;});return y+rowH;}
-    function metaGrid(y,items){const cols=3;const cellW=inner/cols;const cellH=32;const rows=Math.ceil(items.length/cols);const totalH=rows*cellH;for(let ri=0;ri<rows;ri++){for(let ci=0;ci<cols;ci++){const idx=ri*cols+ci;if(idx>=items.length)continue;const cx=M+ci*cellW;const cy=y+ri*cellH;setFill(ci%2===0?C.surface:C.surface2);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(cx,cy,cellW,cellH,'FD');bold();pdf.setFontSize(6);setTxtClr(C.dim);pdf.text(String(items[idx][0]).toUpperCase(),cx+5,cy+10);normal();pdf.setFontSize(8);setTxtClr(C.text);const val=pdf.splitTextToSize(String(items[idx][1]||'—'),cellW-10);pdf.text(val[0],cx+5,cy+22);}}return y+totalH;}
-    function descBox(y,text){if(!text)return y;normal();pdf.setFontSize(8);setTxtClr(C.sub);const lines=pdf.splitTextToSize(text,inner-16);const boxH=lines.length*11+14;setFill([250,251,254]);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(M,y,inner,boxH,'FD');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+boxH);pdf.setLineWidth(0.3);pdf.text(lines,M+10,y+11);return y+boxH+6;}
-    function signatureSection(y){const sigBoxH=88;y=sectionBar(y,'Approval & Signatures');setDraw(C.border);pdf.setLineWidth(0.5);pdf.rect(M,y,inner,sigBoxH,'S');const colW=inner/3;const roles=[{title:'Site Engineer',color:C.green},{title:'Site Manager',color:C.blue},{title:'Client Representative',color:C.accent}];roles.forEach((role,ci)=>{const cx=M+ci*colW;if(ci>0){setDraw(C.border);pdf.setLineWidth(0.4);pdf.line(cx,y,cx,y+sigBoxH);}pdf.setFillColor(...role.color);pdf.rect(cx,y,colW,14,'F');bold();pdf.setFontSize(7.5);setTxtClr(C.white);pdf.text(role.title,cx+colW/2,y+10,{align:'center'});const fieldY=y+22;const fieldGap=18;const fields=['Name:','Designation:','Signature:','Date:'];fields.forEach((lbl,fi)=>{normal();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(lbl,cx+6,fieldY+fi*fieldGap);setDraw(C.line);pdf.setLineWidth(0.4);pdf.line(cx+38,fieldY+fi*fieldGap+1,cx+colW-6,fieldY+fi*fieldGap+1);});});return y+sigBoxH+10;}
-    function drawPageFooter(pageLabel){const pNum=pdf.internal.getCurrentPageInfo().pageNumber;setFill(C.accent);pdf.rect(0,pageH-5,pageW,5,'F');setDraw(C.border);pdf.setLineWidth(0.3);pdf.line(0,pageH-18,pageW,pageH-18);normal();pdf.setFontSize(6.5);setTxtClr(C.dim);pdf.text(`Gulf Petrochemical Services LLC · Generated ${genDate}${pageLabel?' · '+pageLabel:''}`,pageW/2,pageH-8,{align:'center'});}
+    function drawPageHeader(reportNo,wi,isContinued){ const headerH=72;setFill(C.surface);pdf.rect(0,0,pageW,headerH,'F');setFill(C.accent);pdf.rect(0,0,4,headerH,'F'); const logoX=M+4,logoY=(headerH-LOGO_SIZE)/2; if(logoB64){setFill([255,255,255]);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');const pad=3;pdf.addImage(logoB64,'PNG',logoX+pad,logoY+pad,LOGO_SIZE-pad*2,LOGO_SIZE-pad*2);}else{setFill(C.surface2);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');bold();pdf.setFontSize(9);setTxtClr(C.accent);pdf.text('GPS',logoX+LOGO_SIZE/2,logoY+LOGO_SIZE/2+3,{align:'center'});} const textX=logoX+LOGO_SIZE+10;bold();pdf.setFontSize(13);setTxtClr(C.text);pdf.text('Gulf Petrochemical Services',textX,28);normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text('OXY OMAN · CONTRACT #24000110790',textX,40); if(isContinued){pdf.setFontSize(7);setTxtClr(C.dim);pdf.text(`Work Report #${reportNo}  (continued)`,textX,52);} const badgeLabel=`Work Report #${reportNo}`;bold();pdf.setFontSize(9);setTxtClr(C.white);const bw=pdf.getTextWidth(badgeLabel)+22;const bx=pageW-M-bw;setFill(C.accent);pdf.roundedRect(bx,10,bw,19,3,3,'F');pdf.text(badgeLabel,bx+bw/2,23,{align:'center'}); normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text(`WI: ${wi}`,pageW-M,40,{align:'right'});pdf.text(`Date: ${dateStr}`,pageW-M,51,{align:'right'}); setDraw(C.border);pdf.setLineWidth(0.5);pdf.line(0,headerH,pageW,headerH); return headerH+10; }
+    function checkPage(y,needed,reportNo,wi){ const bottomGuard=pageH-24; if(y+needed>bottomGuard){pdf.addPage();drawPageFooter();y=drawPageHeader(reportNo,wi,true);}return y; }
+    function sectionBar(y,title){ setFill(C.surface2);pdf.rect(M,y,inner,18,'F');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+18);pdf.setLineWidth(0.5);bold();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(title.toUpperCase(),M+8,y+12);normal();return y+18; }
+    function tableRow(y,cells,widths,rowH,isHeader,isAlt){ if(isHeader){setFill(C.surface2);}else if(isAlt){setFill([248,250,253]);}else{setFill(C.white);}pdf.rect(M,y,inner,rowH,'F');setDraw(C.line);pdf.setLineWidth(0.3);pdf.line(M,y+rowH,M+inner,y+rowH);let x=M;cells.forEach((cell,ci)=>{const w=widths[ci];if(isHeader){bold();pdf.setFontSize(6.5);setTxtClr(C.sub);}else{normal();pdf.setFontSize(7.5);setTxtClr(C.text);}const lines=pdf.splitTextToSize(String(cell||'—'),w-8);pdf.text(lines[0],x+4,y+rowH/2+(isHeader?2:2.5));x+=w;});return y+rowH; }
+    function metaGrid(y,items){ const cols=3;const cellW=inner/cols;const cellH=32;const rows=Math.ceil(items.length/cols);const totalH=rows*cellH;for(let ri=0;ri<rows;ri++){for(let ci=0;ci<cols;ci++){const idx=ri*cols+ci;if(idx>=items.length)continue;const cx=M+ci*cellW;const cy=y+ri*cellH;setFill(ci%2===0?C.surface:C.surface2);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(cx,cy,cellW,cellH,'FD');bold();pdf.setFontSize(6);setTxtClr(C.dim);pdf.text(String(items[idx][0]).toUpperCase(),cx+5,cy+10);normal();pdf.setFontSize(8);setTxtClr(C.text);const val=pdf.splitTextToSize(String(items[idx][1]||'—'),cellW-10);pdf.text(val[0],cx+5,cy+22);}}return y+totalH; }
+    function descBox(y,text){ if(!text)return y;normal();pdf.setFontSize(8);setTxtClr(C.sub);const lines=pdf.splitTextToSize(text,inner-16);const boxH=lines.length*11+14;setFill([250,251,254]);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(M,y,inner,boxH,'FD');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+boxH);pdf.setLineWidth(0.3);pdf.text(lines,M+10,y+11);return y+boxH+6; }
+    function signatureSection(y){ const sigBoxH=88;y=sectionBar(y,'Approval & Signatures');setDraw(C.border);pdf.setLineWidth(0.5);pdf.rect(M,y,inner,sigBoxH,'S');const colW=inner/3;const roles=[{title:'Site Engineer',color:C.green},{title:'Site Manager',color:C.blue},{title:'Client Representative',color:C.accent}];roles.forEach((role,ci)=>{const cx=M+ci*colW;if(ci>0){setDraw(C.border);pdf.setLineWidth(0.4);pdf.line(cx,y,cx,y+sigBoxH);}pdf.setFillColor(...role.color);pdf.rect(cx,y,colW,14,'F');bold();pdf.setFontSize(7.5);setTxtClr(C.white);pdf.text(role.title,cx+colW/2,y+10,{align:'center'});const fieldY=y+22;const fieldGap=18;const fields=['Name:','Designation:','Signature:','Date:'];fields.forEach((lbl,fi)=>{normal();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(lbl,cx+6,fieldY+fi*fieldGap);setDraw(C.line);pdf.setLineWidth(0.4);pdf.line(cx+38,fieldY+fi*fieldGap+1,cx+colW-6,fieldY+fi*fieldGap+1);});});return y+sigBoxH+10; }
+    function drawPageFooter(pageLabel){ const pNum=pdf.internal.getCurrentPageInfo().pageNumber;setFill(C.accent);pdf.rect(0,pageH-5,pageW,5,'F');setDraw(C.border);pdf.setLineWidth(0.3);pdf.line(0,pageH-18,pageW,pageH-18);normal();pdf.setFontSize(6.5);setTxtClr(C.dim);pdf.text(`Gulf Petrochemical Services LLC · Generated ${genDate}${pageLabel?' · '+pageLabel:''}`,pageW/2,pageH-8,{align:'center'}); }
     const totalReports=lastRepGroups.length;
     for(let i=0;i<totalReports;i++){
-      const g=lastRepGroups[i];progressTxt.textContent=`Rendering report ${i+1} of ${totalReports}…`;if(i>0)pdf.addPage();
+      const g=lastRepGroups[i]; progressTxt.textContent=`Rendering report ${i+1} of ${totalReports}…`; if(i>0)pdf.addPage();
       const reportStartPage=pdf.internal.getCurrentPageInfo().pageNumber;
       let y=drawPageHeader(i+1,g.wi,false);
       if(g.desc){y=checkPage(y,40,i+1,g.wi);y=sectionBar(y,'Work Description');y=descBox(y,g.desc);y+=4;}
-      const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length;const eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;
+      const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length; const eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;
       const metaItems=[['Foreman ID',g.id],['Foreman Name',g.crewLead],['Area / Block',g.area],['Discipline',g.discipline],['Permit No.',g.permitNo],['Work Hours',`${g.timeIn} → ${g.timeOut}`],['Manpower',String(mp)],['Equipment',String(eq)],['Crew Size',String(g.resources.size)]];
       y=checkPage(y,20,i+1,g.wi);y=sectionBar(y,'Report Details');y=checkPage(y,Math.ceil(metaItems.length/3)*32+4,i+1,g.wi);y=metaGrid(y,metaItems);y+=10;
       const progressLines=g.progress.replace(/"/g,'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const idx=l.lastIndexOf('=');return idx!==-1?[l.slice(0,idx).trim(),l.slice(idx+1).trim()]:[l,'—'];});
       y=checkPage(y,36,i+1,g.wi);y=sectionBar(y,`Progress Details (${progressLines.length} item${progressLines.length!==1?'s':''})`);
-      const progWidths=[30,inner-80,50];y=tableRow(y,['#','Description','Quantity'],progWidths,16,true);
+      const progWidths=[30,inner-80,50]; y=tableRow(y,['#','Description','Quantity'],progWidths,16,true);
       if(progressLines.length){progressLines.forEach((pl,j)=>{y=checkPage(y,16,i+1,g.wi);y=tableRow(y,[j+1,pl[0],pl[1]],progWidths,16,false,j%2===1);});}
       else{y=checkPage(y,16,i+1,g.wi);normal();pdf.setFontSize(7.5);setTxtClr(C.dim);pdf.text('No progress data recorded.',M+8,y+11);y+=16;}
       y+=10;
       y=checkPage(y,36,i+1,g.wi);y=sectionBar(y,`Resources (${g.resourceRows.length} record${g.resourceRows.length!==1?'s':''})`);
-      const resColW=[30,80,inner-310,75,60,65];y=tableRow(y,['#','Resource ID','Designation','Type','Time-In','Time-Out'],resColW,16,true);
+      const resColW=[30,80,inner-310,75,60,65]; y=tableRow(y,['#','Resource ID','Designation','Type','Time-In','Time-Out'],resColW,16,true);
       if(g.resourceRows.length){g.resourceRows.forEach((r,j)=>{y=checkPage(y,16,i+1,g.wi);const typeLabel=r.type.toLowerCase()==='manpower'?'Manpower':r.type.toLowerCase()==='equipment'?'Equipment':r.type||'—';y=tableRow(y,[j+1,r.id,r.desig,typeLabel,r.tin,r.tout],resColW,16,false,j%2===1);});}
       else{normal();pdf.setFontSize(7.5);setTxtClr(C.dim);pdf.text('No resource records found.',M+8,y+11);y+=16;}
       y+=12;
       const SIG_NEEDED=18+88+10+30;
       if(y+SIG_NEEDED>pageH-24){pdf.addPage();drawPageFooter();y=drawPageHeader(i+1,g.wi,true);}
       y=signatureSection(y);
-      const reportEndPage=pdf.internal.getCurrentPageInfo().pageNumber;const reportPageCount=reportEndPage-reportStartPage+1;
+      const reportEndPage=pdf.internal.getCurrentPageInfo().pageNumber; const reportPageCount=reportEndPage-reportStartPage+1;
       for(let p=reportStartPage;p<=reportEndPage;p++){pdf.setPage(p);const pageLabel=reportPageCount>1?`Report ${i+1} of ${totalReports} · Page ${p-reportStartPage+1} of ${reportPageCount}`:`Report ${i+1} of ${totalReports}`;drawPageFooter(pageLabel);}
       pdf.setPage(reportEndPage);
     }
@@ -1151,20 +1150,13 @@ function renderResource(){
 }
 
 /* ════════════════════════════════════════════════════════════
-   SANKEY / ALLUVIAL FLOW DIAGRAM  —  v3
+   SANKEY / ALLUVIAL FLOW DIAGRAM — FIXED VERSION
    Key fixes:
-   · Fixed viewBox (1040 × dynamic) scales to card width — labels
-     are placed at known internal coords and NEVER overflow.
-   · LEFT_LABEL_W / RIGHT_LABEL_W reserves exact pixel budget for
-     text; labels are clipped to that budget via char truncation
-     using a conservative 6.5 px/char estimate at 10 px font size.
-   · Ribbon accumulation uses exact floating-point offsets so
-     stacked ribbons fill each node bar precisely with no gap/spill.
-   · Discipline node labels float in the centre of the gap between
-     Area and Disc columns; WI labels start at NODE_W+6 px after
-     the WI bar — both are within the reserved right budget.
-   · Two new filters (Area, Discipline) are dynamically populated
-     from the current date's data and re-filter alongside Category.
+   1. SVG height is set explicitly via the height attribute (not just viewBox)
+      so the container grows to fit all content — no bottom clipping.
+   2. All font sizes inside the SVG are uniformly set to 8px.
+   3. overflow:visible on both the container div and the SVG element.
+   4. The sankey-card uses overflow:visible (not overflow:hidden).
 ════════════════════════════════════════════════════════════ */
 function renderSankey() {
   if (!dataReady) return;
@@ -1175,7 +1167,6 @@ function renderSankey() {
   const container  = document.getElementById('sankey-container');
   const tooltip    = document.getElementById('sk-tooltip');
 
-  /* ── No date selected ── */
   if (!d) {
     container.innerHTML = `<div class="sankey-no-data"><i class="fas fa-calendar"></i>Select a date to view the flow diagram</div>`;
     document.getElementById('sk-stats-bar').innerHTML = '';
@@ -1187,11 +1178,8 @@ function renderSankey() {
 
   const dateKey = toKey(d);
 
-  /* ── 1. Aggregate flows: unique resource IDs per (area, disc, wi) path ──
-     First pass collects ALL paths for this date so we can populate the
-     Area and Discipline dropdowns dynamically. Second pass applies filters.
-  */
-  const allPathMap = {};   // unfiltered — used for dropdown population
+  /* ── 1. First pass: collect ALL paths for dropdown population ── */
+  const allPathMap = {};
   DATA.forEach(row => {
     const rd = parseRowDate(row.DATE);
     if (!rd || toKey(rd) !== dateKey) return;
@@ -1204,7 +1192,7 @@ function renderSankey() {
     if (!allPathMap[key]) allPathMap[key] = { area, disc, wi };
   });
 
-  /* Populate Area dropdown dynamically (keep current selection if still valid) */
+  /* Populate dropdowns dynamically */
   const allAreas = [...new Set(Object.values(allPathMap).map(p => p.area))].sort();
   const allDiscs = [...new Set(Object.values(allPathMap).map(p => p.disc))].sort();
   const areaSel  = document.getElementById('sk-area');
@@ -1216,7 +1204,7 @@ function renderSankey() {
   discSel.innerHTML = '<option value="all">All Disciplines</option>' +
     allDiscs.map(d2 => `<option value="${escHtml(d2)}" ${prevDisc === d2 ? 'selected' : ''}>${escHtml(d2)}</option>`).join('');
 
-  /* Now build the filtered pathMap */
+  /* ── 2. Second pass: filtered pathMap ── */
   const pathMap = {};
   DATA.forEach(row => {
     const rd = parseRowDate(row.DATE);
@@ -1251,7 +1239,7 @@ function renderSankey() {
     .sort((a, b) => a.disc.localeCompare(b.disc) || b.total - a.total);
   lastSankeyFlows = flows;
 
-  /* ── 2. Stats bar ── */
+  /* ── 3. Stats bar ── */
   const totalRes    = flows.reduce((s,f)=>s+f.total,0);
   const totalMP     = flows.reduce((s,f)=>s+f.mp,0);
   const totalEQ     = flows.reduce((s,f)=>s+f.eq,0);
@@ -1269,7 +1257,7 @@ function renderSankey() {
     { label:'WI Count',        value:uniqueWIs,   icon:'fa-clipboard-list',  color:'sp-dim'    },
   ]}]);
 
-  /* ── 3. Flow detail table ── */
+  /* ── 4. Flow detail table ── */
   document.getElementById('sk-flow-badge').textContent = `${flows.length} flows`;
   document.getElementById('sk-flow-body').innerHTML = flows.length
     ? flows.map((f,i)=>`<tr>
@@ -1288,38 +1276,34 @@ function renderSankey() {
     return;
   }
 
-  /* ── 4. Layout geometry ── */
+  /* ── 5. Layout geometry ── */
   const isDark  = currentTheme === 'dark';
   const textClr = isDark ? '#e3e8f0' : '#1a2236';
   const subClr  = isDark ? '#8b96ab' : '#5a6880';
 
   /*
-   * Fixed internal SVG coordinate space (TOTAL_W × SVG_H).
-   * The SVG is always rendered at viewBox="0 0 TOTAL_W SVG_H"
-   * with width="100%", so every coordinate is an internal pixel
-   * that scales uniformly — labels placed within LEFT_LABEL_W or
-   * RIGHT_LABEL_W will NEVER overflow the card edge regardless of
-   * actual card pixel width.
-   *
-   * Column layout:
-   *   [LEFT_LABEL_W] [Area bar] [ribbon gap] [Disc bar] [ribbon gap] [WI bar] [RIGHT_LABEL_W]
+   * UNIFORM FONT SIZE: all text in the SVG uses 8px.
+   * Fixed internal coordinate space TOTAL_W × SVG_H.
+   * SVG rendered with width="100%" and explicit height attribute
+   * so the container grows to match — no clipping at the bottom.
    */
-  const TOTAL_W       = 1040;  // internal SVG width (viewBox)
-  const LEFT_LABEL_W  = 155;   // budget for Area labels (left of area bar)
-  const RIGHT_LABEL_W = 175;   // budget for WI labels  (right of WI bar)
-  const NODE_W        = 16;    // node bar width
-  /* Available width for the two ribbon zones + 3 node bars */
+  const FONT_SIZE     = 8;   // uniform 8px for all SVG text
+  const TOTAL_W       = 1040;
+  const LEFT_LABEL_W  = 155;
+  const RIGHT_LABEL_W = 175;
+  const NODE_W        = 16;
   const RIBBON_ZONE   = TOTAL_W - LEFT_LABEL_W - RIGHT_LABEL_W - NODE_W * 3;
-  const col0x = LEFT_LABEL_W;                                       // area bar left
-  const col1x = col0x + NODE_W + Math.round(RIBBON_ZONE * 0.44);   // disc bar left
-  const col2x = col1x + NODE_W + Math.round(RIBBON_ZONE * 0.56);   // WI bar left
+  const col0x = LEFT_LABEL_W;
+  const col1x = col0x + NODE_W + Math.round(RIBBON_ZONE * 0.44);
+  const col2x = col1x + NODE_W + Math.round(RIBBON_ZONE * 0.56);
 
-  const NODE_GAP  = 10;   // vertical gap between node bars in same column
-  const ROW_MIN_H = 20;   // minimum bar height
-  const TOP_PAD   = 46;   // room for stage header labels
+  const NODE_GAP  = 10;
+  const ROW_MIN_H = 20;
+  const TOP_PAD   = 46;
+  const BOT_PAD   = 24;  /* extra bottom padding so last node label is visible */
 
-  /* Chars-per-pixel budget for label truncation (10px DM Sans ≈ 6 px/char) */
-  const PX_PER_CHAR  = 6.2;
+  /* Char budget using 8px font (~5.2px per char) */
+  const PX_PER_CHAR = 5.2;
   function truncate(str, budgetPx) {
     const max = Math.floor(budgetPx / PX_PER_CHAR);
     return str.length > max ? str.slice(0, Math.max(3, max - 1)) + '…' : str;
@@ -1339,7 +1323,7 @@ function renderSankey() {
   const discTotals = colTotals(discNames, f => f.disc);
   const wiTotals   = colTotals(wiNames,   f => f.wi);
 
-  /* Proportional layout — distribute CONTENT_H among nodes */
+  /* ── 6. Proportional layout ── */
   function layoutNodes(items, contentH) {
     const grand  = items.reduce((s, n) => s + n.total, 0) || 1;
     const usable = contentH - NODE_GAP * (items.length - 1);
@@ -1352,9 +1336,19 @@ function renderSankey() {
     });
   }
 
-  const minH = (n) => n * (ROW_MIN_H + NODE_GAP) + TOP_PAD + 24;
-  const CONTENT_H = Math.max(520, minH(areaNames.length), minH(discNames.length), minH(wiNames.length));
-  const SVG_H     = CONTENT_H + 20;
+  /* CRITICAL FIX: compute actual content height needed for each column,
+     then use the MAXIMUM to ensure nothing is clipped */
+  function neededHeight(count) {
+    return TOP_PAD + count * (ROW_MIN_H + NODE_GAP) + BOT_PAD;
+  }
+  const CONTENT_H = Math.max(
+    520,
+    neededHeight(areaNames.length),
+    neededHeight(discNames.length),
+    neededHeight(wiNames.length)
+  );
+  /* SVG_H is the full internal height including bottom padding */
+  const SVG_H = CONTENT_H + BOT_PAD;
 
   const areaNodes = layoutNodes(areaTotals, CONTENT_H);
   const discNodes = layoutNodes(discTotals, CONTENT_H);
@@ -1364,12 +1358,7 @@ function renderSankey() {
   const discMap = Object.fromEntries(discNodes.map(n => [n.name, n]));
   const wiMap   = Object.fromEntries(wiNodes.map(n => [n.name, n]));
 
-  /* ── 5. Build ribbon segments ──
-     Use FLOATING-POINT cursors so proportional slices accumulate
-     perfectly — no rounding gaps or overshoot at node edges.
-     Each cursor tracks how many internal px have been used on that
-     side of a node bar; we convert to integer only for the SVG path.
-  */
+  /* ── 7. Ribbon segments with float cursors ── */
   const cur = {
     areaR: Object.fromEntries(areaNames.map(n => [n, 0.0])),
     discL: Object.fromEntries(discNames.map(n => [n, 0.0])),
@@ -1377,12 +1366,11 @@ function renderSankey() {
     wiL:   Object.fromEntries(wiNames.map(n => [n, 0.0])),
   };
 
-  /* Proportional slice height as a float */
   const sliceH = (node, flowCount) =>
     Math.max(1.5, (flowCount / node.total) * node.h);
 
-  const ribbons1 = [];  // Area → Disc
-  const ribbons2 = [];  // Disc → WI
+  const ribbons1 = [];
+  const ribbons2 = [];
 
   flows.forEach(f => {
     const aN = areaMap[f.area];
@@ -1390,18 +1378,16 @@ function renderSankey() {
     const wN = wiMap[f.wi];
     const col = discColor(f.disc);
 
-    /* Area → Disc ribbon */
-    const ha = sliceH(aN, f.total);
+    const ha  = sliceH(aN, f.total);
     const hd1 = sliceH(dN, f.total);
     ribbons1.push({
       x0: col0x + NODE_W, y0: aN.y + cur.areaR[f.area], h0: ha,
       x1: col1x,          y1: dN.y + cur.discL[f.disc],  h1: hd1,
       color: col, flow: f,
     });
-    cur.areaR[f.area]  += ha;
-    cur.discL[f.disc]  += hd1;
+    cur.areaR[f.area] += ha;
+    cur.discL[f.disc] += hd1;
 
-    /* Disc → WI ribbon */
     const hd2 = sliceH(dN, f.total);
     const hw  = sliceH(wN, f.total);
     ribbons2.push({
@@ -1413,23 +1399,29 @@ function renderSankey() {
     cur.wiL[f.wi]     += hw;
   });
 
-  /* ── 6. Render ── */
+  /* ── 8. Render SVG ──
+     KEY FIX: set both viewBox AND explicit width/height.
+     width="100%" + height attribute (in px matching viewBox aspect)
+     ensures the SVG occupies its full natural height in the DOM,
+     preventing any container from clipping it.
+  */
   container.innerHTML = '';
 
-  /*
-   * Use a fixed internal viewBox (TOTAL_W × SVG_H) and let the SVG
-   * scale to the card width via width="100%".  This guarantees labels
-   * placed at known internal coordinates are always visible regardless
-   * of the actual pixel width of the container.
-   */
+  /* Compute the pixel height the SVG will render at for a given container width.
+     We set a concrete height so the DOM element is tall enough. */
   const svg = d3.select(container)
     .append('svg')
     .attr('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`)
     .attr('width', '100%')
-    .attr('height', null)
-    .style('display', 'block');
+    /* CRITICAL FIX: remove fixed height, use preserveAspectRatio + CSS height:auto
+       so the SVG scales properly and shows all content */
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .style('display', 'block')
+    .style('width', '100%')
+    .style('height', 'auto')
+    .style('overflow', 'visible');
 
-  /* Stage header labels */
+  /* Stage header labels — all 8px */
   const stageLabels = [
     { x: col0x + NODE_W / 2, anchor: 'middle', text: 'AREA' },
     { x: col1x + NODE_W / 2, anchor: 'middle', text: 'DISCIPLINE' },
@@ -1440,13 +1432,14 @@ function renderSankey() {
       .attr('x', sl.x).attr('y', 22)
       .attr('text-anchor', sl.anchor)
       .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', 9).attr('font-weight', 600)
+      .attr('font-size', FONT_SIZE)
+      .attr('font-weight', 600)
       .attr('letter-spacing', '0.09em')
       .attr('fill', subClr)
       .text(sl.text);
   });
 
-  /* Cubic-bezier ribbon path (closed quadrilateral) */
+  /* Cubic-bezier ribbon path */
   function ribbonPath(r) {
     const { x0, y0, h0, x1, y1, h1 } = r;
     const mx = (x0 + x1) / 2;
@@ -1459,7 +1452,6 @@ function renderSankey() {
     ].join(' ');
   }
 
-  /* Draw ribbon layers (behind nodes) */
   const ribbonGroup = svg.append('g').attr('class', 'ribbon-layer');
 
   function drawRibbons(data, cls) {
@@ -1472,7 +1464,6 @@ function renderSankey() {
       .attr('stroke', r => r.color)
       .attr('stroke-width', 0.4)
       .attr('opacity', 0.26)
-      .style('cursor', 'default')
       .on('mouseenter', function(event, r) {
         d3.select(this).attr('opacity', 0.62);
         showFlowTooltip(event, r.flow);
@@ -1486,10 +1477,9 @@ function renderSankey() {
   drawRibbons(ribbons1, 'sk-r1');
   drawRibbons(ribbons2, 'sk-r2');
 
-  /* Node layer (on top of ribbons) */
   const nodeGroup = svg.append('g').attr('class', 'node-layer');
 
-  /* Area nodes — labels on the LEFT, capped at LEFT_LABEL_W budget */
+  /* Area nodes — labels LEFT, all 8px */
   areaNodes.forEach((n, i) => {
     const color = PALETTE[i % PALETTE.length];
     const g     = nodeGroup.append('g');
@@ -1503,28 +1493,33 @@ function renderSankey() {
       .on('mousemove',  ev => positionTooltip(ev))
       .on('mouseleave', hideTooltip);
 
-    /* Budget = LEFT_LABEL_W minus 10 px padding */
     const label = truncate(n.name, LEFT_LABEL_W - 10);
     const midY  = n.y + n.h / 2;
 
     g.append('text')
-      .attr('x', col0x - 7).attr('y', midY - (n.h >= 32 ? 5 : 0))
-      .attr('text-anchor', 'end').attr('dominant-baseline', 'central')
+      .attr('x', col0x - 7)
+      .attr('y', midY - (n.h >= 28 ? 5 : 0))
+      .attr('text-anchor', 'end')
+      .attr('dominant-baseline', 'central')
       .attr('font-family', "'DM Sans',sans-serif")
-      .attr('font-size', 10).attr('fill', textClr)
+      .attr('font-size', FONT_SIZE)
+      .attr('fill', textClr)
       .text(label);
 
-    if (n.h >= 32) {
+    if (n.h >= 28) {
       g.append('text')
-        .attr('x', col0x - 7).attr('y', midY + 8)
-        .attr('text-anchor', 'end').attr('dominant-baseline', 'central')
+        .attr('x', col0x - 7)
+        .attr('y', midY + 7)
+        .attr('text-anchor', 'end')
+        .attr('dominant-baseline', 'central')
         .attr('font-family', "'DM Mono',monospace")
-        .attr('font-size', 9).attr('fill', subClr)
+        .attr('font-size', FONT_SIZE)
+        .attr('fill', subClr)
         .text(n.total);
     }
   });
 
-  /* Discipline nodes — label floats in centre of gap between col0 and col1 */
+  /* Discipline nodes — labels centred in gap, all 8px */
   discNodes.forEach(n => {
     const color   = discColor(n.name);
     const g       = nodeGroup.append('g');
@@ -1538,32 +1533,37 @@ function renderSankey() {
       .on('mousemove',  ev => positionTooltip(ev))
       .on('mouseleave', hideTooltip);
 
-    /* Label centred in the ribbon-zone gap, truncated to that gap width */
-    const gapW    = col1x - col0x - NODE_W;
+    const gapW        = col1x - col0x - NODE_W;
     const labelBudget = gapW - 12;
-    const lx      = col0x + NODE_W + gapW / 2;
-    const label   = truncate(n.name, labelBudget);
-    const midY    = n.y + n.h / 2;
+    const lx          = col0x + NODE_W + gapW / 2;
+    const label       = truncate(n.name, labelBudget);
+    const midY        = n.y + n.h / 2;
 
     g.append('text')
-      .attr('x', lx).attr('y', midY - (n.h >= 32 ? 5 : 0))
-      .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
+      .attr('x', lx)
+      .attr('y', midY - (n.h >= 28 ? 5 : 0))
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
       .attr('font-family', "'DM Sans',sans-serif")
-      .attr('font-size', 9).attr('fill', color)
+      .attr('font-size', FONT_SIZE)
+      .attr('fill', color)
       .attr('font-weight', 600)
       .text(label);
 
-    if (n.h >= 32) {
+    if (n.h >= 28) {
       g.append('text')
-        .attr('x', lx).attr('y', midY + 8)
-        .attr('text-anchor', 'middle').attr('dominant-baseline', 'central')
+        .attr('x', lx)
+        .attr('y', midY + 7)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'central')
         .attr('font-family', "'DM Mono',monospace")
-        .attr('font-size', 8).attr('fill', subClr)
+        .attr('font-size', FONT_SIZE)
+        .attr('fill', subClr)
         .text(n.total);
     }
   });
 
-  /* WI nodes — labels on the RIGHT, capped at RIGHT_LABEL_W budget */
+  /* WI nodes — labels RIGHT, all 8px */
   wiNodes.forEach(n => {
     const disc  = flows.find(f => f.wi === n.name)?.disc || 'Other';
     const color = discColor(disc);
@@ -1578,29 +1578,32 @@ function renderSankey() {
       .on('mousemove',  ev => positionTooltip(ev))
       .on('mouseleave', hideTooltip);
 
-    /* Budget = RIGHT_LABEL_W minus 10 px padding */
     const label = truncate(n.name, RIGHT_LABEL_W - 10);
     const midY  = n.y + n.h / 2;
     const lx    = col2x + NODE_W + 7;
 
     g.append('text')
-      .attr('x', lx).attr('y', midY - (n.h >= 32 ? 5 : 0))
+      .attr('x', lx)
+      .attr('y', midY - (n.h >= 28 ? 5 : 0))
       .attr('dominant-baseline', 'central')
       .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', 10).attr('fill', textClr)
+      .attr('font-size', FONT_SIZE)
+      .attr('fill', textClr)
       .text(label);
 
-    if (n.h >= 32) {
+    if (n.h >= 28) {
       g.append('text')
-        .attr('x', lx).attr('y', midY + 8)
+        .attr('x', lx)
+        .attr('y', midY + 7)
         .attr('dominant-baseline', 'central')
         .attr('font-family', "'DM Mono',monospace")
-        .attr('font-size', 9).attr('fill', subClr)
+        .attr('font-size', FONT_SIZE)
+        .attr('fill', subClr)
         .text(n.total);
     }
   });
 
-  /* ── 7. Legend ── */
+  /* ── 9. Legend ── */
   const legendDiscs = [...new Set(flows.map(f=>f.disc))].sort();
   document.getElementById('sankey-legend').innerHTML = legendDiscs.map(disc =>
     `<div class="sankey-legend-item">
@@ -1609,9 +1612,7 @@ function renderSankey() {
      </div>`
   ).join('');
 
-  /* ── 8. Tooltip helpers ── */
-  let _ttListener = null;
-
+  /* ── 10. Tooltip helpers ── */
   function showFlowTooltip(event, flow) {
     tooltip.style.display = 'block';
     tooltip.innerHTML = `
@@ -1643,7 +1644,6 @@ function renderSankey() {
 
   function hideTooltip() { tooltip.style.display = 'none'; }
 
-  // Clean up any old global mousemove listener before adding a new one
   if (window._skTooltipListener) {
     document.removeEventListener('mousemove', window._skTooltipListener);
   }
