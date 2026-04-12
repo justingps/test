@@ -12,7 +12,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
 :root {
   --font-body:'DM Sans',sans-serif;
@@ -47,14 +46,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:10px}
 
-/* ══ THEME TOGGLE ══ */
 .theme-toggle{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border-br);border-radius:20px;padding:3px;cursor:pointer;transition:all var(--transition)}
 .theme-opt{padding:5px 11px;border-radius:16px;font-size:0.72rem;font-weight:600;font-family:var(--font-mono);color:var(--text-sub);cursor:pointer;transition:all 0.2s;user-select:none;display:flex;align-items:center;gap:5px;letter-spacing:0.04em}
 .theme-opt.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
 [data-theme="dark"] .theme-opt-dark.active{color:var(--accent2)}
 [data-theme="light"] .theme-opt-light.active{color:var(--warning)}
 
-/* ══ LOGIN ══ */
 #login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--login-bg);transition:background var(--transition)}
 [data-theme="dark"] #login-screen::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 55% 55% at 15% 55%,rgba(224,123,57,0.09) 0%,transparent 60%),radial-gradient(ellipse 50% 55% at 85% 25%,rgba(58,123,213,0.07) 0%,transparent 60%)}
 [data-theme="light"] #login-screen::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 55% 55% at 15% 55%,rgba(224,123,57,0.05) 0%,transparent 60%),radial-gradient(ellipse 50% 55% at 85% 25%,rgba(58,123,213,0.04) 0%,transparent 60%)}
@@ -85,7 +82,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .login-theme-toggle{position:absolute;top:20px;right:20px}
 .login-version{position:absolute;bottom:16px;right:20px;font-family:var(--font-mono);font-size:0.65rem;color:var(--text-dim)}
 
-/* ══ DASHBOARD SHELL ══ */
 #dashboard{display:none;flex-direction:column;min-height:100vh}
 .topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:var(--topbar-h);background:var(--topbar-bg);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);transition:background var(--transition),border-color var(--transition)}
 .topbar-left{display:flex;align-items:center;gap:14px}
@@ -111,7 +107,6 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .page-title{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
 .page-title span{color:var(--accent)}
 
-/* ══ FILTERS ══ */
 .filters{display:flex;flex-wrap:wrap;gap:10px;padding:14px 16px;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:background var(--transition)}
 .filter-group{display:flex;align-items:center;gap:8px;flex:1;min-width:175px}
 .filter-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub);white-space:nowrap;text-transform:uppercase;letter-spacing:0.07em}
@@ -120,14 +115,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 select.f-input{cursor:pointer}
 option{background:var(--surface2);color:var(--text)}
 
-/* ══ LOADING ══ */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:12px}
 .spinner{width:30px;height:30px;border:2px solid var(--border-br);border-top-color:var(--accent);border-radius:50%;animation:spin 0.65s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-sub)}
 .loading-sub{font-size:0.72rem;color:var(--text-dim);font-style:italic}
 
-/* ══ STATS BAR ══ */
 .stats-bar{display:flex;align-items:stretch;margin-bottom:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto;transition:background var(--transition);flex-shrink:0}
 .stats-bar::-webkit-scrollbar{height:3px}
 .stats-bar::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:10px}
@@ -143,7 +136,6 @@ option{background:var(--surface2);color:var(--text)}
 .stat-pill-value{font-family:var(--font-display);font-size:1.28rem;font-weight:700;line-height:1;letter-spacing:-0.02em;color:var(--sc,var(--text))}
 .stat-pill-label{font-family:var(--font-mono);font-size:0.58rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.07em;text-align:center;white-space:nowrap}
 
-/* ══ CHARTS ══ */
 .chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px}
 .chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
 .chart-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
@@ -154,7 +146,6 @@ option{background:var(--surface2);color:var(--text)}
 .chart-wrap{position:relative}
 .chart-wrap.h200{height:200px}.chart-wrap.h220{height:220px}.chart-wrap.h240{height:240px}.chart-wrap.h260{height:260px}.chart-wrap.h280{height:280px}.chart-wrap.h320{height:320px}
 
-/* ══ KPI CARDS ══ */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s}
 .kpi-card:hover{box-shadow:var(--shadow-sm)}
@@ -164,7 +155,6 @@ option{background:var(--surface2);color:var(--text)}
 .kpi-value{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
 .kpi-delta{font-size:0.7rem;font-family:var(--font-mono);margin-top:5px;color:var(--text-dim)}
 
-/* ══ TABLES ══ */
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px;transition:background var(--transition);width:100%}
 .table-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
 .table-title{font-family:var(--font-display);font-size:0.92rem;font-weight:700;color:var(--text)}
@@ -180,7 +170,6 @@ option{background:var(--surface2);color:var(--text)}
 .data-table td.mono{font-family:var(--font-mono);font-size:0.76rem;color:var(--text-sub)}
 .no-data{text-align:center;padding:44px 20px;color:var(--text-dim);font-size:0.82rem;font-family:var(--font-mono)}
 
-/* ══ DAILY REPORTS ══ */
 .work-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;transition:background var(--transition)}
 .work-card-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:var(--surface2);border-bottom:1px solid var(--border);transition:background var(--transition)}
 .work-card-num{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.06em}
@@ -193,7 +182,6 @@ option{background:var(--surface2);color:var(--text)}
 .work-meta-value{font-size:0.82rem;font-weight:600;color:var(--text)}
 .work-sub-head{padding:10px 18px;font-family:var(--font-mono);font-size:0.67rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);background:var(--surface2);transition:background var(--transition)}
 
-/* ══ DAY SUMMARY ══ */
 .day-summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:11px;margin-bottom:16px}
 .day-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px;transition:background var(--transition),box-shadow 0.2s}
 .day-summary-card:hover{box-shadow:var(--shadow-sm)}
@@ -204,16 +192,13 @@ option{background:var(--surface2);color:var(--text)}
 .day-stat-label{font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:3px}
 .day-stat-value{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--text)}
 
-/* ══ DATE RANGE ROW ══ */
 .date-range-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:background var(--transition)}
 .date-range-label{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
 .date-sep{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-dim)}
 
-/* ══ SECTION LABEL ══ */
 .section-label{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-family:var(--font-mono);font-size:0.67rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-dim)}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ══ BADGES ══ */
 .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
 .badge-mp{background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.22)}
 .badge-eq{background:rgba(58,123,213,0.12);color:var(--accent2);border:1px solid rgba(58,123,213,0.22)}
@@ -221,14 +206,13 @@ option{background:var(--surface2);color:var(--text)}
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
 .dot-green{background:var(--accent3);box-shadow:0 0 4px var(--accent3)}
 .dot-amber{background:var(--warning)}
+.dot-red{background:var(--danger)}
 
-/* ══ PROGRESS BAR ══ */
 .prog-bar-wrap{display:flex;align-items:center;gap:10px}
 .prog-bar-bg{flex:1;height:6px;background:var(--surface2);border-radius:4px;overflow:hidden}
 .prog-bar-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
 .prog-val{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-sub);min-width:36px;text-align:right}
 
-/* ══ INSIGHT GRID ══ */
 .insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
 .insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:background var(--transition)}
 .insight-card-title{font-family:var(--font-display);font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:3px}
@@ -236,7 +220,6 @@ option{background:var(--surface2);color:var(--text)}
 .stat-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:6px}
 .stat-value{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
 
-/* ══ BUTTONS ══ */
 .btn-excel{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;background:rgba(46,170,126,0.1);border:1px solid rgba(46,170,126,0.3);border-radius:var(--radius-sm);color:var(--accent3);font-size:0.78rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:all var(--transition);white-space:nowrap}
 .btn-excel:hover{background:rgba(46,170,126,0.18);border-color:rgba(46,170,126,0.5)}
 .btn-pdf{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;background:rgba(217,79,79,0.1);border:1px solid rgba(217,79,79,0.3);border-radius:var(--radius-sm);color:var(--danger);font-size:0.78rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:all var(--transition);white-space:nowrap}
@@ -246,7 +229,6 @@ option{background:var(--surface2);color:var(--text)}
 .btn-refresh{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;background:rgba(58,123,213,0.1);border:1px solid rgba(58,123,213,0.3);border-radius:var(--radius-sm);color:var(--accent2);font-size:0.78rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:all var(--transition);white-space:nowrap}
 .btn-refresh:hover{background:rgba(58,123,213,0.18);border-color:rgba(58,123,213,0.5)}
 
-/* ══ CAMP TABLE ══ */
 .camp-table tr.editing{background:rgba(224,123,57,0.04) !important}
 .camp-table tr.new-row{background:rgba(46,170,126,0.04) !important}
 .camp-table .cell-edit{display:none}
@@ -255,6 +237,7 @@ option{background:var(--surface2);color:var(--text)}
 .inline-input{background:var(--input-bg);border:1px solid var(--accent);color:var(--text);font-family:var(--font-body);font-size:0.82rem;padding:6px 10px;border-radius:var(--radius-sm);width:100%;outline:none;min-width:80px;transition:box-shadow 0.2s}
 .inline-input:focus{box-shadow:0 0 0 3px rgba(224,123,57,0.15)}
 select.inline-input{cursor:pointer}
+textarea.inline-input{min-height:60px;resize:vertical}
 .cell-actions{display:flex;gap:5px;align-items:center;justify-content:flex-end}
 .icon-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid transparent;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.15s;color:var(--text-sub)}
 .icon-btn:hover{color:var(--text);background:var(--surface2);border-color:var(--border-br)}
@@ -268,7 +251,6 @@ tr.editing .save-actions{display:flex}
 tr.editing .edit-actions{display:none}
 tr.saving td{opacity:0.55}
 
-/* ══ STATUS PILLS ══ */
 .status-pill{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-family:var(--font-mono);font-size:0.67rem;font-weight:600;white-space:nowrap}
 .s-pob{background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28)}
 .s-pob-a{background:rgba(46,170,126,0.08);color:#34c58a;border:1px solid rgba(52,197,138,0.28)}
@@ -284,46 +266,11 @@ tr.saving td{opacity:0.55}
 .nat-exp{background:rgba(224,123,57,0.10);color:var(--accent);border:1px solid rgba(224,123,57,0.22);display:inline-flex;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
 .nat-nat{background:rgba(46,170,126,0.10);color:var(--accent3);border:1px solid rgba(46,170,126,0.22);display:inline-flex;padding:2px 9px;border-radius:20px;font-family:var(--font-mono);font-size:0.66rem;font-weight:500}
 
-/* ══ TOAST ══ */
 #camp-toast{position:fixed;bottom:80px;right:24px;z-index:900;display:flex;flex-direction:column;gap:8px}
 .c-toast{background:var(--surface);border:1px solid var(--border-br);color:var(--text);padding:12px 18px;border-radius:10px;font-size:0.82rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:9px;animation:slideInRight 0.25s ease;max-width:320px}
 .c-toast.success{border-color:var(--accent3)}.c-toast.error{border-color:var(--danger)}.c-toast.info{border-color:var(--accent2)}
 @keyframes slideInRight{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-/* ══ SANKEY — FIXED ══ */
-.sankey-outer{
-  width:100%;
-  /* CRITICAL FIX: remove overflow:hidden so the full SVG height is visible */
-  overflow-x:auto;
-  overflow-y:visible;
-  box-sizing:border-box;
-}
-/* The container must NOT clip height */
-#sankey-container{
-  width:100%;
-  min-height:100px;
-  overflow:visible;
-}
-/* SVG scales to full width, height is determined by viewBox aspect ratio */
-#sankey-container svg{
-  display:block;
-  width:100%;
-  height:auto;         /* CRITICAL FIX: auto height follows viewBox aspect ratio */
-  overflow:visible;    /* prevent internal clipping */
-}
-.sankey-ribbon{transition:opacity 0.18s;cursor:default}
-.sankey-node-bar{cursor:pointer;transition:opacity 0.18s}
-.sankey-node-bar:hover{opacity:0.78 !important}
-.sankey-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 14px;margin-bottom:16px;transition:background var(--transition);overflow:visible}
-.sankey-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
-.sankey-legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-sub)}
-.sankey-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-.sankey-tooltip{position:fixed;z-index:500;background:var(--surface);border:1px solid var(--border-br);border-radius:var(--radius-sm);padding:10px 14px;font-size:0.78rem;color:var(--text);box-shadow:var(--shadow);pointer-events:none;display:none;max-width:260px;line-height:1.55}
-.sankey-tooltip strong{color:var(--accent);display:block;margin-bottom:3px;font-family:var(--font-display)}
-.sankey-no-data{text-align:center;padding:80px 20px;color:var(--text-dim);font-size:0.84rem;font-family:var(--font-mono)}
-.sankey-no-data i{display:block;font-size:2rem;margin-bottom:12px;opacity:0.4}
-
-/* ══ MISC ══ */
 .prog-cell{max-width:280px;font-size:0.78rem;line-height:1.55;white-space:pre-line}
 .desc-cell{max-width:240px;font-size:0.8rem;line-height:1.5}
 #back-to-top{position:fixed;bottom:28px;right:24px;z-index:200;width:42px;height:42px;background:var(--surface);border:1px solid var(--border-br);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-sub);cursor:pointer;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity 0.3s ease,background 0.2s,color 0.2s,transform 0.2s;font-size:0.9rem}
@@ -336,7 +283,44 @@ tr.saving td{opacity:0.55}
 .pdf-modal-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:6px}
 .pdf-modal-sub{font-family:var(--font-mono);font-size:0.72rem;color:var(--text-sub)}
 
-/* ══ RESPONSIVE ══ */
+/* ══ VOR TRACKER STYLES ══ */
+.vor-table tr.editing{background:rgba(224,123,57,0.04) !important}
+.vor-table tr.new-row{background:rgba(46,170,126,0.04) !important}
+.vor-table .cell-edit{display:none}
+.vor-table tr.editing .cell-view{display:none}
+.vor-table tr.editing .cell-edit{display:inline-block;width:100%}
+.vor-row-delay-approval td:first-child{border-left:3px solid var(--danger)}
+.vor-row-delay-ho td:first-child{border-left:3px solid var(--warning)}
+.vor-row-delay-claim td:first-child{border-left:3px solid #9b5de5}
+.vor-row-complete td:first-child{border-left:3px solid var(--accent3)}
+.vor-group-header{background:var(--surface2);transition:background var(--transition)}
+.vor-group-header td{padding:8px 16px;font-family:var(--font-mono);font-size:0.65rem;font-weight:600;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.1em}
+.vor-view-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.vor-view-tab{padding:6px 14px;border-radius:20px;font-family:var(--font-mono);font-size:0.7rem;font-weight:600;cursor:pointer;border:1px solid var(--border-br);color:var(--text-sub);background:transparent;transition:all 0.2s;white-space:nowrap}
+.vor-view-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.vor-view-tab:hover:not(.active){background:var(--surface2)}
+.delay-flag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-family:var(--font-mono);font-size:0.63rem;font-weight:600;white-space:nowrap}
+.delay-flag.red{background:rgba(217,79,79,0.12);color:var(--danger);border:1px solid rgba(217,79,79,0.28)}
+.delay-flag.amber{background:rgba(212,146,43,0.12);color:var(--warning);border:1px solid rgba(212,146,43,0.28)}
+.delay-flag.purple{background:rgba(155,93,229,0.12);color:#9b5de5;border:1px solid rgba(155,93,229,0.28)}
+.vor-kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.vor-kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s;cursor:pointer}
+.vor-kpi-card:hover{box-shadow:var(--shadow-sm)}
+.vor-kpi-card.active-filter{box-shadow:0 0 0 2px var(--kpi-color,var(--accent))}
+.vor-kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--kpi-color,var(--accent));border-radius:0 0 var(--radius) var(--radius)}
+.vor-kpi-icon{width:28px;height:28px;border-radius:7px;background:var(--kpi-bg,rgba(224,123,57,0.12));display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:0.82rem;color:var(--kpi-color,var(--accent))}
+.vor-kpi-label{font-family:var(--font-mono);font-size:0.6rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:4px}
+.vor-kpi-value{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
+.vor-kpi-hint{font-size:0.65rem;font-family:var(--font-mono);margin-top:4px;color:var(--text-dim)}
+/* VOR responsibility badge groups */
+.resp-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);font-size:0.63rem;font-weight:600;white-space:nowrap;margin-bottom:2px}
+.resp-site{background:rgba(58,123,213,0.10);color:var(--accent2);border:1px solid rgba(58,123,213,0.22)}
+.resp-qs{background:rgba(155,93,229,0.10);color:#9b5de5;border:1px solid rgba(155,93,229,0.22)}
+.resp-cost{background:rgba(46,170,126,0.10);color:var(--accent3);border:1px solid rgba(46,170,126,0.22)}
+.resp-common{background:rgba(212,146,43,0.10);color:var(--warning);border:1px solid rgba(212,146,43,0.22)}
+/* Inline editable textarea for VOR */
+.vor-table .cell-edit textarea.inline-input{min-height:48px;font-size:0.78rem;padding:5px 8px}
+
 @media(max-width:1200px){.chart-grid{grid-template-columns:1fr}.chart-grid-3{grid-template-columns:1fr 1fr}.insight-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:900px){.chart-grid,.chart-grid-3,.chart-grid-2{grid-template-columns:1fr}.insight-grid{grid-template-columns:1fr}.chart-card.span2{grid-column:span 1}}
 @media(max-width:600px){.content{padding:14px}.topbar{padding:0 14px}.nav{padding:0 14px}.login-card{width:calc(100% - 28px);padding:30px 22px}.work-meta{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:1fr 1fr}.topbar-date{display:none}.stat-pill{min-width:76px;padding:8px 10px}.stat-pill-value{font-size:1.05rem}}
@@ -403,8 +387,8 @@ tr.saving td{opacity:0.55}
     <button class="nav-tab" data-tab="reports"><i class="fas fa-file-lines"></i> Daily Reports</button>
     <button class="nav-tab" data-tab="status"><i class="fas fa-list-check"></i> Project Status</button>
     <button class="nav-tab" data-tab="resource"><i class="fas fa-people-group"></i> Resources</button>
-    <button class="nav-tab" data-tab="sankey"><i class="fas fa-diagram-project"></i> Flow Diagram</button>
     <button class="nav-tab" data-tab="camp"><i class="fas fa-tent"></i> Camp</button>
+    <button class="nav-tab" data-tab="vor"><i class="fas fa-file-contract"></i> Day-Works &amp; VoR</button>
   </nav>
 
   <div class="content">
@@ -540,60 +524,6 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- FLOW DIAGRAM (SANKEY) -->
-    <div id="tab-sankey" class="tab-panel">
-      <div class="page-header">
-        <h1 class="page-title">Resource <span>Flow Diagram</span></h1>
-        <button class="btn-excel" onclick="exportSankeyExcel()"><i class="fas fa-file-excel"></i> Export Flows</button>
-      </div>
-      <div class="filters">
-        <div class="filter-group"><span class="filter-label"><i class="far fa-calendar"></i> Date</span><input type="date" id="sk-date" class="f-input" style="max-width:175px" onchange="renderSankey()"></div>
-        <div class="filter-group"><span class="filter-label"><i class="fas fa-map-pin"></i> Area</span>
-          <select id="sk-area" class="f-input" onchange="renderSankey()">
-            <option value="all">All Areas</option>
-          </select>
-        </div>
-        <div class="filter-group"><span class="filter-label"><i class="fas fa-gears"></i> Discipline</span>
-          <select id="sk-disc" class="f-input" onchange="renderSankey()">
-            <option value="all">All Disciplines</option>
-          </select>
-        </div>
-        <div class="filter-group"><span class="filter-label"><i class="fas fa-boxes-stacked"></i> Category</span>
-          <select id="sk-cat" class="f-input" onchange="renderSankey()">
-            <option value="all">All Resources</option>
-            <option value="manpower">Manpower</option>
-            <option value="equipment">Equipment</option>
-            <option value="unclassified">Unclassified</option>
-          </select>
-        </div>
-      </div>
-      <div id="sk-stats-bar"></div>
-      <div id="sk-content">
-        <div class="sankey-card">
-          <div class="chart-card-title">Area → Discipline → Work Instruction</div>
-          <div class="chart-card-sub">Flow width = crew / resource count. Hover nodes and ribbons for details.</div>
-          <!-- CRITICAL FIX: removed overflow:hidden, let height be auto -->
-          <div class="sankey-outer">
-            <div id="sankey-container"></div>
-          </div>
-          <div class="sankey-legend" id="sankey-legend"></div>
-        </div>
-        <div class="section-label">Flow Detail Table</div>
-        <div class="table-wrap">
-          <div class="table-header">
-            <div class="table-title">Path Breakdown</div>
-            <div class="table-badge" id="sk-flow-badge">0 flows</div>
-          </div>
-          <div class="table-scroll">
-            <table class="data-table">
-              <thead><tr><th>#</th><th>Area</th><th>Discipline</th><th>WI No.</th><th>Resources</th><th>Manpower</th><th>Equipment</th><th>Unclassified</th></tr></thead>
-              <tbody id="sk-flow-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- CAMP -->
     <div id="tab-camp" class="tab-panel">
       <div class="page-header">
@@ -626,10 +556,66 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
+    <!-- DAY-WORKS & VOR TRACKER -->
+    <div id="tab-vor" class="tab-panel">
+      <div class="page-header">
+        <h1 class="page-title">Day-Works &amp; <span>VoR Tracker</span></h1>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn-excel" onclick="vorExportExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+          <button class="btn-accent" onclick="vorAddRow()"><i class="fas fa-plus"></i> Add Record</button>
+          <button class="btn-refresh" onclick="vorLoadData()"><i class="fas fa-rotate-right"></i> Refresh</button>
+        </div>
+      </div>
+
+      <!-- KPI Dashboard Cards -->
+      <div class="vor-kpi-grid" id="vor-kpi-cards"></div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-search"></i> Search</span><input type="text" id="vf-search" class="f-input" placeholder="WI, requestor, scope…" oninput="vorFilterRender()"></div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-map-pin"></i> Site</span><select id="vf-site" class="f-input" onchange="vorFilterRender()"><option value="all">All Sites</option><option>Safha</option><option>Wadi Lathem</option></select></div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-folder"></i> Work Type</span><select id="vf-type" class="f-input" onchange="vorFilterRender()"><option value="all">All Types</option><option>Variation Order (VoR)</option><option>Day Work</option></select></div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-circle-check"></i> Approval</span><select id="vf-approval" class="f-input" onchange="vorFilterRender()"><option value="all">All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div>
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-file-invoice"></i> Claim</span><select id="vf-claim" class="f-input" onchange="vorFilterRender()"><option value="all">All Claim Status</option><option>Not Started</option><option>Under Preparation</option><option>Submitted</option><option>Certified</option><option>Closed</option></select></div>
+      </div>
+
+      <!-- View Tabs -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <span class="filter-label"><i class="fas fa-eye"></i> Responsibility View</span>
+        <div class="vor-view-tabs">
+          <button class="vor-view-tab active" data-view="all" onclick="vorSetView('all',this)">All Fields</button>
+          <button class="vor-view-tab" data-view="site" onclick="vorSetView('site',this)"><i class="fas fa-hard-hat" style="font-size:11px"></i> Site Engineer</button>
+          <button class="vor-view-tab" data-view="qs" onclick="vorSetView('qs',this)"><i class="fas fa-chart-bar" style="font-size:11px"></i> QS View</button>
+          <button class="vor-view-tab" data-view="cost" onclick="vorSetView('cost',this)"><i class="fas fa-coins" style="font-size:11px"></i> Cost Team</button>
+        </div>
+      </div>
+
+      <!-- Delay Legend -->
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+        <span class="filter-label">Delay Indicators</span>
+        <span class="delay-flag red"><i class="fas fa-circle" style="font-size:7px"></i> Approval Overdue</span>
+        <span class="delay-flag amber"><i class="fas fa-circle" style="font-size:7px"></i> Awaiting HO Receipt</span>
+        <span class="delay-flag purple"><i class="fas fa-circle" style="font-size:7px"></i> Claim Not Started</span>
+        <span class="delay-flag" style="background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28)"><i class="fas fa-circle" style="font-size:7px"></i> Closed</span>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">VoR &amp; Day-Works Register</div>
+          <div class="table-header-right"><div class="table-badge" id="vor-badge">0 records</div></div>
+        </div>
+        <div class="table-scroll" id="vor-table-scroll">
+          <table class="data-table vor-table" id="vor-table">
+            <thead id="vor-thead"><tr></tr></thead>
+            <tbody id="vor-tbody"><tr><td colspan="20" style="text-align:center;padding:40px"><div class="spinner" style="margin:0 auto"></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<div class="sankey-tooltip" id="sk-tooltip"></div>
 <button id="back-to-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 <div id="pdf-overlay"><div class="pdf-modal"><div class="spinner"></div><div class="pdf-modal-title">Generating PDF</div><div class="pdf-modal-sub" id="pdf-progress-text">Preparing work reports…</div></div></div>
 <div id="camp-toast"></div>
@@ -666,24 +652,10 @@ let DATA = [], charts = {}, dataReady = false;
 let lastStatusGroups = [], lastStatusDate = null;
 let lastResAllRows = [], lastResDate = null;
 let lastRepSumRows = [], lastRepGroups = [];
-let lastSankeyFlows = [];
 let campAllRows = [], campFilteredRows = [], campNewRowCounter = 0;
 const POB_STATUSES = ['POB','POB-A','POB-B','POB-C','POB-D'];
 const KNOWN_DISCIPLINES = ['Piping & Mechanical','Electrical','Civil','Instrumentation','OHL'];
 const PALETTE = ['#e07b39','#3a7bd5','#2eaa7e','#d4922b','#9b5de5','#d94f4f','#17b8c4','#a3b18a'];
-
-const DISC_COLORS = {
-  'Piping & Mechanical': '#e07b39',
-  'Electrical':          '#3a7bd5',
-  'Civil':               '#2eaa7e',
-  'Instrumentation':     '#d4922b',
-  'OHL':                 '#9b5de5',
-  'Other':               '#8b96ab',
-};
-function discColor(disc) {
-  return DISC_COLORS[disc] || DISC_COLORS['Other'];
-}
-
 const palA = (i,a=0.82) => hexA(PALETTE[i%PALETTE.length],a);
 function hexA(hex,a){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
 updateChartDefaults();
@@ -756,6 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   fetchData();
   campLoadData();
+  vorLoadData();
 });
 
 function bootDashboard() {
@@ -763,7 +736,7 @@ function bootDashboard() {
   setDateVal('r-date',yest); setDateVal('st-date',yest); setDateVal('res-date',yest);
   setDateVal('sum-start',weekStart); setDateVal('sum-end',yest);
   setDateVal('kpi-start',weekStart); setDateVal('kpi-end',yest);
-  setDateVal('rs-date',yest); setDateVal('sk-date',yest);
+  setDateVal('rs-date',yest);
   document.getElementById('today-label').textContent = fmtDisplay(today);
   if (dataReady) { hideLoaders(); renderAll(); }
 }
@@ -771,7 +744,7 @@ function hideLoaders() {
   [['sum-loading','sum-content'],['kpi-loading','kpi-content'],['rep-loading','rep-content'],
    ['rs-loading','rs-content'],['st-loading','st-content'],['res-loading','res-content']].forEach(([l,c])=>{ hide(l); show(c); });
 }
-function renderAll() { renderSummary(); renderKPI(); renderReports(); renderRepSum(); renderStatus(); renderResource(); renderSankey(); }
+function renderAll() { renderSummary(); renderKPI(); renderReports(); renderRepSum(); renderStatus(); renderResource(); }
 
 /* ══ FETCH ══ */
 function fetchData() {
@@ -809,9 +782,11 @@ function toKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(
 function fmtDisplay(d){ return `${d.getDate()}-${MNA[d.getMonth()]}-${d.getFullYear()}`; }
 function offsetDate(d,n){ const r=new Date(d);r.setDate(d.getDate()+n);return r; }
 function dateRange(a,b){ const ds=[];let d=new Date(a);while(d<=b){ds.push(new Date(d));d.setDate(d.getDate()+1);}return ds; }
-function setDateVal(id,d){ const el=document.getElementById(id); if(el) el.value=toKey(d); }
+function setDateVal(id,d){ document.getElementById(id).value=toKey(d); }
 function getDate(id){ const v=document.getElementById(id).value;return v?new Date(v+'T00:00:00'):null; }
 function matchDiscipline(rowDisc,filterVal){ if(filterVal==='all')return true; if(filterVal==='__other__')return !KNOWN_DISCIPLINES.includes(rowDisc); return rowDisc===filterVal; }
+function daysBetween(a,b){ if(!a||!b)return null; const da=new Date(a),db=new Date(b); return Math.round((db-da)/(1000*60*60*24)); }
+function today(){ return toKey(new Date()); }
 
 /* ══ GROUP DATA ══ */
 function groupByProject(dateKey,area='all',disc='all',wiSearch='') {
@@ -890,8 +865,8 @@ function renderSummary(){
     if(res) wgCrew[wk].add(res);
     if(type==='manpower')mpCount.mp++; else if(type==='equipment')mpCount.eq++; else mpCount.nf++;
   });
-  const inRange = r=>{ const d=parseRowDate(r.DATE); return d&&toKey(d)>=toKey(start)&&toKey(d)<=toKey(end); };
-  const totalCrew=new Set(DATA.filter(inRange).map(r=>r['RESOURCE ID']).filter(Boolean)).size;
+  const inRange = r=>{ const d=parseRowDate(r.DATE); return d&&toKey(d)>=toKey(start)&&toKey(d)<=toKey(end)&&r['RESOURCE ID']; };
+  const totalCrew=new Set(DATA.filter(inRange).map(r=>r['RESOURCE ID'])).size;
   const totalFore=new Set(DATA.filter(inRange).map(r=>r['FOREMAN ID']).filter(Boolean)).size;
   const activeDays=Object.values(actByDay).filter(d=>d.active).length;
   const totalAreas=Object.keys(areaCrew).length;
@@ -980,7 +955,7 @@ function renderKPI(){
   document.getElementById('kpi-day-body').innerHTML=Object.values(dayStats).sort((a,b)=>b.date-a.date).map(d=>`<tr><td class="mono">${fmtDisplay(d.date)}</td><td>${d.areas.size}</td><td>${d.foremen.size}</td><td><strong>${d.crew.size}</strong></td><td>${d.projects.size}</td><td>${d.mp}</td><td>${d.eq}</td><td><span class="dot dot-green"></span>Active</td></tr>`).join('')||'<tr><td colspan="8" class="no-data">No data</td></tr>';
 }
 
-/* ══ DAILY REPORTS (UI) ══ */
+/* ══ DAILY REPORTS ══ */
 function renderReports(){
   if(!dataReady) return;
   const d=getDate('r-date'),area=document.getElementById('r-area').value;
@@ -1025,62 +1000,152 @@ async function fetchLogoBase64() {
       reader.onloadend = () => { _cachedLogoB64 = reader.result; resolve(_cachedLogoB64); };
       reader.readAsDataURL(blob);
     });
-  } catch (e) { console.warn('Logo fetch failed:', e); return null; }
+  } catch (e) { return null; }
 }
 
-/* ══ PDF GENERATION ══ */
+/* ══ PDF ══ */
 async function downloadReportsPDF() {
   if (!lastRepGroups.length) { alert('No reports to export.'); return; }
-  const overlay=document.getElementById('pdf-overlay'), progressTxt=document.getElementById('pdf-progress-text');
+  const overlay=document.getElementById('pdf-overlay'),progressTxt=document.getElementById('pdf-progress-text');
   overlay.classList.add('visible');
   try {
     progressTxt.textContent='Loading company logo…';
     const logoB64=await fetchLogoBase64();
-    const { jsPDF }=window.jspdf;
+    const {jsPDF}=window.jspdf;
     const pdf=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
-    const pageW=pdf.internal.pageSize.getWidth(), pageH=pdf.internal.pageSize.getHeight(), M=36, inner=pageW-M*2;
-    const dateVal=getDate('r-date'), dateStr=dateVal?fmtDisplay(dateVal):'—';
+    const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight();
+    const M=36,inner=pageW-M*2;
+    const dateVal=getDate('r-date'),dateStr=dateVal?fmtDisplay(dateVal):'—';
     const genDate=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
     const C={accent:[224,123,57],text:[26,34,54],sub:[90,104,128],dim:[160,172,190],surface:[244,246,249],surface2:[235,238,243],border:[210,215,224],white:[255,255,255],green:[46,170,126],blue:[58,123,213],line:[224,226,232]};
-    const setFill=c=>pdf.setFillColor(...c); const setDraw=c=>pdf.setDrawColor(...c); const setTxtClr=c=>pdf.setTextColor(...c); const bold=()=>pdf.setFont('helvetica','bold'); const normal=()=>pdf.setFont('helvetica','normal');
+    const setFill=c=>pdf.setFillColor(...c),setDraw=c=>pdf.setDrawColor(...c),setTxtClr=c=>pdf.setTextColor(...c);
+    const bold=()=>pdf.setFont('helvetica','bold'),normal=()=>pdf.setFont('helvetica','normal');
     const LOGO_SIZE=36;
-    function drawPageHeader(reportNo,wi,isContinued){ const headerH=72;setFill(C.surface);pdf.rect(0,0,pageW,headerH,'F');setFill(C.accent);pdf.rect(0,0,4,headerH,'F'); const logoX=M+4,logoY=(headerH-LOGO_SIZE)/2; if(logoB64){setFill([255,255,255]);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');const pad=3;pdf.addImage(logoB64,'PNG',logoX+pad,logoY+pad,LOGO_SIZE-pad*2,LOGO_SIZE-pad*2);}else{setFill(C.surface2);setDraw(C.border);pdf.setLineWidth(0.5);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');bold();pdf.setFontSize(9);setTxtClr(C.accent);pdf.text('GPS',logoX+LOGO_SIZE/2,logoY+LOGO_SIZE/2+3,{align:'center'});} const textX=logoX+LOGO_SIZE+10;bold();pdf.setFontSize(13);setTxtClr(C.text);pdf.text('Gulf Petrochemical Services',textX,28);normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text('OXY OMAN · CONTRACT #24000110790',textX,40); if(isContinued){pdf.setFontSize(7);setTxtClr(C.dim);pdf.text(`Work Report #${reportNo}  (continued)`,textX,52);} const badgeLabel=`Work Report #${reportNo}`;bold();pdf.setFontSize(9);setTxtClr(C.white);const bw=pdf.getTextWidth(badgeLabel)+22;const bx=pageW-M-bw;setFill(C.accent);pdf.roundedRect(bx,10,bw,19,3,3,'F');pdf.text(badgeLabel,bx+bw/2,23,{align:'center'}); normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text(`WI: ${wi}`,pageW-M,40,{align:'right'});pdf.text(`Date: ${dateStr}`,pageW-M,51,{align:'right'}); setDraw(C.border);pdf.setLineWidth(0.5);pdf.line(0,headerH,pageW,headerH); return headerH+10; }
-    function checkPage(y,needed,reportNo,wi){ const bottomGuard=pageH-24; if(y+needed>bottomGuard){pdf.addPage();drawPageFooter();y=drawPageHeader(reportNo,wi,true);}return y; }
-    function sectionBar(y,title){ setFill(C.surface2);pdf.rect(M,y,inner,18,'F');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+18);pdf.setLineWidth(0.5);bold();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(title.toUpperCase(),M+8,y+12);normal();return y+18; }
-    function tableRow(y,cells,widths,rowH,isHeader,isAlt){ if(isHeader){setFill(C.surface2);}else if(isAlt){setFill([248,250,253]);}else{setFill(C.white);}pdf.rect(M,y,inner,rowH,'F');setDraw(C.line);pdf.setLineWidth(0.3);pdf.line(M,y+rowH,M+inner,y+rowH);let x=M;cells.forEach((cell,ci)=>{const w=widths[ci];if(isHeader){bold();pdf.setFontSize(6.5);setTxtClr(C.sub);}else{normal();pdf.setFontSize(7.5);setTxtClr(C.text);}const lines=pdf.splitTextToSize(String(cell||'—'),w-8);pdf.text(lines[0],x+4,y+rowH/2+(isHeader?2:2.5));x+=w;});return y+rowH; }
-    function metaGrid(y,items){ const cols=3;const cellW=inner/cols;const cellH=32;const rows=Math.ceil(items.length/cols);const totalH=rows*cellH;for(let ri=0;ri<rows;ri++){for(let ci=0;ci<cols;ci++){const idx=ri*cols+ci;if(idx>=items.length)continue;const cx=M+ci*cellW;const cy=y+ri*cellH;setFill(ci%2===0?C.surface:C.surface2);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(cx,cy,cellW,cellH,'FD');bold();pdf.setFontSize(6);setTxtClr(C.dim);pdf.text(String(items[idx][0]).toUpperCase(),cx+5,cy+10);normal();pdf.setFontSize(8);setTxtClr(C.text);const val=pdf.splitTextToSize(String(items[idx][1]||'—'),cellW-10);pdf.text(val[0],cx+5,cy+22);}}return y+totalH; }
-    function descBox(y,text){ if(!text)return y;normal();pdf.setFontSize(8);setTxtClr(C.sub);const lines=pdf.splitTextToSize(text,inner-16);const boxH=lines.length*11+14;setFill([250,251,254]);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(M,y,inner,boxH,'FD');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+boxH);pdf.setLineWidth(0.3);pdf.text(lines,M+10,y+11);return y+boxH+6; }
-    function signatureSection(y){ const sigBoxH=88;y=sectionBar(y,'Approval & Signatures');setDraw(C.border);pdf.setLineWidth(0.5);pdf.rect(M,y,inner,sigBoxH,'S');const colW=inner/3;const roles=[{title:'Site Engineer',color:C.green},{title:'Site Manager',color:C.blue},{title:'Client Representative',color:C.accent}];roles.forEach((role,ci)=>{const cx=M+ci*colW;if(ci>0){setDraw(C.border);pdf.setLineWidth(0.4);pdf.line(cx,y,cx,y+sigBoxH);}pdf.setFillColor(...role.color);pdf.rect(cx,y,colW,14,'F');bold();pdf.setFontSize(7.5);setTxtClr(C.white);pdf.text(role.title,cx+colW/2,y+10,{align:'center'});const fieldY=y+22;const fieldGap=18;const fields=['Name:','Designation:','Signature:','Date:'];fields.forEach((lbl,fi)=>{normal();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(lbl,cx+6,fieldY+fi*fieldGap);setDraw(C.line);pdf.setLineWidth(0.4);pdf.line(cx+38,fieldY+fi*fieldGap+1,cx+colW-6,fieldY+fi*fieldGap+1);});});return y+sigBoxH+10; }
-    function drawPageFooter(pageLabel){ const pNum=pdf.internal.getCurrentPageInfo().pageNumber;setFill(C.accent);pdf.rect(0,pageH-5,pageW,5,'F');setDraw(C.border);pdf.setLineWidth(0.3);pdf.line(0,pageH-18,pageW,pageH-18);normal();pdf.setFontSize(6.5);setTxtClr(C.dim);pdf.text(`Gulf Petrochemical Services LLC · Generated ${genDate}${pageLabel?' · '+pageLabel:''}`,pageW/2,pageH-8,{align:'center'}); }
+    function drawPageHeader(reportNo,wi,isContinued){
+      const headerH=72;
+      setFill(C.surface);pdf.rect(0,0,pageW,headerH,'F');
+      setFill(C.accent);pdf.rect(0,0,4,headerH,'F');
+      const logoX=M+4,logoY=(headerH-LOGO_SIZE)/2;
+      if(logoB64){
+        setFill([255,255,255]);setDraw(C.border);pdf.setLineWidth(0.5);
+        pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');
+        const pad=3;pdf.addImage(logoB64,'PNG',logoX+pad,logoY+pad,LOGO_SIZE-pad*2,LOGO_SIZE-pad*2);
+      } else {
+        setFill(C.surface2);setDraw(C.border);pdf.setLineWidth(0.5);
+        pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');
+        bold();pdf.setFontSize(9);setTxtClr(C.accent);
+        pdf.text('GPS',logoX+LOGO_SIZE/2,logoY+LOGO_SIZE/2+3,{align:'center'});
+      }
+      const textX=logoX+LOGO_SIZE+10;
+      bold();pdf.setFontSize(13);setTxtClr(C.text);pdf.text('Gulf Petrochemical Services',textX,28);
+      normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text('OXY OMAN · CONTRACT #24000110790',textX,40);
+      if(isContinued){pdf.setFontSize(7);setTxtClr(C.dim);pdf.text(`Work Report #${reportNo}  (continued)`,textX,52);}
+      const badgeLabel=`Work Report #${reportNo}`;
+      bold();pdf.setFontSize(9);setTxtClr(C.white);
+      const bw=pdf.getTextWidth(badgeLabel)+22,bx=pageW-M-bw;
+      setFill(C.accent);pdf.roundedRect(bx,10,bw,19,3,3,'F');
+      pdf.text(badgeLabel,bx+bw/2,23,{align:'center'});
+      normal();pdf.setFontSize(7.5);setTxtClr(C.sub);
+      pdf.text(`WI: ${wi}`,pageW-M,40,{align:'right'});
+      pdf.text(`Date: ${dateStr}`,pageW-M,51,{align:'right'});
+      setDraw(C.border);pdf.setLineWidth(0.5);pdf.line(0,headerH,pageW,headerH);
+      return headerH+10;
+    }
+    function checkPage(y,needed,reportNo,wi){
+      if(y+needed>pageH-24){pdf.addPage();drawPageFooter();y=drawPageHeader(reportNo,wi,true);}
+      return y;
+    }
+    function sectionBar(y,title){
+      setFill(C.surface2);pdf.rect(M,y,inner,18,'F');
+      setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+18);pdf.setLineWidth(0.5);
+      bold();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(title.toUpperCase(),M+8,y+12);normal();
+      return y+18;
+    }
+    function tableRow(y,cells,widths,rowH,isHeader,isAlt){
+      if(isHeader)setFill(C.surface2); else if(isAlt)setFill([248,250,253]); else setFill(C.white);
+      pdf.rect(M,y,inner,rowH,'F');
+      setDraw(C.line);pdf.setLineWidth(0.3);pdf.line(M,y+rowH,M+inner,y+rowH);
+      let x=M;
+      cells.forEach((cell,ci)=>{
+        const w=widths[ci];
+        if(isHeader){bold();pdf.setFontSize(6.5);setTxtClr(C.sub);}else{normal();pdf.setFontSize(7.5);setTxtClr(C.text);}
+        const lines=pdf.splitTextToSize(String(cell||'—'),w-8);
+        pdf.text(lines[0],x+4,y+rowH/2+(isHeader?2:2.5));x+=w;
+      });
+      return y+rowH;
+    }
+    function metaGrid(y,items){
+      const cols=3,cellW=inner/cols,cellH=32,rows=Math.ceil(items.length/cols),totalH=rows*cellH;
+      for(let ri=0;ri<rows;ri++){for(let ci=0;ci<cols;ci++){const idx=ri*cols+ci;if(idx>=items.length)continue;const cx=M+ci*cellW,cy=y+ri*cellH;setFill(ci%2===0?C.surface:C.surface2);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(cx,cy,cellW,cellH,'FD');bold();pdf.setFontSize(6);setTxtClr(C.dim);pdf.text(String(items[idx][0]).toUpperCase(),cx+5,cy+10);normal();pdf.setFontSize(8);setTxtClr(C.text);const val=pdf.splitTextToSize(String(items[idx][1]||'—'),cellW-10);pdf.text(val[0],cx+5,cy+22);}}
+      return y+totalH;
+    }
+    function descBox(y,text){
+      if(!text)return y;normal();pdf.setFontSize(8);setTxtClr(C.sub);
+      const lines=pdf.splitTextToSize(text,inner-16),boxH=lines.length*11+14;
+      setFill([250,251,254]);setDraw(C.border);pdf.setLineWidth(0.3);pdf.rect(M,y,inner,boxH,'FD');
+      setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+boxH);pdf.setLineWidth(0.3);
+      pdf.text(lines,M+10,y+11);return y+boxH+6;
+    }
+    function signatureSection(y){
+      const sigBoxH=88;y=sectionBar(y,'Approval & Signatures');
+      setDraw(C.border);pdf.setLineWidth(0.5);pdf.rect(M,y,inner,sigBoxH,'S');
+      const colW=inner/3;
+      [{title:'Site Engineer',color:C.green},{title:'Site Manager',color:C.blue},{title:'Client Representative',color:C.accent}].forEach((role,ci)=>{
+        const cx=M+ci*colW;
+        if(ci>0){setDraw(C.border);pdf.setLineWidth(0.4);pdf.line(cx,y,cx,y+sigBoxH);}
+        pdf.setFillColor(...role.color);pdf.rect(cx,y,colW,14,'F');
+        bold();pdf.setFontSize(7.5);setTxtClr(C.white);pdf.text(role.title,cx+colW/2,y+10,{align:'center'});
+        const fieldY=y+22,fieldGap=18;
+        ['Name:','Designation:','Signature:','Date:'].forEach((lbl,fi)=>{
+          normal();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(lbl,cx+6,fieldY+fi*fieldGap);
+          setDraw(C.line);pdf.setLineWidth(0.4);pdf.line(cx+38,fieldY+fi*fieldGap+1,cx+colW-6,fieldY+fi*fieldGap+1);
+        });
+      });
+      return y+sigBoxH+10;
+    }
+    function drawPageFooter(pageLabel){
+      setFill(C.accent);pdf.rect(0,pageH-5,pageW,5,'F');
+      setDraw(C.border);pdf.setLineWidth(0.3);pdf.line(0,pageH-18,pageW,pageH-18);
+      normal();pdf.setFontSize(6.5);setTxtClr(C.dim);
+      pdf.text(`Gulf Petrochemical Services LLC · Generated ${genDate}${pageLabel?' · '+pageLabel:''}`,pageW/2,pageH-8,{align:'center'});
+    }
     const totalReports=lastRepGroups.length;
     for(let i=0;i<totalReports;i++){
-      const g=lastRepGroups[i]; progressTxt.textContent=`Rendering report ${i+1} of ${totalReports}…`; if(i>0)pdf.addPage();
+      const g=lastRepGroups[i];progressTxt.textContent=`Rendering report ${i+1} of ${totalReports}…`;
+      if(i>0)pdf.addPage();
       const reportStartPage=pdf.internal.getCurrentPageInfo().pageNumber;
       let y=drawPageHeader(i+1,g.wi,false);
       if(g.desc){y=checkPage(y,40,i+1,g.wi);y=sectionBar(y,'Work Description');y=descBox(y,g.desc);y+=4;}
-      const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length; const eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;
+      const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length;
+      const eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;
       const metaItems=[['Foreman ID',g.id],['Foreman Name',g.crewLead],['Area / Block',g.area],['Discipline',g.discipline],['Permit No.',g.permitNo],['Work Hours',`${g.timeIn} → ${g.timeOut}`],['Manpower',String(mp)],['Equipment',String(eq)],['Crew Size',String(g.resources.size)]];
-      y=checkPage(y,20,i+1,g.wi);y=sectionBar(y,'Report Details');y=checkPage(y,Math.ceil(metaItems.length/3)*32+4,i+1,g.wi);y=metaGrid(y,metaItems);y+=10;
+      y=checkPage(y,20,i+1,g.wi);y=sectionBar(y,'Report Details');
+      y=checkPage(y,Math.ceil(metaItems.length/3)*32+4,i+1,g.wi);y=metaGrid(y,metaItems);y+=10;
       const progressLines=g.progress.replace(/"/g,'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const idx=l.lastIndexOf('=');return idx!==-1?[l.slice(0,idx).trim(),l.slice(idx+1).trim()]:[l,'—'];});
       y=checkPage(y,36,i+1,g.wi);y=sectionBar(y,`Progress Details (${progressLines.length} item${progressLines.length!==1?'s':''})`);
-      const progWidths=[30,inner-80,50]; y=tableRow(y,['#','Description','Quantity'],progWidths,16,true);
+      const progWidths=[30,inner-80,50];y=tableRow(y,['#','Description','Quantity'],progWidths,16,true);
       if(progressLines.length){progressLines.forEach((pl,j)=>{y=checkPage(y,16,i+1,g.wi);y=tableRow(y,[j+1,pl[0],pl[1]],progWidths,16,false,j%2===1);});}
       else{y=checkPage(y,16,i+1,g.wi);normal();pdf.setFontSize(7.5);setTxtClr(C.dim);pdf.text('No progress data recorded.',M+8,y+11);y+=16;}
       y+=10;
       y=checkPage(y,36,i+1,g.wi);y=sectionBar(y,`Resources (${g.resourceRows.length} record${g.resourceRows.length!==1?'s':''})`);
-      const resColW=[30,80,inner-310,75,60,65]; y=tableRow(y,['#','Resource ID','Designation','Type','Time-In','Time-Out'],resColW,16,true);
-      if(g.resourceRows.length){g.resourceRows.forEach((r,j)=>{y=checkPage(y,16,i+1,g.wi);const typeLabel=r.type.toLowerCase()==='manpower'?'Manpower':r.type.toLowerCase()==='equipment'?'Equipment':r.type||'—';y=tableRow(y,[j+1,r.id,r.desig,typeLabel,r.tin,r.tout],resColW,16,false,j%2===1);});}
+      const resColW=[30,80,inner-310,75,60,65];
+      y=tableRow(y,['#','Resource ID','Designation','Type','Time-In','Time-Out'],resColW,16,true);
+      if(g.resourceRows.length){g.resourceRows.forEach((r,j)=>{y=checkPage(y,16,i+1,g.wi);const tl=r.type.toLowerCase()==='manpower'?'Manpower':r.type.toLowerCase()==='equipment'?'Equipment':r.type||'—';y=tableRow(y,[j+1,r.id,r.desig,tl,r.tin,r.tout],resColW,16,false,j%2===1);});}
       else{normal();pdf.setFontSize(7.5);setTxtClr(C.dim);pdf.text('No resource records found.',M+8,y+11);y+=16;}
       y+=12;
       const SIG_NEEDED=18+88+10+30;
       if(y+SIG_NEEDED>pageH-24){pdf.addPage();drawPageFooter();y=drawPageHeader(i+1,g.wi,true);}
       y=signatureSection(y);
-      const reportEndPage=pdf.internal.getCurrentPageInfo().pageNumber; const reportPageCount=reportEndPage-reportStartPage+1;
-      for(let p=reportStartPage;p<=reportEndPage;p++){pdf.setPage(p);const pageLabel=reportPageCount>1?`Report ${i+1} of ${totalReports} · Page ${p-reportStartPage+1} of ${reportPageCount}`:`Report ${i+1} of ${totalReports}`;drawPageFooter(pageLabel);}
+      const reportEndPage=pdf.internal.getCurrentPageInfo().pageNumber;
+      const reportPageCount=reportEndPage-reportStartPage+1;
+      for(let p=reportStartPage;p<=reportEndPage;p++){
+        pdf.setPage(p);
+        const pageLabel=reportPageCount>1?`Report ${i+1} of ${totalReports} · Page ${p-reportStartPage+1} of ${reportPageCount}`:`Report ${i+1} of ${totalReports}`;
+        drawPageFooter(pageLabel);
+      }
       pdf.setPage(reportEndPage);
     }
-    const filename=`GPS_DailyReports_${dateVal?toKey(dateVal):'export'}.pdf`;
-    pdf.save(filename);
+    pdf.save(`GPS_DailyReports_${dateVal?toKey(dateVal):'export'}.pdf`);
   } catch(err){console.error(err);alert('PDF generation failed: '+err.message);}
   finally{overlay.classList.remove('visible');}
 }
@@ -1093,12 +1158,7 @@ function renderRepSum(){
   const rows=groupByProjectForDate(toKey(d),area,disc);
   lastRepSumRows=rows;
   const uF=new Set(rows.map(r=>r.id)).size,uA=new Set(rows.map(r=>r.area)).size,tC=rows.reduce((s,r)=>s+r.resources.size,0);
-  document.getElementById('rs-stats-bar').innerHTML = buildStatsBar([{label:'', pills:[
-    {label:'Work Groups', value:rows.length, icon:'fa-clipboard-list',   color:'sp-orange'},
-    {label:'Foremen',     value:uF,          icon:'fa-hard-hat',          color:'sp-blue'},
-    {label:'Areas',       value:uA,          icon:'fa-map-location-dot',  color:'sp-teal'},
-    {label:'Total Crew',  value:tC,          icon:'fa-people-group',      color:'sp-green'},
-  ]}]);
+  document.getElementById('rs-stats-bar').innerHTML=buildStatsBar([{label:'',pills:[{label:'Work Groups',value:rows.length,icon:'fa-clipboard-list',color:'sp-orange'},{label:'Foremen',value:uF,icon:'fa-hard-hat',color:'sp-blue'},{label:'Areas',value:uA,icon:'fa-map-location-dot',color:'sp-teal'},{label:'Total Crew',value:tC,icon:'fa-people-group',color:'sp-green'}]}]);
   document.getElementById('rs-badge').textContent=`${rows.length} entries`;
   if(!rows.length){document.getElementById('rs-body').innerHTML='<tr><td colspan="9" class="no-data">No records found.</td></tr>';return;}
   document.getElementById('rs-body').innerHTML=rows.map((g,i)=>`<tr><td class="mono">${i+1}</td><td>${escHtml(g.crewLead)}</td><td class="mono">${escHtml(g.id)}</td><td>${escHtml(g.area)}</td><td>${escHtml(g.discipline)}</td><td class="mono">${escHtml(g.wi)}</td><td><strong>${g.resources.size}</strong></td><td class="desc-cell">${escHtml(g.desc||'—')}</td><td class="prog-cell">${escHtml(formatProgressFlat(g.progress)||'—')}</td></tr>`).join('');
@@ -1111,21 +1171,15 @@ function renderStatus(){
   const d=getDate('st-date'),area=document.getElementById('st-area').value,disc=document.getElementById('st-disc').value;
   if(!d) return;
   const {groups,uniqueResources}=groupByProject(toKey(d),area,disc);
-  lastStatusGroups=groups; lastStatusDate=d;
+  lastStatusGroups=groups;lastStatusDate=d;
   document.getElementById('st-table-title').textContent=`Active Projects on ${fmtDisplay(d)}`;
   const uA=new Set(groups.map(g=>g.area)).size;
   const mpT=groups.reduce((s,g)=>s+g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,0);
   const eqT=groups.reduce((s,g)=>s+g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length,0);
-  document.getElementById('st-stats-bar').innerHTML = buildStatsBar([{label:'', pills:[
-    {label:'Total Projects', value:groups.length,         icon:'fa-clipboard-list',   color:'sp-orange'},
-    {label:'Total Crew',     value:uniqueResources.size,  icon:'fa-people-group',     color:'sp-blue'},
-    {label:'Active Areas',   value:uA,                    icon:'fa-map-location-dot', color:'sp-teal'},
-    {label:'Manpower',       value:mpT,                   icon:'fa-person-digging',   color:'sp-green'},
-    {label:'Equipment',      value:eqT,                   icon:'fa-gear',             color:'sp-purple'},
-  ]}]);
+  document.getElementById('st-stats-bar').innerHTML=buildStatsBar([{label:'',pills:[{label:'Total Projects',value:groups.length,icon:'fa-clipboard-list',color:'sp-orange'},{label:'Total Crew',value:uniqueResources.size,icon:'fa-people-group',color:'sp-blue'},{label:'Active Areas',value:uA,icon:'fa-map-location-dot',color:'sp-teal'},{label:'Manpower',value:mpT,icon:'fa-person-digging',color:'sp-green'},{label:'Equipment',value:eqT,icon:'fa-gear',color:'sp-purple'}]}]);
   document.getElementById('st-badge').textContent=`${groups.length} entries`;
   if(!groups.length){document.getElementById('st-body').innerHTML='<tr><td colspan="9" class="no-data">No records found.</td></tr>';return;}
-  document.getElementById('st-body').innerHTML=groups.map((g,i)=>{ const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length; return `<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(g.id)}</td><td>${escHtml(g.crewLead)}</td><td class="mono">${escHtml(g.wi)}</td><td>${escHtml(g.area)}</td><td><strong>${g.resources.size}</strong></td><td>${mp}</td><td>${eq}</td><td>${escHtml(g.discipline)}</td></tr>`; }).join('');
+  document.getElementById('st-body').innerHTML=groups.map((g,i)=>{const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;return `<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(g.id)}</td><td>${escHtml(g.crewLead)}</td><td class="mono">${escHtml(g.wi)}</td><td>${escHtml(g.area)}</td><td><strong>${g.resources.size}</strong></td><td>${mp}</td><td>${eq}</td><td>${escHtml(g.discipline)}</td></tr>`;}).join('');
 }
 
 /* ══ RESOURCES ══ */
@@ -1134,540 +1188,385 @@ function renderResource(){
   const d=getDate('res-date'),area=document.getElementById('res-area').value;
   if(!d) return;
   const {groups}=groupByProject(toKey(d),area);
-  const all=[]; groups.forEach(g=>g.resourceRows.forEach(r=>all.push({...r,wi:g.wi,area:g.area,foreman:g.crewLead,discipline:g.discipline})));
-  lastResAllRows=all; lastResDate=d;
-  const mp=all.filter(r=>r.type.toLowerCase()==='manpower');
-  const eq=all.filter(r=>r.type.toLowerCase()==='equipment');
-  const nf=all.filter(r=>!['manpower','equipment'].includes(r.type.toLowerCase()));
-  document.getElementById('res-stats-bar').innerHTML = buildStatsBar([{label:'', pills:[
-    {label:'All Resources', value:all.length, icon:'fa-boxes-stacked',   color:'sp-blue'},
-    {label:'Manpower',      value:mp.length,  icon:'fa-person-digging',  color:'sp-green'},
-    {label:'Equipment',     value:eq.length,  icon:'fa-gear',            color:'sp-teal'},
-    {label:'Unclassified',  value:nf.length,  icon:'fa-circle-question', color:'sp-warn'},
-  ]}]);
-  function mkT(title,rows,bc,bl){ return `<div class="table-wrap" style="margin-bottom:14px"><div class="table-header"><div class="table-title">${title}</div><div class="table-header-right"><div class="table-badge">${rows.length}</div><button class="btn-excel" onclick="exportResourceExcel()"><i class="fas fa-file-excel"></i> Excel</button></div></div>${rows.length?`<div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>Resource ID</th><th>Designation</th><th>Type</th><th>WI No.</th><th>Area</th><th>Foreman</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(r.id)}</td><td>${escHtml(r.desig)}</td><td><span class="badge ${bc}">${bl}</span></td><td class="mono">${escHtml(r.wi)}</td><td>${escHtml(r.area)}</td><td>${escHtml(r.foreman)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="no-data">No records found.</div>'}</div>`; }
+  const all=[];groups.forEach(g=>g.resourceRows.forEach(r=>all.push({...r,wi:g.wi,area:g.area,foreman:g.crewLead,discipline:g.discipline})));
+  lastResAllRows=all;lastResDate=d;
+  const mp=all.filter(r=>r.type.toLowerCase()==='manpower'),eq=all.filter(r=>r.type.toLowerCase()==='equipment'),nf=all.filter(r=>!['manpower','equipment'].includes(r.type.toLowerCase()));
+  document.getElementById('res-stats-bar').innerHTML=buildStatsBar([{label:'',pills:[{label:'All Resources',value:all.length,icon:'fa-boxes-stacked',color:'sp-blue'},{label:'Manpower',value:mp.length,icon:'fa-person-digging',color:'sp-green'},{label:'Equipment',value:eq.length,icon:'fa-gear',color:'sp-teal'},{label:'Unclassified',value:nf.length,icon:'fa-circle-question',color:'sp-warn'}]}]);
+  function mkT(title,rows,bc,bl){return `<div class="table-wrap" style="margin-bottom:14px"><div class="table-header"><div class="table-title">${title}</div><div class="table-header-right"><div class="table-badge">${rows.length}</div><button class="btn-excel" onclick="exportResourceExcel()"><i class="fas fa-file-excel"></i> Excel</button></div></div>${rows.length?`<div class="table-scroll"><table class="data-table"><thead><tr><th>#</th><th>Resource ID</th><th>Designation</th><th>Type</th><th>WI No.</th><th>Area</th><th>Foreman</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td class="mono">${i+1}</td><td class="mono">${escHtml(r.id)}</td><td>${escHtml(r.desig)}</td><td><span class="badge ${bc}">${bl}</span></td><td class="mono">${escHtml(r.wi)}</td><td>${escHtml(r.area)}</td><td>${escHtml(r.foreman)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="no-data">No records found.</div>'}</div>`;}
   document.getElementById('res-tables').innerHTML=mkT('Manpower',mp,'badge-mp','Manpower')+mkT('Equipment',eq,'badge-eq','Equipment')+mkT('Unclassified',nf,'badge-nf','Other');
 }
 
-/* ════════════════════════════════════════════════════════════
-   SANKEY / ALLUVIAL FLOW DIAGRAM — FIXED VERSION
-   Key fixes:
-   1. SVG height is set explicitly via the height attribute (not just viewBox)
-      so the container grows to fit all content — no bottom clipping.
-   2. All font sizes inside the SVG are uniformly set to 8px.
-   3. overflow:visible on both the container div and the SVG element.
-   4. The sankey-card uses overflow:visible (not overflow:hidden).
-════════════════════════════════════════════════════════════ */
-function renderSankey() {
-  if (!dataReady) return;
-  const d          = getDate('sk-date');
-  const catFilter  = document.getElementById('sk-cat').value;
-  const areaFilter = document.getElementById('sk-area').value;
-  const discFilter = document.getElementById('sk-disc').value;
-  const container  = document.getElementById('sankey-container');
-  const tooltip    = document.getElementById('sk-tooltip');
+/* ══════════════════════════════════════════════════════
+   VOR / DAY-WORKS TRACKER MODULE
+══════════════════════════════════════════════════════ */
 
-  if (!d) {
-    container.innerHTML = `<div class="sankey-no-data"><i class="fas fa-calendar"></i>Select a date to view the flow diagram</div>`;
-    document.getElementById('sk-stats-bar').innerHTML = '';
-    document.getElementById('sk-flow-body').innerHTML = '';
-    document.getElementById('sk-flow-badge').textContent = '0 flows';
-    document.getElementById('sankey-legend').innerHTML = '';
-    return;
+/* Local storage key */
+const VOR_KEY = 'gps_vor_records_v1';
+let vorAllRows = [];
+let vorFilteredRows = [];
+let vorNewCounter = 0;
+let vorCurrentView = 'all';
+let vorKpiFilter = null; // active kpi card filter
+
+/* Columns definition — each has: key, label, group (site/qs/cost/common), type, options */
+const VOR_COLS = [
+  // Group 1 — Site Engineer
+  { key:'date',        label:'Date',             group:'site',   type:'date' },
+  { key:'requestor',   label:'Requestor',        group:'site',   type:'text' },
+  { key:'site',        label:'Site',             group:'site',   type:'select', options:['Safha','Wadi Lathem'] },
+  { key:'workType',    label:'Work Type',        group:'site',   type:'select', options:['Variation Order (VoR)','Day Work'] },
+  { key:'wi',          label:'WI No.',           group:'site',   type:'text' },
+  { key:'discipline',  label:'Discipline',       group:'site',   type:'select', options:['Civil','Mechanical','Piping','Electrical','Instrumentation','Telecom','Structural','Process','HSE','QA/QC'] },
+  { key:'scope',       label:'Work Scope',       group:'site',   type:'textarea' },
+  { key:'qsDate',      label:'QS Submission Date', group:'site', type:'date' },
+  // Group 2 — QS
+  { key:'approval',    label:'Client Approval Status', group:'qs', type:'select', options:['Pending','Approved','Rejected'] },
+  { key:'approvalDate',label:'Client Approval Date',   group:'qs', type:'date' },
+  // Group 3 — Cost / HO
+  { key:'hoDate',      label:'HO Receipt Date',  group:'cost',   type:'date' },
+  { key:'claimStatus', label:'Claim Status',     group:'cost',   type:'select', options:['Not Started','Under Preparation','Submitted','Certified','Closed'] },
+  // Common
+  { key:'remarks',     label:'Remarks',          group:'common', type:'textarea' },
+];
+
+const VOR_VIEW_COLS = {
+  all:  VOR_COLS.map(c=>c.key),
+  site: ['date','requestor','site','workType','wi','discipline','scope','qsDate'],
+  qs:   ['date','wi','site','workType','qsDate','approval','approvalDate','remarks'],
+  cost: ['date','wi','site','workType','approval','approvalDate','hoDate','claimStatus','remarks'],
+};
+
+/* Smart derived status */
+function vorDeriveStatus(r) {
+  if (r.claimStatus === 'Closed') return 'closed';
+  if (r.approval === 'Approved' && !r.hoDate) return 'delay-ho';
+  if (r.hoDate && (!r.claimStatus || r.claimStatus === 'Not Started')) return 'delay-claim';
+  if (r.qsDate && r.approval !== 'Approved' && r.approval !== 'Rejected') {
+    const days = daysBetween(r.qsDate, today());
+    if (days !== null && days > 14) return 'delay-approval';
   }
+  if (r.qsDate) return 'submitted';
+  return 'initiated';
+}
 
-  const dateKey = toKey(d);
+/* Load from localStorage */
+function vorLoadData() {
+  try {
+    const raw = localStorage.getItem(VOR_KEY);
+    vorAllRows = raw ? JSON.parse(raw) : [];
+  } catch(e) { vorAllRows = []; }
+  vorFilteredRows = [...vorAllRows];
+  vorKpiFilter = null;
+  vorUpdateKpiCards();
+  vorFilterRender();
+  campToast('VoR data loaded','info');
+}
 
-  /* ── 1. First pass: collect ALL paths for dropdown population ── */
-  const allPathMap = {};
-  DATA.forEach(row => {
-    const rd = parseRowDate(row.DATE);
-    if (!rd || toKey(rd) !== dateKey) return;
-    const area = (row['AREA / BLOCK'] || 'Unknown').trim();
-    const disc = (row['DISCIPLINE']   || 'Other').trim();
-    const wi   = (row['WI NO']        || '—').trim();
-    const res  = (row['RESOURCE ID']  || '').trim();
-    if (!res) return;
-    const key = `${area}\x00${disc}\x00${wi}`;
-    if (!allPathMap[key]) allPathMap[key] = { area, disc, wi };
-  });
+/* Save to localStorage */
+function vorSaveAll() {
+  try { localStorage.setItem(VOR_KEY, JSON.stringify(vorAllRows)); } catch(e){}
+}
 
-  /* Populate dropdowns dynamically */
-  const allAreas = [...new Set(Object.values(allPathMap).map(p => p.area))].sort();
-  const allDiscs = [...new Set(Object.values(allPathMap).map(p => p.disc))].sort();
-  const areaSel  = document.getElementById('sk-area');
-  const discSel  = document.getElementById('sk-disc');
-  const prevArea = areaSel.value;
-  const prevDisc = discSel.value;
-  areaSel.innerHTML = '<option value="all">All Areas</option>' +
-    allAreas.map(a => `<option value="${escHtml(a)}" ${prevArea === a ? 'selected' : ''}>${escHtml(a)}</option>`).join('');
-  discSel.innerHTML = '<option value="all">All Disciplines</option>' +
-    allDiscs.map(d2 => `<option value="${escHtml(d2)}" ${prevDisc === d2 ? 'selected' : ''}>${escHtml(d2)}</option>`).join('');
+/* KPI dashboard */
+function vorUpdateKpiCards() {
+  const rows = vorAllRows;
+  const total      = rows.length;
+  const pending_qs = rows.filter(r=>!r.qsDate).length;
+  const pending_ap = rows.filter(r=>r.qsDate && r.approval === 'Pending').length;
+  const approved_ho = rows.filter(r=>r.approval === 'Approved' && !r.hoDate).length;
+  const in_progress = rows.filter(r=>r.hoDate && r.claimStatus && r.claimStatus !== 'Closed' && r.claimStatus !== 'Not Started').length;
+  const closed     = rows.filter(r=>r.claimStatus === 'Closed').length;
+  const delay_appr = rows.filter(r=>vorDeriveStatus(r)==='delay-approval').length;
 
-  /* ── 2. Second pass: filtered pathMap ── */
-  const pathMap = {};
-  DATA.forEach(row => {
-    const rd = parseRowDate(row.DATE);
-    if (!rd || toKey(rd) !== dateKey) return;
-    const area = (row['AREA / BLOCK'] || 'Unknown').trim();
-    const disc = (row['DISCIPLINE']   || 'Other').trim();
-    const wi   = (row['WI NO']        || '—').trim();
-    const res  = (row['RESOURCE ID']  || '').trim();
-    if (!res) return;
-    const type = (row['MANPOWER / EQUIPMENT'] || '').toLowerCase().trim();
-    const isMP = type === 'manpower';
-    const isEQ = type === 'equipment';
-    const isNF = !isMP && !isEQ;
-    if (catFilter  === 'manpower'     && !isMP) return;
-    if (catFilter  === 'equipment'    && !isEQ) return;
-    if (catFilter  === 'unclassified' && !isNF) return;
-    if (areaFilter !== 'all' && area !== areaFilter) return;
-    if (discFilter !== 'all' && disc !== discFilter) return;
-    const key = `${area}\x00${disc}\x00${wi}`;
-    if (!pathMap[key]) pathMap[key] = { area, disc, wi, mp:0, eq:0, nf:0, total:0, seen: new Set() };
-    if (!pathMap[key].seen.has(res)) {
-      pathMap[key].seen.add(res);
-      pathMap[key].total++;
-      if (isMP) pathMap[key].mp++;
-      else if (isEQ) pathMap[key].eq++;
-      else pathMap[key].nf++;
-    }
-  });
-
-  const flows = Object.values(pathMap)
-    .filter(f => f.total > 0)
-    .sort((a, b) => a.disc.localeCompare(b.disc) || b.total - a.total);
-  lastSankeyFlows = flows;
-
-  /* ── 3. Stats bar ── */
-  const totalRes    = flows.reduce((s,f)=>s+f.total,0);
-  const totalMP     = flows.reduce((s,f)=>s+f.mp,0);
-  const totalEQ     = flows.reduce((s,f)=>s+f.eq,0);
-  const totalNF     = flows.reduce((s,f)=>s+f.nf,0);
-  const uniqueAreas = new Set(flows.map(f=>f.area)).size;
-  const uniqueDiscs = new Set(flows.map(f=>f.disc)).size;
-  const uniqueWIs   = new Set(flows.map(f=>f.wi)).size;
-  document.getElementById('sk-stats-bar').innerHTML = buildStatsBar([{ label:'', pills:[
-    { label:'Total Resources', value:totalRes,    icon:'fa-people-group',    color:'sp-orange' },
-    { label:'Manpower',        value:totalMP,     icon:'fa-person-digging',  color:'sp-green'  },
-    { label:'Equipment',       value:totalEQ,     icon:'fa-gear',            color:'sp-blue'   },
-    { label:'Unclassified',    value:totalNF,     icon:'fa-circle-question', color:'sp-warn'   },
-    { label:'Areas',           value:uniqueAreas, icon:'fa-map-pin',         color:'sp-teal'   },
-    { label:'Disciplines',     value:uniqueDiscs, icon:'fa-gears',           color:'sp-purple' },
-    { label:'WI Count',        value:uniqueWIs,   icon:'fa-clipboard-list',  color:'sp-dim'    },
-  ]}]);
-
-  /* ── 4. Flow detail table ── */
-  document.getElementById('sk-flow-badge').textContent = `${flows.length} flows`;
-  document.getElementById('sk-flow-body').innerHTML = flows.length
-    ? flows.map((f,i)=>`<tr>
-        <td class="mono">${i+1}</td>
-        <td>${escHtml(f.area)}</td>
-        <td><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${discColor(f.disc)};margin-right:6px;vertical-align:middle"></span>${escHtml(f.disc)}</td>
-        <td class="mono">${escHtml(f.wi)}</td>
-        <td><strong>${f.total}</strong></td>
-        <td>${f.mp}</td><td>${f.eq}</td><td>${f.nf}</td>
-      </tr>`).join('')
-    : '<tr><td colspan="8" class="no-data">No data for selected date and filters.</td></tr>';
-
-  if (!flows.length) {
-    container.innerHTML = `<div class="sankey-no-data"><i class="fas fa-diagram-project"></i>No resource flow data found for ${fmtDisplay(d)}</div>`;
-    document.getElementById('sankey-legend').innerHTML = '';
-    return;
-  }
-
-  /* ── 5. Layout geometry ── */
-  const isDark  = currentTheme === 'dark';
-  const textClr = isDark ? '#e3e8f0' : '#1a2236';
-  const subClr  = isDark ? '#8b96ab' : '#5a6880';
-
-  /*
-   * UNIFORM FONT SIZE: all text in the SVG uses 8px.
-   * Fixed internal coordinate space TOTAL_W × SVG_H.
-   * SVG rendered with width="100%" and explicit height attribute
-   * so the container grows to match — no clipping at the bottom.
-   */
-  const FONT_SIZE     = 8;   // uniform 8px for all SVG text
-  const TOTAL_W       = 1040;
-  const LEFT_LABEL_W  = 155;
-  const RIGHT_LABEL_W = 175;
-  const NODE_W        = 16;
-  const RIBBON_ZONE   = TOTAL_W - LEFT_LABEL_W - RIGHT_LABEL_W - NODE_W * 3;
-  const col0x = LEFT_LABEL_W;
-  const col1x = col0x + NODE_W + Math.round(RIBBON_ZONE * 0.44);
-  const col2x = col1x + NODE_W + Math.round(RIBBON_ZONE * 0.56);
-
-  const NODE_GAP  = 10;
-  const ROW_MIN_H = 20;
-  const TOP_PAD   = 46;
-  const BOT_PAD   = 24;  /* extra bottom padding so last node label is visible */
-
-  /* Char budget using 8px font (~5.2px per char) */
-  const PX_PER_CHAR = 5.2;
-  function truncate(str, budgetPx) {
-    const max = Math.floor(budgetPx / PX_PER_CHAR);
-    return str.length > max ? str.slice(0, Math.max(3, max - 1)) + '…' : str;
-  }
-
-  const areaNames = [...new Set(flows.map(f => f.area))].sort();
-  const discNames = [...new Set(flows.map(f => f.disc))].sort();
-  const wiNames   = [...new Set(flows.map(f => f.wi))].sort();
-
-  function colTotals(names, keyFn) {
-    return names.map(name => ({
-      name,
-      total: flows.filter(f => keyFn(f) === name).reduce((s, f) => s + f.total, 0),
-    }));
-  }
-  const areaTotals = colTotals(areaNames, f => f.area);
-  const discTotals = colTotals(discNames, f => f.disc);
-  const wiTotals   = colTotals(wiNames,   f => f.wi);
-
-  /* ── 6. Proportional layout ── */
-  function layoutNodes(items, contentH) {
-    const grand  = items.reduce((s, n) => s + n.total, 0) || 1;
-    const usable = contentH - NODE_GAP * (items.length - 1);
-    let y = TOP_PAD;
-    return items.map(item => {
-      const h    = Math.max(ROW_MIN_H, Math.round((item.total / grand) * usable));
-      const node = { ...item, y, h };
-      y += h + NODE_GAP;
-      return node;
-    });
-  }
-
-  /* CRITICAL FIX: compute actual content height needed for each column,
-     then use the MAXIMUM to ensure nothing is clipped */
-  function neededHeight(count) {
-    return TOP_PAD + count * (ROW_MIN_H + NODE_GAP) + BOT_PAD;
-  }
-  const CONTENT_H = Math.max(
-    520,
-    neededHeight(areaNames.length),
-    neededHeight(discNames.length),
-    neededHeight(wiNames.length)
-  );
-  /* SVG_H is the full internal height including bottom padding */
-  const SVG_H = CONTENT_H + BOT_PAD;
-
-  const areaNodes = layoutNodes(areaTotals, CONTENT_H);
-  const discNodes = layoutNodes(discTotals, CONTENT_H);
-  const wiNodes   = layoutNodes(wiTotals,   CONTENT_H);
-
-  const areaMap = Object.fromEntries(areaNodes.map(n => [n.name, n]));
-  const discMap = Object.fromEntries(discNodes.map(n => [n.name, n]));
-  const wiMap   = Object.fromEntries(wiNodes.map(n => [n.name, n]));
-
-  /* ── 7. Ribbon segments with float cursors ── */
-  const cur = {
-    areaR: Object.fromEntries(areaNames.map(n => [n, 0.0])),
-    discL: Object.fromEntries(discNames.map(n => [n, 0.0])),
-    discR: Object.fromEntries(discNames.map(n => [n, 0.0])),
-    wiL:   Object.fromEntries(wiNames.map(n => [n, 0.0])),
-  };
-
-  const sliceH = (node, flowCount) =>
-    Math.max(1.5, (flowCount / node.total) * node.h);
-
-  const ribbons1 = [];
-  const ribbons2 = [];
-
-  flows.forEach(f => {
-    const aN = areaMap[f.area];
-    const dN = discMap[f.disc];
-    const wN = wiMap[f.wi];
-    const col = discColor(f.disc);
-
-    const ha  = sliceH(aN, f.total);
-    const hd1 = sliceH(dN, f.total);
-    ribbons1.push({
-      x0: col0x + NODE_W, y0: aN.y + cur.areaR[f.area], h0: ha,
-      x1: col1x,          y1: dN.y + cur.discL[f.disc],  h1: hd1,
-      color: col, flow: f,
-    });
-    cur.areaR[f.area] += ha;
-    cur.discL[f.disc] += hd1;
-
-    const hd2 = sliceH(dN, f.total);
-    const hw  = sliceH(wN, f.total);
-    ribbons2.push({
-      x0: col1x + NODE_W, y0: dN.y + cur.discR[f.disc], h0: hd2,
-      x1: col2x,          y1: wN.y + cur.wiL[f.wi],      h1: hw,
-      color: col, flow: f,
-    });
-    cur.discR[f.disc] += hd2;
-    cur.wiL[f.wi]     += hw;
-  });
-
-  /* ── 8. Render SVG ──
-     KEY FIX: set both viewBox AND explicit width/height.
-     width="100%" + height attribute (in px matching viewBox aspect)
-     ensures the SVG occupies its full natural height in the DOM,
-     preventing any container from clipping it.
-  */
-  container.innerHTML = '';
-
-  /* Compute the pixel height the SVG will render at for a given container width.
-     We set a concrete height so the DOM element is tall enough. */
-  const svg = d3.select(container)
-    .append('svg')
-    .attr('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`)
-    .attr('width', '100%')
-    /* CRITICAL FIX: remove fixed height, use preserveAspectRatio + CSS height:auto
-       so the SVG scales properly and shows all content */
-    .attr('preserveAspectRatio', 'xMidYMid meet')
-    .style('display', 'block')
-    .style('width', '100%')
-    .style('height', 'auto')
-    .style('overflow', 'visible');
-
-  /* Stage header labels — all 8px */
-  const stageLabels = [
-    { x: col0x + NODE_W / 2, anchor: 'middle', text: 'AREA' },
-    { x: col1x + NODE_W / 2, anchor: 'middle', text: 'DISCIPLINE' },
-    { x: col2x + NODE_W / 2, anchor: 'middle', text: 'WORK INSTRUCTION (WI)' },
+  const kpis = [
+    { label:'Total Requests',       value:total,       icon:'fa-file-contract',   color:'#e07b39', bg:'rgba(224,123,57,0.12)',   hint:'All records', filter:null },
+    { label:'Pending QS Submission',value:pending_qs,  icon:'fa-paper-plane',     color:'#3a7bd5', bg:'rgba(58,123,213,0.12)',   hint:'Not yet submitted to QS', filter:'pending_qs' },
+    { label:'Pending Client Approval',value:pending_ap,icon:'fa-clock',           color:'#d4922b', bg:'rgba(212,146,43,0.12)',   hint:'Submitted, awaiting approval', filter:'pending_ap' },
+    { label:'Approved (Awaiting HO)',value:approved_ho, icon:'fa-inbox',          color:'#9b5de5', bg:'rgba(155,93,229,0.12)',   hint:'Approved but not received by HO', filter:'approved_ho' },
+    { label:'Claims in Progress',   value:in_progress, icon:'fa-spinner',         color:'#17b8c4', bg:'rgba(23,184,196,0.12)',   hint:'Under prep / submitted / certified', filter:'in_progress' },
+    { label:'Closed',               value:closed,      icon:'fa-circle-check',    color:'#2eaa7e', bg:'rgba(46,170,126,0.12)',   hint:'Fully closed', filter:'closed' },
+    { label:'Approval Overdue',     value:delay_appr,  icon:'fa-triangle-exclamation', color:'#d94f4f', bg:'rgba(217,79,79,0.12)', hint:'>14 days since QS submission', filter:'delay_appr' },
   ];
-  stageLabels.forEach(sl => {
-    svg.append('text')
-      .attr('x', sl.x).attr('y', 22)
-      .attr('text-anchor', sl.anchor)
-      .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', FONT_SIZE)
-      .attr('font-weight', 600)
-      .attr('letter-spacing', '0.09em')
-      .attr('fill', subClr)
-      .text(sl.text);
-  });
 
-  /* Cubic-bezier ribbon path */
-  function ribbonPath(r) {
-    const { x0, y0, h0, x1, y1, h1 } = r;
-    const mx = (x0 + x1) / 2;
-    return [
-      `M ${x0} ${y0}`,
-      `C ${mx} ${y0}, ${mx} ${y1}, ${x1} ${y1}`,
-      `L ${x1} ${y1 + h1}`,
-      `C ${mx} ${y1 + h1}, ${mx} ${y0 + h0}, ${x0} ${y0 + h0}`,
-      'Z'
-    ].join(' ');
-  }
-
-  const ribbonGroup = svg.append('g').attr('class', 'ribbon-layer');
-
-  function drawRibbons(data, cls) {
-    ribbonGroup.selectAll('.' + cls)
-      .data(data)
-      .join('path')
-      .attr('class', cls + ' sankey-ribbon')
-      .attr('d', ribbonPath)
-      .attr('fill', r => r.color)
-      .attr('stroke', r => r.color)
-      .attr('stroke-width', 0.4)
-      .attr('opacity', 0.26)
-      .on('mouseenter', function(event, r) {
-        d3.select(this).attr('opacity', 0.62);
-        showFlowTooltip(event, r.flow);
-      })
-      .on('mousemove', function(event) { positionTooltip(event); })
-      .on('mouseleave', function() {
-        d3.select(this).attr('opacity', 0.26);
-        hideTooltip();
-      });
-  }
-  drawRibbons(ribbons1, 'sk-r1');
-  drawRibbons(ribbons2, 'sk-r2');
-
-  const nodeGroup = svg.append('g').attr('class', 'node-layer');
-
-  /* Area nodes — labels LEFT, all 8px */
-  areaNodes.forEach((n, i) => {
-    const color = PALETTE[i % PALETTE.length];
-    const g     = nodeGroup.append('g');
-
-    g.append('rect')
-      .attr('class', 'sankey-node-bar')
-      .attr('x', col0x).attr('y', n.y)
-      .attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', color).attr('opacity', 0.95)
-      .on('mouseenter', ev => showNodeTooltip(ev, n.name, 'Area', n.total, color))
-      .on('mousemove',  ev => positionTooltip(ev))
-      .on('mouseleave', hideTooltip);
-
-    const label = truncate(n.name, LEFT_LABEL_W - 10);
-    const midY  = n.y + n.h / 2;
-
-    g.append('text')
-      .attr('x', col0x - 7)
-      .attr('y', midY - (n.h >= 28 ? 5 : 0))
-      .attr('text-anchor', 'end')
-      .attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Sans',sans-serif")
-      .attr('font-size', FONT_SIZE)
-      .attr('fill', textClr)
-      .text(label);
-
-    if (n.h >= 28) {
-      g.append('text')
-        .attr('x', col0x - 7)
-        .attr('y', midY + 7)
-        .attr('text-anchor', 'end')
-        .attr('dominant-baseline', 'central')
-        .attr('font-family', "'DM Mono',monospace")
-        .attr('font-size', FONT_SIZE)
-        .attr('fill', subClr)
-        .text(n.total);
-    }
-  });
-
-  /* Discipline nodes — labels centred in gap, all 8px */
-  discNodes.forEach(n => {
-    const color   = discColor(n.name);
-    const g       = nodeGroup.append('g');
-
-    g.append('rect')
-      .attr('class', 'sankey-node-bar')
-      .attr('x', col1x).attr('y', n.y)
-      .attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', color).attr('opacity', 0.95)
-      .on('mouseenter', ev => showNodeTooltip(ev, n.name, 'Discipline', n.total, color))
-      .on('mousemove',  ev => positionTooltip(ev))
-      .on('mouseleave', hideTooltip);
-
-    const gapW        = col1x - col0x - NODE_W;
-    const labelBudget = gapW - 12;
-    const lx          = col0x + NODE_W + gapW / 2;
-    const label       = truncate(n.name, labelBudget);
-    const midY        = n.y + n.h / 2;
-
-    g.append('text')
-      .attr('x', lx)
-      .attr('y', midY - (n.h >= 28 ? 5 : 0))
-      .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Sans',sans-serif")
-      .attr('font-size', FONT_SIZE)
-      .attr('fill', color)
-      .attr('font-weight', 600)
-      .text(label);
-
-    if (n.h >= 28) {
-      g.append('text')
-        .attr('x', lx)
-        .attr('y', midY + 7)
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'central')
-        .attr('font-family', "'DM Mono',monospace")
-        .attr('font-size', FONT_SIZE)
-        .attr('fill', subClr)
-        .text(n.total);
-    }
-  });
-
-  /* WI nodes — labels RIGHT, all 8px */
-  wiNodes.forEach(n => {
-    const disc  = flows.find(f => f.wi === n.name)?.disc || 'Other';
-    const color = discColor(disc);
-    const g     = nodeGroup.append('g');
-
-    g.append('rect')
-      .attr('class', 'sankey-node-bar')
-      .attr('x', col2x).attr('y', n.y)
-      .attr('width', NODE_W).attr('height', n.h)
-      .attr('rx', 3).attr('fill', color).attr('opacity', 0.9)
-      .on('mouseenter', ev => showNodeTooltip(ev, n.name, 'Work Instruction', n.total, color))
-      .on('mousemove',  ev => positionTooltip(ev))
-      .on('mouseleave', hideTooltip);
-
-    const label = truncate(n.name, RIGHT_LABEL_W - 10);
-    const midY  = n.y + n.h / 2;
-    const lx    = col2x + NODE_W + 7;
-
-    g.append('text')
-      .attr('x', lx)
-      .attr('y', midY - (n.h >= 28 ? 5 : 0))
-      .attr('dominant-baseline', 'central')
-      .attr('font-family', "'DM Mono',monospace")
-      .attr('font-size', FONT_SIZE)
-      .attr('fill', textClr)
-      .text(label);
-
-    if (n.h >= 28) {
-      g.append('text')
-        .attr('x', lx)
-        .attr('y', midY + 7)
-        .attr('dominant-baseline', 'central')
-        .attr('font-family', "'DM Mono',monospace")
-        .attr('font-size', FONT_SIZE)
-        .attr('fill', subClr)
-        .text(n.total);
-    }
-  });
-
-  /* ── 9. Legend ── */
-  const legendDiscs = [...new Set(flows.map(f=>f.disc))].sort();
-  document.getElementById('sankey-legend').innerHTML = legendDiscs.map(disc =>
-    `<div class="sankey-legend-item">
-       <div class="sankey-legend-dot" style="background:${discColor(disc)}"></div>
-       ${escHtml(disc)}
-     </div>`
-  ).join('');
-
-  /* ── 10. Tooltip helpers ── */
-  function showFlowTooltip(event, flow) {
-    tooltip.style.display = 'block';
-    tooltip.innerHTML = `
-      <strong>${escHtml(flow.wi)}</strong>
-      <span style="color:var(--text-sub)">Area: ${escHtml(flow.area)}</span><br>
-      <span style="color:var(--text-sub)">Discipline: </span><span style="color:${discColor(flow.disc)};font-weight:600">${escHtml(flow.disc)}</span><br>
-      <span style="display:block;margin-top:5px;font-family:var(--font-mono)">
-        Total <strong>${flow.total}</strong> &nbsp;·&nbsp; MP ${flow.mp} &nbsp;·&nbsp; EQ ${flow.eq} &nbsp;·&nbsp; NF ${flow.nf}
-      </span>`;
-    positionTooltip(event);
-  }
-
-  function showNodeTooltip(event, name, stage, total, color) {
-    tooltip.style.display = 'block';
-    tooltip.innerHTML = `
-      <strong style="color:${color}">${escHtml(name)}</strong>
-      <span style="color:var(--text-sub);font-size:0.72rem">${stage}</span><br>
-      <span style="font-family:var(--font-mono)">Resources: <strong>${total}</strong></span>`;
-    positionTooltip(event);
-  }
-
-  function positionTooltip(event) {
-    const vw = window.innerWidth;
-    let lx = event.clientX + 16;
-    if (lx + 270 > vw) lx = event.clientX - 275;
-    tooltip.style.left = lx + 'px';
-    tooltip.style.top  = (event.clientY - 16) + 'px';
-  }
-
-  function hideTooltip() { tooltip.style.display = 'none'; }
-
-  if (window._skTooltipListener) {
-    document.removeEventListener('mousemove', window._skTooltipListener);
-  }
-  window._skTooltipListener = (e) => {
-    if (tooltip.style.display !== 'none') positionTooltip(e);
-  };
-  document.addEventListener('mousemove', window._skTooltipListener);
+  document.getElementById('vor-kpi-cards').innerHTML = kpis.map(k => `
+    <div class="vor-kpi-card${vorKpiFilter===k.filter?' active-filter':''}" style="--kpi-color:${k.color};--kpi-bg:${k.bg}" onclick="vorKpiClick('${k.filter||''}')">
+      <div class="vor-kpi-icon"><i class="fas ${k.icon}"></i></div>
+      <div class="vor-kpi-label">${k.label}</div>
+      <div class="vor-kpi-value">${k.value}</div>
+      <div class="vor-kpi-hint">${k.hint}</div>
+    </div>`).join('');
 }
 
-/* ══ SANKEY EXCEL EXPORT ══ */
-function exportSankeyExcel() {
-  if (!lastSankeyFlows.length) { alert('No flow data to export.'); return; }
-  const ws = XLSX.utils.aoa_to_sheet([
-    ['#', 'Area', 'Discipline', 'WI No.', 'Total Resources', 'Manpower', 'Equipment', 'Unclassified'],
-    ...lastSankeyFlows.map((f, i) => [i + 1, f.area, f.disc, f.wi, f.total, f.mp, f.eq, f.nf])
+function vorKpiClick(filter) {
+  vorKpiFilter = (vorKpiFilter === filter || filter === 'null' || filter === '') ? null : filter;
+  vorUpdateKpiCards();
+  vorFilterRender();
+}
+
+/* Filter logic */
+function vorFilterRender() {
+  const q   = (document.getElementById('vf-search').value||'').toLowerCase().trim();
+  const fSite= document.getElementById('vf-site').value;
+  const fType= document.getElementById('vf-type').value;
+  const fApp = document.getElementById('vf-approval').value;
+  const fClaim= document.getElementById('vf-claim').value;
+
+  vorFilteredRows = vorAllRows.filter(r => {
+    if (fSite!=='all' && r.site!==fSite) return false;
+    if (fType!=='all' && r.workType!==fType) return false;
+    if (fApp!=='all' && r.approval!==fApp) return false;
+    if (fClaim!=='all' && r.claimStatus!==fClaim) return false;
+    if (q) {
+      const hay = `${r.wi||''} ${r.requestor||''} ${r.scope||''} ${r.discipline||''} ${r.site||''} ${r.workType||''}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    // KPI filter
+    if (vorKpiFilter === 'pending_qs') { if (r.qsDate) return false; }
+    else if (vorKpiFilter === 'pending_ap') { if (!r.qsDate || r.approval !== 'Pending') return false; }
+    else if (vorKpiFilter === 'approved_ho') { if (r.approval !== 'Approved' || r.hoDate) return false; }
+    else if (vorKpiFilter === 'in_progress') { const cs=r.claimStatus; if (!r.hoDate || !cs || cs==='Not Started' || cs==='Closed') return false; }
+    else if (vorKpiFilter === 'closed') { if (r.claimStatus !== 'Closed') return false; }
+    else if (vorKpiFilter === 'delay_appr') { if (vorDeriveStatus(r)!=='delay-approval') return false; }
+    return true;
+  });
+
+  vorRenderTable();
+}
+
+/* Build thead based on current view */
+function vorBuildThead() {
+  const visKeys = VOR_VIEW_COLS[vorCurrentView];
+  const visCols = VOR_COLS.filter(c => visKeys.includes(c.key));
+  const groupLabels = {site:'👷 Site Engineer',qs:'📊 QS',cost:'💰 Cost / HO',common:'📝 Common'};
+  const groupSpans = {};
+  visCols.forEach(c=>{ groupSpans[c.group] = (groupSpans[c.group]||0)+1; });
+
+  let topRow = '<tr><th rowspan="2">#</th>';
+  const groups = ['site','qs','cost','common'];
+  groups.forEach(g => {
+    if (groupSpans[g]) {
+      const cls = g==='site'?'resp-site':g==='qs'?'resp-qs':g==='cost'?'resp-cost':'resp-common';
+      topRow += `<th colspan="${groupSpans[g]}" style="text-align:center;border-bottom:2px solid var(--border-br)"><span class="resp-badge ${cls}">${groupLabels[g]}</span></th>`;
+    }
+  });
+  topRow += '<th rowspan="2" style="text-align:right">Actions</th></tr>';
+
+  let botRow = '<tr>';
+  visCols.forEach(c => { botRow += `<th>${c.label}</th>`; });
+  botRow += '</tr>';
+
+  document.getElementById('vor-thead').innerHTML = topRow + botRow;
+}
+
+/* Render table body */
+function vorRenderTable() {
+  vorBuildThead();
+  document.getElementById('vor-badge').textContent = `${vorFilteredRows.length} record${vorFilteredRows.length!==1?'s':''}`;
+
+  if (!vorFilteredRows.length) {
+    document.getElementById('vor-tbody').innerHTML = `<tr><td colspan="20" class="no-data">No records match the current filters.</td></tr>`;
+    return;
+  }
+
+  document.getElementById('vor-tbody').innerHTML = vorFilteredRows.map((r, i) => vorRowHTML(r, i+1)).join('');
+}
+
+/* Row HTML */
+function vorRowHTML(r, idx) {
+  const rid = r._id;
+  const status = vorDeriveStatus(r);
+  const rowClass = status==='closed'?'vor-row-complete':status==='delay-approval'?'vor-row-delay-approval':status==='delay-ho'?'vor-row-delay-ho':status==='delay-claim'?'vor-row-delay-claim':'';
+
+  const visKeys = VOR_VIEW_COLS[vorCurrentView];
+  const visCols = VOR_COLS.filter(c => visKeys.includes(c.key));
+
+  let cells = '';
+  visCols.forEach(col => {
+    const val = r[col.key] || '';
+    let viewHtml = '', editHtml = '';
+
+    if (col.type === 'select') {
+      viewHtml = vorSelectBadge(col.key, val);
+      editHtml = `<select class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:120px"><option value="">— Select —</option>${col.options.map(o=>`<option ${val===o?'selected':''}>${escHtml(o)}</option>`).join('')}</select>`;
+    } else if (col.type === 'textarea') {
+      const short = val.length > 60 ? val.slice(0,60)+'…' : val;
+      viewHtml = `<span title="${escHtml(val)}">${escHtml(short)||'—'}</span>`;
+      editHtml = `<textarea class="inline-input cell-edit" id="ve-${col.key}-${rid}" rows="2" style="min-width:150px">${escHtml(val)}</textarea>`;
+    } else if (col.type === 'date') {
+      viewHtml = `<span class="mono">${val ? fmtDOJ(val) : '—'}</span>`;
+      editHtml = `<input type="date" class="inline-input cell-edit" id="ve-${col.key}-${rid}" value="${escHtml(val)}" style="min-width:130px">`;
+    } else {
+      viewHtml = `<span>${escHtml(val)||'—'}</span>`;
+      editHtml = `<input type="text" class="inline-input cell-edit" id="ve-${col.key}-${rid}" value="${escHtml(val)}" placeholder="${escHtml(col.label)}" style="min-width:100px">`;
+    }
+
+    cells += `<td><span class="cell-view">${viewHtml}</span>${editHtml}</td>`;
+  });
+
+  // Delay indicator
+  let delayBadge = '';
+  if (status==='delay-approval') delayBadge=`<span class="delay-flag red"><i class="fas fa-circle" style="font-size:7px"></i> Approval overdue</span>`;
+  else if (status==='delay-ho') delayBadge=`<span class="delay-flag amber"><i class="fas fa-circle" style="font-size:7px"></i> Awaiting HO</span>`;
+  else if (status==='delay-claim') delayBadge=`<span class="delay-flag purple"><i class="fas fa-circle" style="font-size:7px"></i> Claim not started</span>`;
+  else if (status==='closed') delayBadge=`<span class="delay-flag" style="background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28)"><i class="fas fa-circle" style="font-size:7px"></i> Closed</span>`;
+
+  return `<tr id="vor-row-${rid}" data-rowid="${rid}" class="${rowClass}">
+    <td class="mono" style="white-space:nowrap">${idx}${delayBadge?'<br>'+delayBadge:''}</td>
+    ${cells}
+    <td style="text-align:right;min-width:100px">
+      <div class="cell-actions">
+        <div class="edit-actions">
+          <button class="icon-btn" onclick="vorEditRow('${rid}')" title="Edit"><i class="fas fa-pen"></i></button>
+          <button class="icon-btn del-btn" onclick="vorDeleteRow('${rid}')" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="save-actions">
+          <button class="icon-btn save-btn" onclick="vorSaveRow('${rid}')" title="Save"><i class="fas fa-check"></i></button>
+          <button class="icon-btn cancel-btn" onclick="vorCancelEdit('${rid}')" title="Cancel"><i class="fas fa-xmark"></i></button>
+        </div>
+      </div>
+    </td>
+  </tr>`;
+}
+
+/* Badge renderers per column */
+function vorSelectBadge(key, val) {
+  if (!val) return '—';
+  if (key === 'approval') {
+    const m = {Pending:'s-pol',Approved:'s-pob',Rejected:'s-por'};
+    return `<span class="status-pill ${m[val]||'s-def'}">${escHtml(val)}</span>`;
+  }
+  if (key === 'claimStatus') {
+    const m = {'Not Started':'s-def','Under Preparation':'s-pob-b','Submitted':'s-pob-c','Certified':'s-pob-d','Closed':'s-pob'};
+    return `<span class="status-pill ${m[val]||'s-def'}">${escHtml(val)}</span>`;
+  }
+  if (key === 'workType') {
+    return val==='Variation Order (VoR)'?`<span class="nat-exp">${escHtml(val)}</span>`:`<span class="nat-nat">${escHtml(val)}</span>`;
+  }
+  if (key === 'site') {
+    return `<span class="badge-eq cat-eq">${escHtml(val)}</span>`;
+  }
+  return `<span class="cat-def">${escHtml(val)}</span>`;
+}
+
+/* View toggle */
+function vorSetView(view, btn) {
+  vorCurrentView = view;
+  document.querySelectorAll('.vor-view-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  vorRenderTable();
+}
+
+/* Edit / Cancel / Save */
+function vorEditRow(rid) {
+  const tr = document.getElementById('vor-row-'+rid);
+  if (tr) tr.classList.add('editing');
+}
+function vorCancelEdit(rid) {
+  const r = vorAllRows.find(x=>x._id===rid);
+  if (!r) { const tr=document.getElementById('vor-row-'+rid); if(tr)tr.remove(); return; }
+  const tr = document.getElementById('vor-row-'+rid);
+  if (tr) tr.classList.remove('editing');
+}
+function vorSaveRow(rid) {
+  const isNew = !vorAllRows.find(x=>x._id===rid);
+  const updated = { _id: rid };
+  VOR_COLS.forEach(col => {
+    const el = document.getElementById(`ve-${col.key}-${rid}`);
+    if (el) updated[col.key] = el.value.trim();
+  });
+  // Smart auto-logic
+  if (!updated.approval) updated.approval = 'Pending';
+  if (updated.approval === 'Approved' && !updated.approvalDate) {
+    campToast('Please enter Client Approval Date', 'error'); return;
+  }
+  if (isNew) {
+    vorAllRows.push(updated);
+  } else {
+    const idx = vorAllRows.findIndex(x=>x._id===rid);
+    if (idx>=0) vorAllRows[idx] = updated;
+  }
+  vorSaveAll();
+  vorUpdateKpiCards();
+  vorFilterRender();
+  campToast(isNew?'✓ Record added':'✓ Record saved','success');
+}
+function vorDeleteRow(rid) {
+  if (!confirm('Delete this VoR/Day-Work record? This cannot be undone.')) return;
+  vorAllRows = vorAllRows.filter(x=>x._id!==rid);
+  vorSaveAll();
+  vorUpdateKpiCards();
+  vorFilterRender();
+  campToast('Record deleted','info');
+}
+
+/* Add new row */
+function vorAddRow() {
+  vorNewCounter++;
+  const rid = 'vnew_'+vorNewCounter;
+  const tbody = document.getElementById('vor-tbody');
+  const nd = tbody.querySelector('.no-data'); if(nd) nd.closest('tr').remove();
+
+  const visKeys = VOR_VIEW_COLS[vorCurrentView] || VOR_COLS.map(c=>c.key);
+  const visCols = VOR_COLS.filter(c => visKeys.includes(c.key));
+
+  let cells = '';
+  visCols.forEach(col => {
+    let editHtml = '';
+    if (col.type === 'select') {
+      editHtml = `<select class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:120px"><option value="">— ${col.label} —</option>${col.options.map(o=>`<option>${escHtml(o)}</option>`).join('')}</select>`;
+    } else if (col.type === 'textarea') {
+      editHtml = `<textarea class="inline-input cell-edit" id="ve-${col.key}-${rid}" rows="2" style="min-width:150px" placeholder="${escHtml(col.label)}"></textarea>`;
+    } else if (col.type === 'date') {
+      editHtml = `<input type="date" class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:130px">`;
+    } else {
+      editHtml = `<input type="text" class="inline-input cell-edit" id="ve-${col.key}-${rid}" placeholder="${escHtml(col.label)}" style="min-width:100px">`;
+    }
+    cells += `<td>${editHtml}</td>`;
+  });
+
+  tbody.insertAdjacentHTML('afterbegin', `<tr id="vor-row-${rid}" data-rowid="${rid}" class="new-row editing">
+    <td class="mono">★</td>
+    ${cells}
+    <td style="text-align:right;min-width:100px">
+      <div class="cell-actions">
+        <div class="edit-actions" style="display:none"></div>
+        <div class="save-actions" style="display:flex;gap:5px">
+          <button class="icon-btn save-btn" onclick="vorSaveRow('${rid}')" title="Save"><i class="fas fa-check"></i></button>
+          <button class="icon-btn cancel-btn" onclick="vorDeleteRow('${rid}')" title="Cancel"><i class="fas fa-xmark"></i></button>
+        </div>
+      </div>
+    </td>
+  </tr>`);
+
+  // Focus first input
+  const first = document.querySelector(`#vor-row-${rid} .inline-input`);
+  if (first) first.focus();
+}
+
+/* Excel export */
+function vorExportExcel() {
+  if (!vorAllRows.length) { alert('No VoR records to export.'); return; }
+  const hdr = ['#','Date','Requestor','Site','Work Type','WI No.','Discipline','Work Scope','QS Submission Date','Client Approval','Approval Date','HO Receipt Date','Claim Status','Remarks','Auto Status'];
+  const rows = vorAllRows.map((r,i)=>[
+    i+1, fmtDOJ(r.date), r.requestor, r.site, r.workType, r.wi, r.discipline,
+    r.scope, fmtDOJ(r.qsDate), r.approval, fmtDOJ(r.approvalDate),
+    fmtDOJ(r.hoDate), r.claimStatus, r.remarks, vorDeriveStatus(r)
   ]);
-  ws['!cols'] = [{wch:4},{wch:28},{wch:22},{wch:18},{wch:16},{wch:12},{wch:12},{wch:14}];
+  const ws = XLSX.utils.aoa_to_sheet([hdr,...rows]);
+  ws['!cols'] = [4,12,16,10,18,12,14,40,16,14,14,14,16,30,14].map(w=>({wch:w}));
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Flow Paths');
-  const d = document.getElementById('sk-date').value;
-  XLSX.writeFile(wb, `GPS_FlowDiagram_${d || 'export'}.xlsx`);
+  XLSX.utils.book_append_sheet(wb,ws,'VoR & Day-Works');
+
+  // Summary sheet
+  const statuses=['initiated','submitted','delay-approval','delay-ho','delay-claim','closed'];
+  const sumData=[['Status','Count'],...statuses.map(s=>[s, vorAllRows.filter(r=>vorDeriveStatus(r)===s).length])];
+  const wsSummary=XLSX.utils.aoa_to_sheet(sumData);
+  XLSX.utils.book_append_sheet(wb,wsSummary,'Summary');
+
+  XLSX.writeFile(wb,`GPS_VoR_DayWorks_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
-/* ══ CAMP — LOAD ══ */
+/* ══ CAMP MODULE (unchanged) ══ */
 async function campLoadData() {
   document.getElementById('camp-tbody').innerHTML=`<tr><td colspan="10" style="text-align:center;padding:40px"><div class="spinner" style="margin:0 auto"></div></td></tr>`;
   try {
@@ -1675,14 +1574,14 @@ async function campLoadData() {
     const json=await res.json();
     if(json.status!=='ok') throw new Error(json.message||'Load failed');
     campAllRows=json.rows.map(r=>({
-      _row:  r._row,
-      id:    String(r['ID']||r['id']||''),
-      name:  String(r['Employee Name']||r['EMPLOYEE NAME']||r['Name']||''),
-      desig: String(r['Designation']||r['DESIGNATION']||''),
-      cat:   String(r['Category']||r['CATEGORY']||''),
-      nat:   String(r['Nationality']||r['NATIONALITY']||''),
-      doj:   parseDOJ(r['Date of Joining']||r['DATE OF JOINING']||r['DOJ']||''),
-      camp:  String(r['Camp']||r['CAMP']||''),
+      _row:r._row,
+      id:String(r['ID']||r['id']||''),
+      name:String(r['Employee Name']||r['EMPLOYEE NAME']||r['Name']||''),
+      desig:String(r['Designation']||r['DESIGNATION']||''),
+      cat:String(r['Category']||r['CATEGORY']||''),
+      nat:String(r['Nationality']||r['NATIONALITY']||''),
+      doj:parseDOJ(r['Date of Joining']||r['DATE OF JOINING']||r['DOJ']||''),
+      camp:String(r['Camp']||r['CAMP']||''),
       status:String(r['Status']||r['STATUS']||''),
     }));
     campFilteredRows=[...campAllRows];
@@ -1697,58 +1596,31 @@ async function campLoadData() {
 }
 async function campRefresh(){ await campLoadData(); }
 
-/* ══ CAMP STATS BAR ══ */
 function campUpdateStats(rows) {
-  const mp  = r => r.cat==='Manpower';
-  const eq  = r => r.cat==='Equipment';
-  const isPOB = r => POB_STATUSES.includes(r.status);
-  const isSafah = r => r.camp==='Safah';
-  const isWadi  = r => r.camp==='Wadi Latham';
-  const safahTotal = rows.filter(r=>mp(r)&&isSafah(r)&&isPOB(r)).length;
-  const wadiTotal  = rows.filter(r=>mp(r)&&isWadi(r) &&isPOB(r)).length;
-  const pobCount  = rows.filter(r=>mp(r)&&r.status==='POB').length;
-  const pobACount = rows.filter(r=>mp(r)&&r.status==='POB-A').length;
-  const pobBCount = rows.filter(r=>mp(r)&&r.status==='POB-B').length;
-  const pobCCount = rows.filter(r=>mp(r)&&r.status==='POB-C').length;
-  const pobDCount = rows.filter(r=>mp(r)&&r.status==='POB-D').length;
-  const polCount  = rows.filter(r=>mp(r)&&r.status==='POL').length;
-  const safahEQ   = rows.filter(r=>eq(r)&&isSafah(r)&&r.status==='POB').length;
-  const wadiEQ    = rows.filter(r=>eq(r)&&isWadi(r) &&r.status==='POB').length;
-  document.getElementById('camp-stats-wrap').innerHTML = buildStatsBar([
-    { label:'Total POB', pills:[
-      {label:'Safah',       value:safahTotal, icon:'fa-tent',        color:'sp-blue'},
-      {label:'Wadi Latham', value:wadiTotal,  icon:'fa-tent',        color:'sp-orange'},
-    ]},
-    { label:'POB Status', pills:[
-      {label:'POB',   value:pobCount,  icon:'fa-user-check', color:'sp-green'},
-      {label:'POB-A', value:pobACount, icon:'fa-user-check', color:'sp-green'},
-      {label:'POB-B', value:pobBCount, icon:'fa-user-check', color:'sp-blue'},
-      {label:'POB-C', value:pobCCount, icon:'fa-user-check', color:'sp-purple'},
-      {label:'POB-D', value:pobDCount, icon:'fa-user-check', color:'sp-teal'},
-      {label:'POL',   value:polCount,  icon:'fa-user-clock', color:'sp-warn'},
-    ]},
-    { label:'Camp Resources', pills:[
-      {label:'Safah MP',  value:safahTotal, icon:'fa-person-digging', color:'sp-green'},
-      {label:'Wadi MP',   value:wadiTotal,  icon:'fa-person-digging', color:'sp-orange'},
-      {label:'Safah EQ',  value:safahEQ,    icon:'fa-gear',           color:'sp-blue'},
-      {label:'Wadi EQ',   value:wadiEQ,     icon:'fa-gear',           color:'sp-teal'},
-    ]},
+  const mp=r=>r.cat==='Manpower',eq=r=>r.cat==='Equipment',isPOB=r=>POB_STATUSES.includes(r.status);
+  const isSafah=r=>r.camp==='Safah',isWadi=r=>r.camp==='Wadi Latham';
+  const safahTotal=rows.filter(r=>mp(r)&&isSafah(r)&&isPOB(r)).length,wadiTotal=rows.filter(r=>mp(r)&&isWadi(r)&&isPOB(r)).length;
+  const pobCount=rows.filter(r=>mp(r)&&r.status==='POB').length,pobACount=rows.filter(r=>mp(r)&&r.status==='POB-A').length;
+  const pobBCount=rows.filter(r=>mp(r)&&r.status==='POB-B').length,pobCCount=rows.filter(r=>mp(r)&&r.status==='POB-C').length;
+  const pobDCount=rows.filter(r=>mp(r)&&r.status==='POB-D').length,polCount=rows.filter(r=>mp(r)&&r.status==='POL').length;
+  const safahEQ=rows.filter(r=>eq(r)&&isSafah(r)&&r.status==='POB').length,wadiEQ=rows.filter(r=>eq(r)&&isWadi(r)&&r.status==='POB').length;
+  document.getElementById('camp-stats-wrap').innerHTML=buildStatsBar([
+    {label:'Total POB',pills:[{label:'Safah',value:safahTotal,icon:'fa-tent',color:'sp-blue'},{label:'Wadi Latham',value:wadiTotal,icon:'fa-tent',color:'sp-orange'}]},
+    {label:'POB Status',pills:[{label:'POB',value:pobCount,icon:'fa-user-check',color:'sp-green'},{label:'POB-A',value:pobACount,icon:'fa-user-check',color:'sp-green'},{label:'POB-B',value:pobBCount,icon:'fa-user-check',color:'sp-blue'},{label:'POB-C',value:pobCCount,icon:'fa-user-check',color:'sp-purple'},{label:'POB-D',value:pobDCount,icon:'fa-user-check',color:'sp-teal'},{label:'POL',value:polCount,icon:'fa-user-clock',color:'sp-warn'}]},
+    {label:'Camp Resources',pills:[{label:'Safah MP',value:safahTotal,icon:'fa-person-digging',color:'sp-green'},{label:'Wadi MP',value:wadiTotal,icon:'fa-person-digging',color:'sp-orange'},{label:'Safah EQ',value:safahEQ,icon:'fa-gear',color:'sp-blue'},{label:'Wadi EQ',value:wadiEQ,icon:'fa-gear',color:'sp-teal'}]},
   ]);
 }
 
-/* ══ CAMP FILTER & RENDER ══ */
 function campFilterRender() {
-  const q    =(document.getElementById('camp-search').value||'').toLowerCase().trim();
-  const fCamp= document.getElementById('cf-camp').value;
-  const fCat = document.getElementById('cf-cat').value;
-  const fStat= document.getElementById('cf-status').value;
-  const fNat = document.getElementById('cf-nat').value;
+  const q=(document.getElementById('camp-search').value||'').toLowerCase().trim();
+  const fCamp=document.getElementById('cf-camp').value,fCat=document.getElementById('cf-cat').value;
+  const fStat=document.getElementById('cf-status').value,fNat=document.getElementById('cf-nat').value;
   campFilteredRows=campAllRows.filter(r=>{
-    if(fCamp!=='all'&&r.camp  !==fCamp) return false;
-    if(fCat !=='all'&&r.cat   !==fCat)  return false;
-    if(fStat!=='all'&&r.status!==fStat) return false;
-    if(fNat !=='all'&&r.nat   !==fNat)  return false;
-    if(q){ const hay=`${r.id} ${r.name} ${r.desig} ${r.cat} ${r.nat} ${r.doj} ${r.camp} ${r.status}`.toLowerCase(); if(!hay.includes(q))return false; }
+    if(fCamp!=='all'&&r.camp!==fCamp)return false;
+    if(fCat!=='all'&&r.cat!==fCat)return false;
+    if(fStat!=='all'&&r.status!==fStat)return false;
+    if(fNat!=='all'&&r.nat!==fNat)return false;
+    if(q){const hay=`${r.id} ${r.name} ${r.desig} ${r.cat} ${r.nat} ${r.doj} ${r.camp} ${r.status}`.toLowerCase();if(!hay.includes(q))return false;}
     return true;
   });
   campUpdateStats(campFilteredRows);
@@ -1756,21 +1628,16 @@ function campFilterRender() {
 }
 function campRenderTable(rows) {
   document.getElementById('camp-badge').textContent=`${rows.length} record${rows.length!==1?'s':''}`;
-  if(!rows.length){ document.getElementById('camp-tbody').innerHTML='<tr><td colspan="10" class="no-data">No records match the current filters.</td></tr>'; return; }
+  if(!rows.length){document.getElementById('camp-tbody').innerHTML='<tr><td colspan="10" class="no-data">No records match the current filters.</td></tr>';return;}
   document.getElementById('camp-tbody').innerHTML=rows.map((r,i)=>campRowHTML(r,i+1)).join('');
 }
-
-/* ══ CAMP BADGES ══ */
-function campStatusBadge(s){ const m={'POB':'s-pob','POB-A':'s-pob-a','POB-B':'s-pob-b','POB-C':'s-pob-c','POB-D':'s-pob-d','POL':'s-pol','POR':'s-por'}; return `<span class="status-pill ${m[s]||'s-def'}">${escHtml(s||'—')}</span>`; }
-function campCatBadge(c){ if(c==='Manpower')return `<span class="cat-mp">Manpower</span>`; if(c==='Equipment')return `<span class="cat-eq">Equipment</span>`; return `<span class="cat-def">${escHtml(c||'—')}</span>`; }
-function campNatBadge(n){ if(n==='Expats')return `<span class="nat-exp">Expats</span>`; if(n==='Nationals')return `<span class="nat-nat">Nationals</span>`; return `<span class="cat-def">${escHtml(n||'—')}</span>`; }
-
-/* ══ CAMP ROW HTML ══ */
+function campStatusBadge(s){const m={'POB':'s-pob','POB-A':'s-pob-a','POB-B':'s-pob-b','POB-C':'s-pob-c','POB-D':'s-pob-d','POL':'s-pol','POR':'s-por'};return `<span class="status-pill ${m[s]||'s-def'}">${escHtml(s||'—')}</span>`;}
+function campCatBadge(c){if(c==='Manpower')return `<span class="cat-mp">Manpower</span>`;if(c==='Equipment')return `<span class="cat-eq">Equipment</span>`;return `<span class="cat-def">${escHtml(c||'—')}</span>`;}
+function campNatBadge(n){if(n==='Expats')return `<span class="nat-exp">Expats</span>`;if(n==='Nationals')return `<span class="nat-nat">Nationals</span>`;return `<span class="cat-def">${escHtml(n||'—')}</span>`;}
 function campRowHTML(r,idx){
   const rid=r._row;
   const statusOpts=['POB','POB-A','POB-B','POB-C','POB-D','POL','POR'].map(o=>`<option ${r.status===o?'selected':''}>${o}</option>`).join('');
-  return `
-  <tr id="camp-row-${rid}" data-rowid="${rid}">
+  return `<tr id="camp-row-${rid}" data-rowid="${rid}">
     <td class="mono">${idx}</td>
     <td><span class="cell-view">${escHtml(r.id)}</span><input class="inline-input cell-edit" id="ci-id-${rid}" value="${escHtml(r.id)}" placeholder="ID" style="min-width:80px"></td>
     <td><span class="cell-view">${escHtml(r.name)}</span><input class="inline-input cell-edit" id="ci-name-${rid}" value="${escHtml(r.name)}" placeholder="Full name" style="min-width:130px"></td>
@@ -1782,32 +1649,21 @@ function campRowHTML(r,idx){
     <td><span class="cell-view">${campStatusBadge(r.status)}</span><select class="inline-input cell-edit" id="ci-status-${rid}" style="min-width:100px"><option value="">— Select —</option>${statusOpts}</select></td>
     <td style="text-align:right">
       <div class="cell-actions">
-        <div class="edit-actions">
-          <button class="icon-btn" onclick="campEditRow('${rid}')" title="Edit"><i class="fas fa-pen"></i></button>
-          <button class="icon-btn del-btn" onclick="campDeleteRow('${rid}')" title="Delete"><i class="fas fa-trash"></i></button>
-        </div>
-        <div class="save-actions">
-          <button class="icon-btn save-btn" onclick="campSaveRow('${rid}',false)" title="Save"><i class="fas fa-check"></i></button>
-          <button class="icon-btn cancel-btn" onclick="campCancelEdit('${rid}',false)" title="Cancel"><i class="fas fa-xmark"></i></button>
-        </div>
+        <div class="edit-actions"><button class="icon-btn" onclick="campEditRow('${rid}')" title="Edit"><i class="fas fa-pen"></i></button><button class="icon-btn del-btn" onclick="campDeleteRow('${rid}')" title="Delete"><i class="fas fa-trash"></i></button></div>
+        <div class="save-actions"><button class="icon-btn save-btn" onclick="campSaveRow('${rid}',false)" title="Save"><i class="fas fa-check"></i></button><button class="icon-btn cancel-btn" onclick="campCancelEdit('${rid}',false)" title="Cancel"><i class="fas fa-xmark"></i></button></div>
       </div>
     </td>
   </tr>`;
 }
-
-/* ══ CAMP EDIT / CANCEL ══ */
-function campEditRow(rid){ const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('editing'); }
-function campCancelEdit(rid,isNew){ if(isNew){ const tr=document.getElementById('camp-row-'+rid); if(tr)tr.remove(); return; } const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.remove('editing'); }
-
-/* ══ CAMP ADD ROW ══ */
+function campEditRow(rid){const tr=document.getElementById('camp-row-'+rid);if(tr)tr.classList.add('editing');}
+function campCancelEdit(rid,isNew){if(isNew){const tr=document.getElementById('camp-row-'+rid);if(tr)tr.remove();return;}const tr=document.getElementById('camp-row-'+rid);if(tr)tr.classList.remove('editing');}
 function campAddRow(){
   campNewRowCounter--;
   const tid='new_'+Math.abs(campNewRowCounter);
   const tbody=document.getElementById('camp-tbody');
-  const nd=tbody.querySelector('.no-data'); if(nd)nd.closest('tr').remove();
+  const nd=tbody.querySelector('.no-data');if(nd)nd.closest('tr').remove();
   const statusOpts=['POB','POB-A','POB-B','POB-C','POB-D','POL','POR'].map(o=>`<option>${o}</option>`).join('');
-  tbody.insertAdjacentHTML('afterbegin',`
-  <tr id="camp-row-${tid}" data-rowid="${tid}" class="new-row editing">
+  tbody.insertAdjacentHTML('afterbegin',`<tr id="camp-row-${tid}" data-rowid="${tid}" class="new-row editing">
     <td class="mono">★</td>
     <td><input class="inline-input cell-edit" id="ci-id-${tid}" placeholder="ID" style="min-width:80px"></td>
     <td><input class="inline-input cell-edit" id="ci-name-${tid}" placeholder="Full name" style="min-width:130px"></td>
@@ -1829,44 +1685,38 @@ function campAddRow(){
   </tr>`);
   document.getElementById('ci-id-'+tid).focus();
 }
-
-/* ══ CAMP SAVE ══ */
 async function campSaveRow(rid,isNew){
-  const g=id=>{ const el=document.getElementById(id); return el?el.value.trim():''; };
+  const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
   const empId=g(`ci-id-${rid}`),name=g(`ci-name-${rid}`),desig=g(`ci-desig-${rid}`);
   const cat=g(`ci-cat-${rid}`),nat=g(`ci-nat-${rid}`),doj=g(`ci-doj-${rid}`);
   const camp=g(`ci-camp-${rid}`),status=g(`ci-status-${rid}`);
-  if(!name)  { campToast('Employee Name is required','error'); return; }
-  if(!cat)   { campToast('Please select a Category','error');  return; }
-  if(!camp)  { campToast('Please select a Camp','error');      return; }
-  if(!status){ campToast('Please select a Status','error');    return; }
-  const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('saving');
+  if(!name){campToast('Employee Name is required','error');return;}
+  if(!cat){campToast('Please select a Category','error');return;}
+  if(!camp){campToast('Please select a Camp','error');return;}
+  if(!status){campToast('Please select a Status','error');return;}
+  const tr=document.getElementById('camp-row-'+rid);if(tr)tr.classList.add('saving');
   const payload=isNew
-    ?{ action:'add','ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status }
-    :{ action:'update',_row:rid,'ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status };
+    ?{action:'add','ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status}
+    :{action:'update',_row:rid,'ID':empId,'Employee Name':name,'Designation':desig,'Category':cat,'Nationality':nat,'Date of Joining':doj,'Camp':camp,'Status':status};
   try {
     const res=await fetch(CAMP_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
     const json=await res.json();
-    if(json.status!=='ok') throw new Error(json.message||'Save failed');
+    if(json.status!=='ok')throw new Error(json.message||'Save failed');
     campToast(isNew?'✓ Employee added':'✓ Record updated','success');
     await campLoadData();
-  } catch(e){ console.error(e); campToast('Save failed: '+e.message,'error'); if(tr)tr.classList.remove('saving'); }
+  } catch(e){console.error(e);campToast('Save failed: '+e.message,'error');if(tr)tr.classList.remove('saving');}
 }
-
-/* ══ CAMP DELETE ══ */
 async function campDeleteRow(rid){
-  if(!confirm('Delete this record? This cannot be undone.')) return;
-  const tr=document.getElementById('camp-row-'+rid); if(tr)tr.classList.add('saving');
+  if(!confirm('Delete this record? This cannot be undone.'))return;
+  const tr=document.getElementById('camp-row-'+rid);if(tr)tr.classList.add('saving');
   try {
     const res=await fetch(CAMP_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',_row:rid})});
     const json=await res.json();
-    if(json.status!=='ok') throw new Error(json.message||'Delete failed');
+    if(json.status!=='ok')throw new Error(json.message||'Delete failed');
     campToast('Record deleted','info');
     await campLoadData();
-  } catch(e){ console.error(e); campToast('Delete failed: '+e.message,'error'); if(tr)tr.classList.remove('saving'); }
+  } catch(e){console.error(e);campToast('Delete failed: '+e.message,'error');if(tr)tr.classList.remove('saving');}
 }
-
-/* ══ CAMP EXCEL ══ */
 function exportCampExcel(){
   if(!campAllRows.length){alert('No data to export.');return;}
   const hdr=['#','ID','Employee Name','Designation','Category','Nationality','Date of Joining','Camp','Status'];
@@ -1877,22 +1727,13 @@ function exportCampExcel(){
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'All Employees');
   ['Safah','Wadi Latham'].forEach(camp=>{
-    const rows=campAllRows.filter(r=>r.camp===camp);
-    if(!rows.length)return;
-    const cws=XLSX.utils.aoa_to_sheet([hdr,...rows.map(toRow)]); cws['!cols']=ws['!cols'];
+    const rows=campAllRows.filter(r=>r.camp===camp);if(!rows.length)return;
+    const cws=XLSX.utils.aoa_to_sheet([hdr,...rows.map(toRow)]);cws['!cols']=ws['!cols'];
     XLSX.utils.book_append_sheet(wb,cws,camp.replace(' ','_'));
   });
   const pobData=[['Status','Safah MP','Wadi Latham MP','Safah EQ','Wadi EQ']];
-  [...POB_STATUSES,'POL','POR'].forEach(st=>{
-    pobData.push([st,
-      campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Manpower').length,
-      campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Manpower').length,
-      campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Equipment').length,
-      campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Equipment').length,
-    ]);
-  });
-  const wsSummary=XLSX.utils.aoa_to_sheet(pobData);
-  wsSummary['!cols']=[{wch:10},{wch:12},{wch:18},{wch:12},{wch:12}];
+  [...POB_STATUSES,'POL','POR'].forEach(st=>{pobData.push([st,campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Manpower').length,campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Manpower').length,campAllRows.filter(r=>r.status===st&&r.camp==='Safah'&&r.cat==='Equipment').length,campAllRows.filter(r=>r.status===st&&r.camp==='Wadi Latham'&&r.cat==='Equipment').length]);});
+  const wsSummary=XLSX.utils.aoa_to_sheet(pobData);wsSummary['!cols']=[{wch:10},{wch:12},{wch:18},{wch:12},{wch:12}];
   XLSX.utils.book_append_sheet(wb,wsSummary,'Summary');
   XLSX.writeFile(wb,`GPS_CampDetails_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
@@ -1905,7 +1746,7 @@ function campToast(msg,type='info'){
   t.className=`c-toast ${type}`;
   t.innerHTML=`<span>${icons[type]||'•'}</span> ${escHtml(msg)}`;
   c.appendChild(t);
-  setTimeout(()=>{ t.style.opacity='0';t.style.transition='opacity 0.4s';setTimeout(()=>t.remove(),400); },3200);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.4s';setTimeout(()=>t.remove(),400);},3200);
 }
 
 /* ══ EXCEL EXPORTS ══ */
@@ -1913,43 +1754,42 @@ function exportRepSumExcel(){
   if(!lastRepSumRows.length){alert('No data to export.');return;}
   const ws=XLSX.utils.aoa_to_sheet([['#','Foreman Name','Foreman ID','Area / Block','Discipline','WI No.','Crew Size','Work Description','Progress Details'],...lastRepSumRows.map((g,i)=>[i+1,g.crewLead,g.id,g.area,g.discipline,g.wi,g.resources.size,g.desc||'—',formatProgressFlat(g.progress)||'—'])]);
   ws['!cols']=[{wch:4},{wch:22},{wch:14},{wch:22},{wch:20},{wch:16},{wch:10},{wch:40},{wch:50}];
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Report Summary');
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Report Summary');
   XLSX.writeFile(wb,`GPS_ReportSummary_${document.getElementById('rs-date').value}.xlsx`);
 }
 function exportStatusExcel(){
   if(!lastStatusGroups.length){alert('No data to export.');return;}
-  const ws=XLSX.utils.aoa_to_sheet([['#','Foreman ID','Crew Lead','WI No.','Area / Block','Crew Size','Manpower','Equipment','Discipline'],...lastStatusGroups.map((g,i)=>{ const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length; return [i+1,g.id,g.crewLead,g.wi,g.area,g.resources.size,mp,eq,g.discipline]; })]);
+  const ws=XLSX.utils.aoa_to_sheet([['#','Foreman ID','Crew Lead','WI No.','Area / Block','Crew Size','Manpower','Equipment','Discipline'],...lastStatusGroups.map((g,i)=>{const mp=g.resourceRows.filter(r=>r.type.toLowerCase()==='manpower').length,eq=g.resourceRows.filter(r=>r.type.toLowerCase()==='equipment').length;return[i+1,g.id,g.crewLead,g.wi,g.area,g.resources.size,mp,eq,g.discipline];})]);
   ws['!cols']=[{wch:4},{wch:14},{wch:22},{wch:16},{wch:22},{wch:10},{wch:10},{wch:10},{wch:20}];
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Project Status');
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Project Status');
   XLSX.writeFile(wb,`GPS_ProjectStatus_${lastStatusDate?toKey(lastStatusDate):'export'}.xlsx`);
 }
 function exportResourceExcel(){
   if(!lastResAllRows.length){alert('No data to export.');return;}
   const allData=[['#','Resource ID','Designation','Type','WI No.','Area','Foreman','Discipline'],...lastResAllRows.map((r,i)=>[i+1,r.id,r.desig,r.type||'—',r.wi,r.area,r.foreman,r.discipline||'—'])];
-  const wsAll=XLSX.utils.aoa_to_sheet(allData); wsAll['!cols']=[{wch:4},{wch:14},{wch:22},{wch:12},{wch:16},{wch:22},{wch:22},{wch:20}];
-  const mpRows=lastResAllRows.filter(r=>r.type.toLowerCase()==='manpower');
-  const eqRows=lastResAllRows.filter(r=>r.type.toLowerCase()==='equipment');
+  const wsAll=XLSX.utils.aoa_to_sheet(allData);wsAll['!cols']=[{wch:4},{wch:14},{wch:22},{wch:12},{wch:16},{wch:22},{wch:22},{wch:20}];
+  const mpRows=lastResAllRows.filter(r=>r.type.toLowerCase()==='manpower'),eqRows=lastResAllRows.filter(r=>r.type.toLowerCase()==='equipment');
   const wsMp=XLSX.utils.aoa_to_sheet([['#','Resource ID','Designation','WI No.','Area','Foreman'],...mpRows.map((r,i)=>[i+1,r.id,r.desig,r.wi,r.area,r.foreman])]);
   const wsEq=XLSX.utils.aoa_to_sheet([['#','Resource ID','Designation','WI No.','Area','Foreman'],...eqRows.map((r,i)=>[i+1,r.id,r.desig,r.wi,r.area,r.foreman])]);
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,wsAll,'All Resources'); XLSX.utils.book_append_sheet(wb,wsMp,'Manpower'); XLSX.utils.book_append_sheet(wb,wsEq,'Equipment');
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,wsAll,'All Resources');XLSX.utils.book_append_sheet(wb,wsMp,'Manpower');XLSX.utils.book_append_sheet(wb,wsEq,'Equipment');
   XLSX.writeFile(wb,`GPS_Resources_${lastResDate?toKey(lastResDate):'export'}.xlsx`);
 }
 
 /* ══ TAB ROUTING ══ */
 function triggerTabRender(t){
-  if(t==='summary')      renderSummary();
-  else if(t==='kpi')     renderKPI();
+  if(t==='summary') renderSummary();
+  else if(t==='kpi') renderKPI();
   else if(t==='reports') renderReports();
-  else if(t==='repsum')  renderRepSum();
-  else if(t==='status')  renderStatus();
-  else if(t==='resource')renderResource();
-  else if(t==='sankey')  renderSankey();
+  else if(t==='repsum') renderRepSum();
+  else if(t==='status') renderStatus();
+  else if(t==='resource') renderResource();
+  else if(t==='vor') { vorUpdateKpiCards(); vorFilterRender(); }
 }
 
 /* ══ UTILS ══ */
-function show(id){ const el=document.getElementById(id); if(el)el.style.display='block'; }
-function hide(id){ const el=document.getElementById(id); if(el)el.style.display='none'; }
-function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function show(id){const el=document.getElementById(id);if(el)el.style.display='block';}
+function hide(id){const el=document.getElementById(id);if(el)el.style.display='none';}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 </script>
 </body>
 </html>
