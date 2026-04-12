@@ -121,6 +121,7 @@ option{background:var(--surface2);color:var(--text)}
 .loading-text{font-family:var(--font-mono);font-size:0.78rem;color:var(--text-sub)}
 .loading-sub{font-size:0.72rem;color:var(--text-dim);font-style:italic}
 
+/* ══ STATS BAR — shared by Analytics, KPI Dashboard, VoR ══ */
 .stats-bar{display:flex;align-items:stretch;margin-bottom:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto;transition:background var(--transition);flex-shrink:0}
 .stats-bar::-webkit-scrollbar{height:3px}
 .stats-bar::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:10px}
@@ -136,6 +137,12 @@ option{background:var(--surface2);color:var(--text)}
 .stat-pill-value{font-family:var(--font-display);font-size:1.28rem;font-weight:700;line-height:1;letter-spacing:-0.02em;color:var(--sc,var(--text))}
 .stat-pill-label{font-family:var(--font-mono);font-size:0.58rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.07em;text-align:center;white-space:nowrap}
 
+/* ══ CLICKABLE stat-pill variant for VoR KPI filter ══ */
+.stat-pill.clickable{cursor:pointer}
+.stat-pill.clickable:hover{background:rgba(224,123,57,0.04)}
+.stat-pill.clickable.active-pill{border-top:2px solid var(--sc,var(--accent));padding-top:8px;background:rgba(224,123,57,0.04)}
+.stat-pill.clickable.active-pill .stat-pill-value{color:var(--sc,var(--accent))}
+
 .chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px}
 .chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
 .chart-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
@@ -146,7 +153,7 @@ option{background:var(--surface2);color:var(--text)}
 .chart-wrap{position:relative}
 .chart-wrap.h200{height:200px}.chart-wrap.h220{height:220px}.chart-wrap.h240{height:240px}.chart-wrap.h260{height:260px}.chart-wrap.h280{height:280px}.chart-wrap.h320{height:320px}
 
-/* ══ KPI CARDS — STANDARDIZED (Change #1) ══ */
+/* KPI cards — kept for reference, now replaced by stats-bar in the KPI tab */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s;display:flex;flex-direction:column;gap:2px}
 .kpi-card:hover{box-shadow:var(--shadow-sm)}
@@ -292,7 +299,6 @@ tr.saving td{opacity:0.55}
 .vor-table tr.editing .cell-view{display:none}
 .vor-table tr.editing .cell-edit{display:inline-block;width:100%}
 
-/* Compact VOR table rows */
 .vor-table td {
   padding: 6px 10px !important;
   font-size: 0.78rem !important;
@@ -323,8 +329,6 @@ tr.saving td{opacity:0.55}
   white-space: normal;
 }
 
-/* ══ Change #3: Row colour coding (no inline text labels) ══ */
-/* Light, non-distracting background tints per status */
 [data-theme="light"] .vor-row-delay-approval { background: rgba(217,79,79,0.05) !important; }
 [data-theme="light"] .vor-row-delay-approval:hover { background: rgba(217,79,79,0.09) !important; }
 [data-theme="dark"]  .vor-row-delay-approval { background: rgba(217,79,79,0.07) !important; }
@@ -345,7 +349,6 @@ tr.saving td{opacity:0.55}
 [data-theme="dark"]  .vor-row-complete { background: rgba(46,170,126,0.07) !important; }
 [data-theme="dark"]  .vor-row-complete:hover { background: rgba(46,170,126,0.11) !important; }
 
-/* Left accent bar per status */
 .vor-row-delay-approval td:first-child { border-left: 3px solid var(--danger) !important; }
 .vor-row-delay-ho td:first-child       { border-left: 3px solid var(--warning) !important; }
 .vor-row-delay-claim td:first-child    { border-left: 3px solid #9b5de5 !important; }
@@ -355,21 +358,6 @@ tr.saving td{opacity:0.55}
 .delay-flag.red{background:rgba(217,79,79,0.12);color:var(--danger);border:1px solid rgba(217,79,79,0.28)}
 .delay-flag.amber{background:rgba(212,146,43,0.12);color:var(--warning);border:1px solid rgba(212,146,43,0.28)}
 .delay-flag.purple{background:rgba(155,93,229,0.12);color:#9b5de5;border:1px solid rgba(155,93,229,0.28)}
-
-/* ══ Change #1: VOR KPI Cards — same compact style as KPI Dashboard ══ */
-.vor-kpi-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px}
-.vor-kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s;cursor:pointer;display:flex;flex-direction:column;gap:2px}
-.vor-kpi-card:hover{box-shadow:var(--shadow-sm)}
-.vor-kpi-card.active-filter{box-shadow:0 0 0 2px var(--kpi-color,var(--accent))}
-.vor-kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--kpi-color,var(--accent));border-radius:0 0 var(--radius) var(--radius)}
-.vor-kpi-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
-.vor-kpi-icon{width:26px;height:26px;border-radius:6px;background:var(--kpi-bg,rgba(224,123,57,0.12));display:flex;align-items:center;justify-content:center;font-size:0.72rem;color:var(--kpi-color,var(--accent))}
-.vor-kpi-label{font-family:var(--font-mono);font-size:0.58rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;line-height:1.3}
-.vor-kpi-value{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
-.vor-kpi-hint{font-size:0.58rem;font-family:var(--font-mono);margin-top:3px;color:var(--text-dim);white-space:normal;line-height:1.3}
-
-@media(max-width:1400px){.vor-kpi-grid{grid-template-columns:repeat(4,1fr)}}
-@media(max-width:900px){.vor-kpi-grid{grid-template-columns:repeat(2,1fr)}}
 
 @media(max-width:1200px){.chart-grid{grid-template-columns:1fr}.chart-grid-3{grid-template-columns:1fr 1fr}.insight-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:900px){.chart-grid,.chart-grid-3,.chart-grid-2{grid-template-columns:1fr}.insight-grid{grid-template-columns:1fr}.chart-card.span2{grid-column:span 1}}
@@ -470,7 +458,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- KPI -->
+    <!-- KPI DASHBOARD -->
     <div id="tab-kpi" class="tab-panel">
       <div class="page-header"><h1 class="page-title">KPI <span>Dashboard</span></h1></div>
       <div class="date-range-row">
@@ -481,8 +469,10 @@ tr.saving td{opacity:0.55}
       </div>
       <div id="kpi-loading" class="loading"><div class="spinner"></div><div class="loading-text">Computing KPIs</div><div class="loading-sub">Deriving performance indicators…</div></div>
       <div id="kpi-content" style="display:none">
+        <!-- ══ KPI stats bar — same horizontal strip as Analytics ══ -->
         <div class="section-label">Key Performance Indicators</div>
-        <div class="kpi-grid" id="kpi-cards"></div>
+        <div id="kpi-stats-bar"></div>
+
         <div class="section-label">Productivity Trends</div>
         <div class="chart-grid-2">
           <div class="chart-card"><div class="chart-card-title">Daily Productivity Index</div><div class="chart-card-sub">Unique active crew per day</div><div class="chart-wrap h240"><canvas id="ch-prod"></canvas></div></div>
@@ -606,7 +596,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- DAY-WORKS & VOR TRACKER — Change #2: filters moved ABOVE cards -->
+    <!-- DAY-WORKS & VOR -->
     <div id="tab-vor" class="tab-panel">
       <div class="page-header">
         <h1 class="page-title">Day-Works &amp; <span>VoR Tracker</span></h1>
@@ -617,7 +607,7 @@ tr.saving td{opacity:0.55}
         </div>
       </div>
 
-      <!-- Change #2: Filters ABOVE KPI cards -->
+      <!-- Filters above KPI strip -->
       <div class="filters">
         <div class="filter-group"><span class="filter-label"><i class="fas fa-search"></i> Search</span><input type="text" id="vf-search" class="f-input" placeholder="WI, requestor, scope…" oninput="vorFilterRender()"></div>
         <div class="filter-group"><span class="filter-label"><i class="fas fa-map-pin"></i> Site</span><select id="vf-site" class="f-input" onchange="vorFilterRender()"><option value="all">All Sites</option><option>Safha</option><option>Wadi Lathem</option></select></div>
@@ -626,10 +616,10 @@ tr.saving td{opacity:0.55}
         <div class="filter-group"><span class="filter-label"><i class="fas fa-file-invoice"></i> Claim</span><select id="vf-claim" class="f-input" onchange="vorFilterRender()"><option value="all">All Claim Status</option><option>Not Started</option><option>Under Preparation</option><option>Submitted</option><option>Certified</option><option>Closed</option></select></div>
       </div>
 
-      <!-- Change #1: KPI Cards BELOW filters, standardized design -->
-      <div class="vor-kpi-grid" id="vor-kpi-cards"></div>
+      <!-- ══ VoR KPI strip — same horizontal stats-bar as Analytics ══ -->
+      <div id="vor-stats-bar"></div>
 
-      <!-- Delay Legend -->
+      <!-- Row colour legend -->
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
         <span class="filter-label">Row Colour Key</span>
         <span class="delay-flag red"><i class="fas fa-square" style="font-size:7px"></i> Approval Overdue</span>
@@ -701,10 +691,27 @@ updateChartDefaults();
 Chart.defaults.font.family = "'DM Mono', monospace";
 Chart.defaults.font.size = 11;
 
-/* ══ STATS BAR BUILDER ══ */
+/* ══════════════════════════════════════════════════════
+   STATS BAR BUILDER — shared utility for ALL tabs
+   Supports optional clickable pills (for VoR KPI filter)
+══════════════════════════════════════════════════════ */
 function buildStatsBar(groups) {
-  const pill = (p) => `<div class="stat-pill ${p.color||''}"><div class="stat-pill-icon"><i class="fas ${p.icon}"></i></div><div class="stat-pill-value">${p.value}</div><div class="stat-pill-label">${p.label}</div></div>`;
-  const group = (g) => `<div class="stats-bar-group">${g.label ? `<div class="stats-bar-group-label">${g.label}</div>` : ''}${g.pills.map(pill).join('')}</div>`;
+  const pill = (p) => {
+    const clickable  = p.filter != null;
+    const isActive   = clickable && vorKpiFilter === p.filter;
+    const extraClass = clickable ? ` clickable${isActive ? ' active-pill' : ''}` : '';
+    const onClick    = clickable ? ` onclick="vorKpiClick('${p.filter}')"` : '';
+    return `<div class="stat-pill ${p.color||''}${extraClass}"${onClick}>
+      <div class="stat-pill-icon"><i class="fas ${p.icon}"></i></div>
+      <div class="stat-pill-value">${p.value}</div>
+      <div class="stat-pill-label">${p.label}</div>
+    </div>`;
+  };
+  const group = (g) =>
+    `<div class="stats-bar-group">
+      ${g.label ? `<div class="stats-bar-group-label">${g.label}</div>` : ''}
+      ${g.pills.map(pill).join('')}
+    </div>`;
   return `<div class="stats-bar">${groups.map(group).join('')}</div>`;
 }
 
@@ -932,7 +939,7 @@ function renderSummary(){
   document.getElementById('recent-body').innerHTML=Object.values(actByDay).sort((a,b)=>b.date-a.date).slice(0,12).map(d=>`<tr><td class="mono">${fmtDisplay(d.date)}</td><td>${d.foremen.size}</td><td>${d.crew.size}</td><td><span class="dot ${d.active?'dot-green':'dot-amber'}"></span>${d.active?'Active':'No Activity'}</td></tr>`).join('')||'<tr><td colspan="4" class="no-data">No data</td></tr>';
 }
 
-/* ══ KPI ══ */
+/* ══ KPI — now uses buildStatsBar for the horizontal strip ══ */
 function renderKPI(){
   if(!dataReady) return;
   const start=getDate('kpi-start'),end=getDate('kpi-end');
@@ -966,26 +973,35 @@ function renderKPI(){
   const eqTotal=Object.values(dayStats).reduce((s,d)=>s+d.eq,0);
   const mpRatio=(mpTotal+eqTotal)>0?Math.round(mpTotal/(mpTotal+eqTotal)*100):0;
 
-  /* Change #1: standardized KPI card HTML */
-  const kpiDefs=[
-    {label:'Total Crew (Period)',value:totalCrew,icon:'fa-people-group',color:PALETTE[0],bg:'rgba(224,123,57,0.12)',sub:''},
-    {label:'Avg Crew per Day',value:avgCrewDay,icon:'fa-chart-line',color:PALETTE[1],bg:'rgba(58,123,213,0.12)',sub:`Peak: ${maxCrewDay}`},
-    {label:'Active Days',value:activeDays,icon:'fa-calendar-check',color:PALETTE[2],bg:'rgba(46,170,126,0.12)',sub:`of ${days.length} total`},
-    {label:'Total Projects',value:totalProj,icon:'fa-clipboard-list',color:PALETTE[3],bg:'rgba(212,146,43,0.12)',sub:''},
-    {label:'Foremen Deployed',value:totalFore,icon:'fa-hard-hat',color:PALETTE[4],bg:'rgba(155,93,229,0.12)',sub:''},
-    {label:'Manpower Ratio',value:mpRatio+'%',icon:'fa-person-digging',color:PALETTE[5],bg:'rgba(217,79,79,0.12)',sub:`${mpTotal}mp / ${eqTotal}eq`},
-    {label:'Active Areas',value:Object.keys(areaStats).length,icon:'fa-map-location-dot',color:PALETTE[6],bg:'rgba(23,184,196,0.12)',sub:''},
-    {label:'Avg Projects/Foreman',value:totalFore>0?(totalProj/totalFore).toFixed(1):0,icon:'fa-diagram-project',color:PALETTE[7],bg:'rgba(163,177,138,0.12)',sub:''},
-  ];
-  document.getElementById('kpi-cards').innerHTML=kpiDefs.map(k=>`
-    <div class="kpi-card" style="--kpi-color:${k.color};--kpi-bg:${k.bg}">
-      <div class="kpi-card-header">
-        <div class="kpi-icon"><i class="fas ${k.icon}"></i></div>
-      </div>
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-value">${k.value}</div>
-      ${k.sub?`<div class="kpi-delta">${k.sub}</div>`:''}
-    </div>`).join('');
+  /* ── KPI Dashboard: horizontal stats-bar strip (two grouped sections) ── */
+  document.getElementById('kpi-stats-bar').innerHTML = buildStatsBar([
+    {
+      label: 'Workforce',
+      pills: [
+        { label:'Total Crew (Period)', value:totalCrew,               icon:'fa-people-group',       color:'sp-orange' },
+        { label:'Avg Crew / Day',      value:avgCrewDay,              icon:'fa-chart-line',          color:'sp-blue',  },
+        { label:'Peak Crew Day',       value:maxCrewDay,              icon:'fa-arrow-trend-up',      color:'sp-purple' },
+        { label:'Foremen Deployed',    value:totalFore,               icon:'fa-hard-hat',            color:'sp-teal'   },
+      ]
+    },
+    {
+      label: 'Operations',
+      pills: [
+        { label:'Active Days',          value:activeDays,             icon:'fa-calendar-check',      color:'sp-green'  },
+        { label:'Total Projects',       value:totalProj,              icon:'fa-clipboard-list',       color:'sp-warn'   },
+        { label:'Active Areas',         value:Object.keys(areaStats).length, icon:'fa-map-location-dot', color:'sp-teal' },
+        { label:'Avg Projects/Foreman', value:totalFore>0?(totalProj/totalFore).toFixed(1):0, icon:'fa-diagram-project', color:'sp-dim' },
+      ]
+    },
+    {
+      label: 'Resources',
+      pills: [
+        { label:'Manpower Rows',   value:mpTotal,          icon:'fa-person-digging', color:'sp-green'  },
+        { label:'Equipment Rows',  value:eqTotal,          icon:'fa-gear',           color:'sp-blue'   },
+        { label:'MP Ratio',        value:mpRatio+'%',      icon:'fa-percent',        color:'sp-orange' },
+      ]
+    }
+  ]);
 
   const sortedDays=days.map(d=>({d,dk:toKey(d)})).filter(x=>dayStats[x.dk]);
   const prodLabels=sortedDays.map(x=>fmtDisplay(x.d));
@@ -1056,7 +1072,7 @@ async function fetchLogoBase64() {
   } catch (e) { return null; }
 }
 
-/* ══ PDF — Change #4: Logo renders properly in header ══ */
+/* ══ PDF ══ */
 async function downloadReportsPDF() {
   if (!lastRepGroups.length) { alert('No reports to export.'); return; }
   const overlay=document.getElementById('pdf-overlay'),progressTxt=document.getElementById('pdf-progress-text');
@@ -1073,86 +1089,39 @@ async function downloadReportsPDF() {
     const C={accent:[224,123,57],text:[26,34,54],sub:[90,104,128],dim:[160,172,190],surface:[244,246,249],surface2:[235,238,243],border:[210,215,224],white:[255,255,255],green:[46,170,126],blue:[58,123,213],line:[224,226,232]};
     const setFill=c=>pdf.setFillColor(...c),setDraw=c=>pdf.setDrawColor(...c),setTxtClr=c=>pdf.setTextColor(...c);
     const bold=()=>pdf.setFont('helvetica','bold'),normal=()=>pdf.setFont('helvetica','normal');
-
-    /* ── Change #4: Larger, properly-rendered logo in header ── */
     const LOGO_SIZE = 42;
-
     function drawPageHeader(reportNo,wi,isContinued){
       const headerH = 76;
       setFill(C.surface); pdf.rect(0,0,pageW,headerH,'F');
-      /* Left accent stripe */
       setFill(C.accent); pdf.rect(0,0,4,headerH,'F');
-
-      /* Logo area */
-      const logoX = M + 4;
-      const logoY = (headerH - LOGO_SIZE) / 2;
-
+      const logoX = M + 4, logoY = (headerH - LOGO_SIZE) / 2;
       if (logoB64) {
-        /* White rounded container with subtle border */
-        setFill([255,255,255]);
-        setDraw(C.border);
-        pdf.setLineWidth(0.5);
-        pdf.roundedRect(logoX, logoY, LOGO_SIZE, LOGO_SIZE, 5, 5, 'FD');
-        /* Draw logo image with 3px padding inside container */
-        const pad = 3;
-        pdf.addImage(logoB64, 'PNG', logoX + pad, logoY + pad, LOGO_SIZE - pad*2, LOGO_SIZE - pad*2, undefined, 'FAST');
+        setFill([255,255,255]);setDraw(C.border);pdf.setLineWidth(0.5);
+        pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,5,5,'FD');
+        const pad=3;pdf.addImage(logoB64,'PNG',logoX+pad,logoY+pad,LOGO_SIZE-pad*2,LOGO_SIZE-pad*2,undefined,'FAST');
       } else {
-        /* Fallback: orange initials block */
-        setFill(C.accent);
-        pdf.roundedRect(logoX, logoY, LOGO_SIZE, LOGO_SIZE, 5, 5, 'F');
-        bold(); pdf.setFontSize(13); setTxtClr(C.white);
-        pdf.text('GPS', logoX + LOGO_SIZE/2, logoY + LOGO_SIZE/2 + 4, {align:'center'});
+        setFill(C.accent);pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,5,5,'F');
+        bold();pdf.setFontSize(13);setTxtClr(C.white);pdf.text('GPS',logoX+LOGO_SIZE/2,logoY+LOGO_SIZE/2+4,{align:'center'});
       }
-
-      /* Company name & meta right of logo */
       const textX = logoX + LOGO_SIZE + 12;
-      bold(); pdf.setFontSize(13); setTxtClr(C.text);
-      pdf.text('Gulf Petrochemical Services', textX, 26);
-      normal(); pdf.setFontSize(7.5); setTxtClr(C.sub);
-      pdf.text('OXY OMAN · CONTRACT #24000110790', textX, 39);
-      if (isContinued) {
-        pdf.setFontSize(7); setTxtClr(C.dim);
-        pdf.text(`Work Report #${reportNo}  (continued)`, textX, 52);
-      }
-
-      /* Report badge top-right */
-      const badgeLabel = `Work Report #${reportNo}`;
-      bold(); pdf.setFontSize(9); setTxtClr(C.white);
-      const bw = pdf.getTextWidth(badgeLabel) + 22, bx = pageW - M - bw;
-      setFill(C.accent); pdf.roundedRect(bx, 10, bw, 20, 3, 3, 'F');
-      pdf.text(badgeLabel, bx + bw/2, 24, {align:'center'});
-
-      /* WI + date below badge */
-      normal(); pdf.setFontSize(7.5); setTxtClr(C.sub);
-      pdf.text(`WI: ${wi}`, pageW-M, 43, {align:'right'});
-      pdf.text(`Date: ${dateStr}`, pageW-M, 54, {align:'right'});
-
-      /* Divider */
-      setDraw(C.border); pdf.setLineWidth(0.5); pdf.line(0, headerH, pageW, headerH);
-      return headerH + 10;
+      bold();pdf.setFontSize(13);setTxtClr(C.text);pdf.text('Gulf Petrochemical Services',textX,26);
+      normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text('OXY OMAN · CONTRACT #24000110790',textX,39);
+      if(isContinued){pdf.setFontSize(7);setTxtClr(C.dim);pdf.text(`Work Report #${reportNo}  (continued)`,textX,52);}
+      const badgeLabel=`Work Report #${reportNo}`;
+      bold();pdf.setFontSize(9);setTxtClr(C.white);
+      const bw=pdf.getTextWidth(badgeLabel)+22,bx=pageW-M-bw;
+      setFill(C.accent);pdf.roundedRect(bx,10,bw,20,3,3,'F');pdf.text(badgeLabel,bx+bw/2,24,{align:'center'});
+      normal();pdf.setFontSize(7.5);setTxtClr(C.sub);
+      pdf.text(`WI: ${wi}`,pageW-M,43,{align:'right'});pdf.text(`Date: ${dateStr}`,pageW-M,54,{align:'right'});
+      setDraw(C.border);pdf.setLineWidth(0.5);pdf.line(0,headerH,pageW,headerH);
+      return headerH+10;
     }
-
-    function checkPage(y,needed,reportNo,wi){
-      if(y+needed>pageH-24){pdf.addPage();drawPageFooter();y=drawPageHeader(reportNo,wi,true);}
-      return y;
-    }
-    function sectionBar(y,title){
-      setFill(C.surface2);pdf.rect(M,y,inner,18,'F');
-      setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+18);pdf.setLineWidth(0.5);
-      bold();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(title.toUpperCase(),M+8,y+12);normal();
-      return y+18;
-    }
+    function checkPage(y,needed,reportNo,wi){if(y+needed>pageH-24){pdf.addPage();drawPageFooter();y=drawPageHeader(reportNo,wi,true);}return y;}
+    function sectionBar(y,title){setFill(C.surface2);pdf.rect(M,y,inner,18,'F');setDraw(C.accent);pdf.setLineWidth(2);pdf.line(M,y,M,y+18);pdf.setLineWidth(0.5);bold();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(title.toUpperCase(),M+8,y+12);normal();return y+18;}
     function tableRow(y,cells,widths,rowH,isHeader,isAlt){
-      if(isHeader)setFill(C.surface2); else if(isAlt)setFill([248,250,253]); else setFill(C.white);
-      pdf.rect(M,y,inner,rowH,'F');
-      setDraw(C.line);pdf.setLineWidth(0.3);pdf.line(M,y+rowH,M+inner,y+rowH);
-      let x=M;
-      cells.forEach((cell,ci)=>{
-        const w=widths[ci];
-        if(isHeader){bold();pdf.setFontSize(6.5);setTxtClr(C.sub);}else{normal();pdf.setFontSize(7.5);setTxtClr(C.text);}
-        const lines=pdf.splitTextToSize(String(cell||'—'),w-8);
-        pdf.text(lines[0],x+4,y+rowH/2+(isHeader?2:2.5));x+=w;
-      });
+      if(isHeader)setFill(C.surface2);else if(isAlt)setFill([248,250,253]);else setFill(C.white);
+      pdf.rect(M,y,inner,rowH,'F');setDraw(C.line);pdf.setLineWidth(0.3);pdf.line(M,y+rowH,M+inner,y+rowH);
+      let x=M;cells.forEach((cell,ci)=>{const w=widths[ci];if(isHeader){bold();pdf.setFontSize(6.5);setTxtClr(C.sub);}else{normal();pdf.setFontSize(7.5);setTxtClr(C.text);}const lines=pdf.splitTextToSize(String(cell||'—'),w-8);pdf.text(lines[0],x+4,y+rowH/2+(isHeader?2:2.5));x+=w;});
       return y+rowH;
     }
     function metaGrid(y,items){
@@ -1177,10 +1146,7 @@ async function downloadReportsPDF() {
         pdf.setFillColor(...role.color);pdf.rect(cx,y,colW,14,'F');
         bold();pdf.setFontSize(7.5);setTxtClr(C.white);pdf.text(role.title,cx+colW/2,y+10,{align:'center'});
         const fieldY=y+22,fieldGap=18;
-        ['Name:','Designation:','Signature:','Date:'].forEach((lbl,fi)=>{
-          normal();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(lbl,cx+6,fieldY+fi*fieldGap);
-          setDraw(C.line);pdf.setLineWidth(0.4);pdf.line(cx+38,fieldY+fi*fieldGap+1,cx+colW-6,fieldY+fi*fieldGap+1);
-        });
+        ['Name:','Designation:','Signature:','Date:'].forEach((lbl,fi)=>{normal();pdf.setFontSize(7);setTxtClr(C.sub);pdf.text(lbl,cx+6,fieldY+fi*fieldGap);setDraw(C.line);pdf.setLineWidth(0.4);pdf.line(cx+38,fieldY+fi*fieldGap+1,cx+colW-6,fieldY+fi*fieldGap+1);});
       });
       return y+sigBoxH+10;
     }
@@ -1280,9 +1246,7 @@ function renderResource(){
 /* ══════════════════════════════════════════════════════
    VOR / DAY-WORKS TRACKER MODULE
 ══════════════════════════════════════════════════════ */
-
 const VOR_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyuSzAwICm1OFRcnC7TCJJewOzr8AxqXt0wVJkh2K1e0M87AX-eQ1C0dg4H_o_GJyKF/exec';
-
 let vorAllRows = [];
 let vorFilteredRows = [];
 let vorNewCounter = 0;
@@ -1320,12 +1284,10 @@ async function vorLoadData() {
        <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-sub);margin-top:10px">Loading VoR records…</div>
      </td></tr>`;
   document.getElementById('vor-badge').textContent = '…';
-
   try {
     const res  = await fetch(VOR_WEBAPP_URL + '?t=' + Date.now());
     const json = await res.json();
     if (json.status !== 'ok') throw new Error(json.message || 'Load failed');
-
     vorAllRows = json.rows.map(r => ({
       ...r,
       _id      : String(r._row),
@@ -1333,9 +1295,8 @@ async function vorLoadData() {
       qsDate       : parseVorDate(r.qsDate       || r['QS Submission Date'] || r.qsdate || ''),
       approvalDate : parseVorDate(r.approvalDate  || r['Client Approval Date'] || r.approvaldate || ''),
     }));
-
     vorKpiFilter = null;
-    vorUpdateKpiCards();
+    vorUpdateKpiBar();
     vorFilterRender();
     campToast('VoR data loaded — ' + vorAllRows.length + ' records', 'success');
   } catch (e) {
@@ -1344,50 +1305,57 @@ async function vorLoadData() {
       `<tr><td colspan="20" class="no-data">⚠ Failed to load VoR data.<br>
        <small style="color:var(--text-dim)">${escHtml(e.message)}</small></td></tr>`;
     campToast('Failed to load VoR: ' + e.message, 'error');
-    document.getElementById('vor-kpi-cards').innerHTML = '';
+    document.getElementById('vor-stats-bar').innerHTML = '';
   }
 }
 
-/* Change #1: standardized VOR KPI card HTML matching KPI Dashboard style */
-function vorUpdateKpiCards() {
+/* ══ VoR: horizontal stats-bar strip — identical structure to Analytics ══ */
+function vorUpdateKpiBar() {
   const rows = vorAllRows;
   const total       = rows.length;
-  const pending_qs  = rows.filter(r=>!r.qsDate).length;
-  const pending_ap  = rows.filter(r=>r.qsDate && r.approval === 'Pending').length;
-  const approved    = rows.filter(r=>r.approval === 'Approved').length;
-  const rejected    = rows.filter(r=>r.approval === 'Rejected').length;
-  const delay_appr  = rows.filter(r=>vorDeriveStatus(r)==='delay-approval').length;
-  const submitted   = rows.filter(r=>vorDeriveStatus(r)==='submitted').length;
+  const pending_qs  = rows.filter(r => !r.qsDate).length;
+  const pending_ap  = rows.filter(r => r.qsDate && r.approval === 'Pending').length;
+  const approved    = rows.filter(r => r.approval === 'Approved').length;
+  const rejected    = rows.filter(r => r.approval === 'Rejected').length;
+  const delay_appr  = rows.filter(r => vorDeriveStatus(r) === 'delay-approval').length;
+  const submitted   = rows.filter(r => vorDeriveStatus(r) === 'submitted').length;
 
-  const kpis = [
-    { label:'Total Requests',        value:total,       icon:'fa-file-contract',        color:'#e07b39', bg:'rgba(224,123,57,0.12)',  hint:'All records',                     filter:null },
-    { label:'Pending QS Submission', value:pending_qs,  icon:'fa-paper-plane',          color:'#3a7bd5', bg:'rgba(58,123,213,0.12)',  hint:'Not yet submitted to QS',         filter:'pending_qs' },
-    { label:'Awaiting Approval',     value:pending_ap,  icon:'fa-clock',                color:'#d4922b', bg:'rgba(212,146,43,0.12)',  hint:'Submitted, awaiting client',      filter:'pending_ap' },
-    { label:'Submitted to QS',       value:submitted,   icon:'fa-inbox',                color:'#17b8c4', bg:'rgba(23,184,196,0.12)',  hint:'QS date set',                     filter:'submitted' },
-    { label:'Approved',              value:approved,    icon:'fa-circle-check',         color:'#2eaa7e', bg:'rgba(46,170,126,0.12)',  hint:'Client approved',                 filter:'approved' },
-    { label:'Rejected',              value:rejected,    icon:'fa-circle-xmark',         color:'#d94f4f', bg:'rgba(217,79,79,0.12)',   hint:'Client rejected',                 filter:'rejected' },
-    { label:'Approval Overdue',      value:delay_appr,  icon:'fa-triangle-exclamation', color:'#9b5de5', bg:'rgba(155,93,229,0.12)',  hint:'>14 days since QS submission',    filter:'delay_appr' },
-  ];
-
-  document.getElementById('vor-kpi-cards').innerHTML = kpis.map(k => `
-    <div class="vor-kpi-card${vorKpiFilter===k.filter?' active-filter':''}" style="--kpi-color:${k.color};--kpi-bg:${k.bg}" onclick="vorKpiClick('${k.filter||''}')">
-      <div class="vor-kpi-card-header">
-        <div class="vor-kpi-icon"><i class="fas ${k.icon}"></i></div>
-      </div>
-      <div class="vor-kpi-label">${k.label}</div>
-      <div class="vor-kpi-value">${k.value}</div>
-      <div class="vor-kpi-hint">${k.hint}</div>
-    </div>`).join('');
+  /* Each pill carries a `filter` key so buildStatsBar renders it as clickable */
+  document.getElementById('vor-stats-bar').innerHTML = buildStatsBar([
+    {
+      label: 'Overview',
+      pills: [
+        { label:'Total Requests',        value:total,       icon:'fa-file-contract',        color:'sp-orange', filter:null        },
+        { label:'Approved',              value:approved,    icon:'fa-circle-check',         color:'sp-green',  filter:'approved'  },
+        { label:'Rejected',              value:rejected,    icon:'fa-circle-xmark',         color:'sp-danger', filter:'rejected'  },
+      ]
+    },
+    {
+      label: 'Pipeline',
+      pills: [
+        { label:'Pending QS Submission', value:pending_qs, icon:'fa-paper-plane',          color:'sp-blue',   filter:'pending_qs'  },
+        { label:'Submitted to QS',       value:submitted,  icon:'fa-inbox',                color:'sp-teal',   filter:'submitted'   },
+        { label:'Awaiting Approval',     value:pending_ap, icon:'fa-clock',                color:'sp-warn',   filter:'pending_ap'  },
+      ]
+    },
+    {
+      label: 'Alerts',
+      pills: [
+        { label:'Approval Overdue',      value:delay_appr, icon:'fa-triangle-exclamation', color:'sp-purple', filter:'delay_appr'  },
+      ]
+    }
+  ]);
 }
 
 function vorKpiClick(filter) {
+  /* toggle — clicking the active filter clears it */
   vorKpiFilter = (vorKpiFilter === filter || filter === 'null' || filter === '') ? null : filter;
-  vorUpdateKpiCards();
+  vorUpdateKpiBar();
   vorFilterRender();
 }
 
 function vorFilterRender() {
-  const q    = (document.getElementById('vf-search').value||'').toLowerCase().trim();
+  const q     = (document.getElementById('vf-search').value||'').toLowerCase().trim();
   const fSite = document.getElementById('vf-site').value;
   const fType = document.getElementById('vf-type').value;
   const fApp  = document.getElementById('vf-approval').value;
@@ -1421,17 +1389,14 @@ function vorBuildThead() {
     '</tr>';
 }
 
-/* Change #3: no inline text status labels in # cell — row bg handles it */
 function vorRenderTable() {
   vorBuildThead();
   document.getElementById('vor-badge').textContent = `${vorFilteredRows.length} record${vorFilteredRows.length!==1?'s':''}`;
-
   if (!vorFilteredRows.length) {
     document.getElementById('vor-tbody').innerHTML =
       `<tr><td colspan="${VOR_COLS.length+2}" class="no-data">No records match the current filters.</td></tr>`;
     return;
   }
-
   document.getElementById('vor-tbody').innerHTML =
     vorFilteredRows.map((r, i) => vorRowHTML(r, i+1)).join('');
 }
@@ -1439,8 +1404,6 @@ function vorRenderTable() {
 function vorRowHTML(r, idx) {
   const rid    = r._id;
   const status = vorDeriveStatus(r);
-
-  /* Change #3: row class for bg colouring — no label text in # cell */
   const rowClass =
     status==='closed'          ? 'vor-row-complete' :
     status==='delay-approval'  ? 'vor-row-delay-approval' :
@@ -1451,9 +1414,7 @@ function vorRowHTML(r, idx) {
     const val     = r[col.key] || '';
     const isWide  = col.wide === true;
     const tdClass = isWide ? (col.key === 'scope' ? 'col-scope' : 'col-remarks') : '';
-
     let viewHtml = '', editHtml = '';
-
     if (col.type === 'select') {
       viewHtml = vorSelectBadge(col.key, val);
       editHtml = `<select class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:110px">
@@ -1472,11 +1433,9 @@ function vorRowHTML(r, idx) {
       viewHtml = `<span title="${escHtml(val)}">${escHtml(short)||'—'}</span>`;
       editHtml = `<input type="text" class="inline-input cell-edit" id="ve-${col.key}-${rid}" value="${escHtml(val)}" placeholder="${escHtml(col.label)}" style="min-width:90px">`;
     }
-
     cells += `<td class="${tdClass}"><span class="cell-view">${viewHtml}</span>${editHtml}</td>`;
   });
 
-  /* Change #3: just the row number — no status text badges cluttering the # column */
   return `<tr id="vor-row-${rid}" data-rowid="${rid}" class="${rowClass}">
     <td class="mono" style="min-width:36px;font-weight:600">${idx}</td>
     ${cells}
@@ -1510,108 +1469,69 @@ function vorSelectBadge(key, val) {
   return `<span class="cat-def">${escHtml(val)}</span>`;
 }
 
-function vorEditRow(rid) {
-  const tr = document.getElementById('vor-row-'+rid);
-  if (tr) tr.classList.add('editing');
-}
+function vorEditRow(rid) { const tr=document.getElementById('vor-row-'+rid); if(tr)tr.classList.add('editing'); }
 function vorCancelEdit(rid) {
-  const r = vorAllRows.find(x => x._id === rid);
-  if (!r) { const tr = document.getElementById('vor-row-'+rid); if (tr) tr.remove(); return; }
-  const tr = document.getElementById('vor-row-'+rid);
-  if (tr) tr.classList.remove('editing');
+  const r=vorAllRows.find(x=>x._id===rid);
+  if(!r){ const tr=document.getElementById('vor-row-'+rid); if(tr)tr.remove(); return; }
+  const tr=document.getElementById('vor-row-'+rid); if(tr)tr.classList.remove('editing');
 }
 
 async function vorSaveRow(rid) {
   if (vorLoading) { campToast('Please wait — another save is in progress', 'info'); return; }
   const isNew = !vorAllRows.find(x => x._id === rid);
-
   const payload = { action: isNew ? 'add' : 'update' };
   if (!isNew) payload._row = rid;
-
-  VOR_COLS.forEach(col => {
-    const el = document.getElementById(`ve-${col.key}-${rid}`);
-    let v = el ? el.value.trim() : '';
-    payload[col.key] = v;
-  });
-
+  VOR_COLS.forEach(col => { const el=document.getElementById(`ve-${col.key}-${rid}`); payload[col.key]=el?el.value.trim():''; });
   if (!payload.approval) payload.approval = 'Pending';
   if (!payload.site)     { campToast('Please select a Site', 'error'); return; }
   if (!payload.workType) { campToast('Please select a Work Type', 'error'); return; }
-  if (payload.approval === 'Approved' && !payload.approvalDate) {
-    campToast('Approval Date is required when status is Approved', 'error'); return;
-  }
-
-  const tr = document.getElementById('vor-row-'+rid);
-  if (tr) tr.classList.add('saving');
+  if (payload.approval === 'Approved' && !payload.approvalDate) { campToast('Approval Date is required when status is Approved', 'error'); return; }
+  const tr=document.getElementById('vor-row-'+rid); if(tr)tr.classList.add('saving');
   vorLoading = true;
-
   try {
-    const res  = await fetch(VOR_WEBAPP_URL, {
-      method : 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body   : JSON.stringify(payload)
-    });
-    const json = await res.json();
-    if (json.status !== 'ok') throw new Error(json.message || 'Save failed');
-    campToast(isNew ? '✓ Record added to Google Sheet' : '✓ Record updated', 'success');
+    const res=await fetch(VOR_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    const json=await res.json();
+    if(json.status!=='ok')throw new Error(json.message||'Save failed');
+    campToast(isNew?'✓ Record added to Google Sheet':'✓ Record updated','success');
     await vorLoadData();
-  } catch (e) {
-    console.error('VoR save error:', e);
-    campToast('Save failed: ' + e.message, 'error');
-    if (tr) { tr.classList.remove('saving'); tr.classList.remove('editing'); }
-  } finally { vorLoading = false; }
+  } catch(e){console.error('VoR save error:',e);campToast('Save failed: '+e.message,'error');if(tr){tr.classList.remove('saving');tr.classList.remove('editing');}}
+  finally{vorLoading=false;}
 }
 
 async function vorDeleteRow(rid) {
-  if (String(rid).startsWith('vnew_')) {
-    const tr = document.getElementById('vor-row-'+rid); if (tr) tr.remove(); return;
-  }
+  if (String(rid).startsWith('vnew_')) { const tr=document.getElementById('vor-row-'+rid); if(tr)tr.remove(); return; }
   if (!confirm('Delete this VoR / Day-Work record? This cannot be undone.')) return;
   if (vorLoading) { campToast('Please wait', 'info'); return; }
-  const tr = document.getElementById('vor-row-'+rid); if (tr) tr.classList.add('saving');
+  const tr=document.getElementById('vor-row-'+rid); if(tr)tr.classList.add('saving');
   vorLoading = true;
   try {
-    const res  = await fetch(VOR_WEBAPP_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({action:'delete',_row:rid}) });
-    const json = await res.json();
-    if (json.status !== 'ok') throw new Error(json.message || 'Delete failed');
-    campToast('Record deleted', 'info');
+    const res=await fetch(VOR_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',_row:rid})});
+    const json=await res.json();
+    if(json.status!=='ok')throw new Error(json.message||'Delete failed');
+    campToast('Record deleted','info');
     await vorLoadData();
-  } catch (e) {
-    console.error('VoR delete error:', e);
-    campToast('Delete failed: ' + e.message, 'error');
-    if (tr) tr.classList.remove('saving');
-  } finally { vorLoading = false; }
+  } catch(e){console.error('VoR delete error:',e);campToast('Delete failed: '+e.message,'error');if(tr)tr.classList.remove('saving');}
+  finally{vorLoading=false;}
 }
 
 function vorAddRow() {
   vorNewCounter++;
-  const rid = 'vnew_' + vorNewCounter;
-  const tbody = document.getElementById('vor-tbody');
-  const nd = tbody.querySelector('.no-data'); if (nd) nd.closest('tr').remove();
-
-  let cells = '';
-  VOR_COLS.forEach(col => {
-    const isWide = col.wide === true;
-    const tdClass = isWide ? (col.key === 'scope' ? 'col-scope' : 'col-remarks') : '';
-    let editHtml = '';
-    if (col.type === 'select') {
-      editHtml = `<select class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:110px">
-        <option value="">— ${col.label} —</option>
-        ${col.options.map(o=>`<option>${escHtml(o)}</option>`).join('')}
-      </select>`;
-    } else if (col.type === 'textarea') {
-      editHtml = `<textarea class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:160px;min-height:44px" placeholder="${escHtml(col.label)}"></textarea>`;
-    } else if (col.type === 'date') {
-      editHtml = `<input type="date" class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:130px">`;
-    } else {
-      editHtml = `<input type="text" class="inline-input cell-edit" id="ve-${col.key}-${rid}" placeholder="${escHtml(col.label)}" style="min-width:90px">`;
-    }
-    cells += `<td class="${tdClass}">${editHtml}</td>`;
+  const rid='vnew_'+vorNewCounter;
+  const tbody=document.getElementById('vor-tbody');
+  const nd=tbody.querySelector('.no-data'); if(nd)nd.closest('tr').remove();
+  let cells='';
+  VOR_COLS.forEach(col=>{
+    const isWide=col.wide===true;
+    const tdClass=isWide?(col.key==='scope'?'col-scope':'col-remarks'):'';
+    let editHtml='';
+    if(col.type==='select'){editHtml=`<select class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:110px"><option value="">— ${col.label} —</option>${col.options.map(o=>`<option>${escHtml(o)}</option>`).join('')}</select>`;}
+    else if(col.type==='textarea'){editHtml=`<textarea class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:160px;min-height:44px" placeholder="${escHtml(col.label)}"></textarea>`;}
+    else if(col.type==='date'){editHtml=`<input type="date" class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:130px">`;}
+    else{editHtml=`<input type="text" class="inline-input cell-edit" id="ve-${col.key}-${rid}" placeholder="${escHtml(col.label)}" style="min-width:90px">`;}
+    cells+=`<td class="${tdClass}">${editHtml}</td>`;
   });
-
-  tbody.insertAdjacentHTML('afterbegin', `<tr id="vor-row-${rid}" data-rowid="${rid}" class="new-row editing">
-    <td class="mono">★</td>
-    ${cells}
+  tbody.insertAdjacentHTML('afterbegin',`<tr id="vor-row-${rid}" data-rowid="${rid}" class="new-row editing">
+    <td class="mono">★</td>${cells}
     <td style="text-align:right;min-width:90px;white-space:nowrap">
       <div class="cell-actions">
         <div class="edit-actions" style="display:none"></div>
@@ -1622,24 +1542,16 @@ function vorAddRow() {
       </div>
     </td>
   </tr>`);
-
-  const first = document.querySelector(`#vor-row-${rid} .inline-input`);
-  if (first) first.focus();
+  const first=document.querySelector(`#vor-row-${rid} .inline-input`); if(first)first.focus();
 }
 
 function vorExportExcel() {
   if (!vorAllRows.length) { alert('No VoR records to export.'); return; }
-  const hdr = ['#','Date','Requestor','Site','Work Type','WI No.','Discipline','Work Scope','QS Submission Date','Client Approval','Approval Date','Remarks','Auto Status'];
-  const rows = vorAllRows.map((r,i)=>[
-    i+1,
-    fmtDOJ(r.date), r.requestor, r.site, r.workType, r.wi, r.discipline,
-    r.scope, fmtDOJ(r.qsDate), r.approval, fmtDOJ(r.approvalDate),
-    r.remarks, vorDeriveStatus(r)
-  ]);
-  const ws = XLSX.utils.aoa_to_sheet([hdr,...rows]);
-  ws['!cols'] = [4,12,16,10,18,12,14,40,16,14,14,30,14].map(w=>({wch:w}));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'VoR & Day-Works');
+  const hdr=['#','Date','Requestor','Site','Work Type','WI No.','Discipline','Work Scope','QS Submission Date','Client Approval','Approval Date','Remarks','Auto Status'];
+  const rows=vorAllRows.map((r,i)=>[i+1,fmtDOJ(r.date),r.requestor,r.site,r.workType,r.wi,r.discipline,r.scope,fmtDOJ(r.qsDate),r.approval,fmtDOJ(r.approvalDate),r.remarks,vorDeriveStatus(r)]);
+  const ws=XLSX.utils.aoa_to_sheet([hdr,...rows]);
+  ws['!cols']=[4,12,16,10,18,12,14,40,16,14,14,30,14].map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'VoR & Day-Works');
   XLSX.writeFile(wb,`GPS_VoR_DayWorks_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
@@ -1860,7 +1772,7 @@ function triggerTabRender(t){
   else if(t==='repsum') renderRepSum();
   else if(t==='status') renderStatus();
   else if(t==='resource') renderResource();
-  else if(t==='vor') { vorUpdateKpiCards(); vorFilterRender(); }
+  else if(t==='vor') { vorUpdateKpiBar(); vorFilterRender(); }
 }
 
 /* ══ UTILS ══ */
