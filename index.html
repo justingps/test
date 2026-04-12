@@ -146,14 +146,16 @@ option{background:var(--surface2);color:var(--text)}
 .chart-wrap{position:relative}
 .chart-wrap.h200{height:200px}.chart-wrap.h220{height:220px}.chart-wrap.h240{height:240px}.chart-wrap.h260{height:260px}.chart-wrap.h280{height:280px}.chart-wrap.h320{height:320px}
 
+/* ══ KPI CARDS — STANDARDIZED (Change #1) ══ */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
-.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s;display:flex;flex-direction:column;gap:2px}
 .kpi-card:hover{box-shadow:var(--shadow-sm)}
 .kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--kpi-color,var(--accent));border-radius:0 0 var(--radius) var(--radius)}
-.kpi-icon{width:32px;height:32px;border-radius:8px;background:var(--kpi-bg,rgba(224,123,57,0.12));display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:0.9rem;color:var(--kpi-color,var(--accent))}
-.kpi-label{font-family:var(--font-mono);font-size:0.64rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:5px}
-.kpi-value{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
-.kpi-delta{font-size:0.7rem;font-family:var(--font-mono);margin-top:5px;color:var(--text-dim)}
+.kpi-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.kpi-icon{width:28px;height:28px;border-radius:7px;background:var(--kpi-bg,rgba(224,123,57,0.12));display:flex;align-items:center;justify-content:center;font-size:0.82rem;color:var(--kpi-color,var(--accent))}
+.kpi-label{font-family:var(--font-mono);font-size:0.62rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:3px;line-height:1.3}
+.kpi-value{font-family:var(--font-display);font-size:1.45rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
+.kpi-delta{font-size:0.68rem;font-family:var(--font-mono);margin-top:4px;color:var(--text-dim)}
 
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px;transition:background var(--transition);width:100%}
 .table-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
@@ -283,7 +285,7 @@ tr.saving td{opacity:0.55}
 .pdf-modal-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:6px}
 .pdf-modal-sub{font-family:var(--font-mono);font-size:0.72rem;color:var(--text-sub)}
 
-/* ══ VOR TRACKER STYLES (UPDATED) ══ */
+/* ══ VOR TRACKER STYLES ══ */
 .vor-table tr.editing{background:rgba(224,123,57,0.04) !important}
 .vor-table tr.new-row{background:rgba(46,170,126,0.04) !important}
 .vor-table .cell-edit{display:none}
@@ -305,7 +307,6 @@ tr.saving td{opacity:0.55}
   font-size: 0.63rem !important;
   white-space: nowrap;
 }
-/* Work Scope and Remarks: allow wrapping, more width */
 .vor-table .col-scope,
 .vor-table .col-remarks {
   white-space: normal !important;
@@ -322,25 +323,49 @@ tr.saving td{opacity:0.55}
   white-space: normal;
 }
 
-.vor-row-delay-approval td:first-child{border-left:3px solid var(--danger)}
-.vor-row-delay-ho td:first-child{border-left:3px solid var(--warning)}
-.vor-row-delay-claim td:first-child{border-left:3px solid #9b5de5}
-.vor-row-complete td:first-child{border-left:3px solid var(--accent3)}
+/* ══ Change #3: Row colour coding (no inline text labels) ══ */
+/* Light, non-distracting background tints per status */
+[data-theme="light"] .vor-row-delay-approval { background: rgba(217,79,79,0.05) !important; }
+[data-theme="light"] .vor-row-delay-approval:hover { background: rgba(217,79,79,0.09) !important; }
+[data-theme="dark"]  .vor-row-delay-approval { background: rgba(217,79,79,0.07) !important; }
+[data-theme="dark"]  .vor-row-delay-approval:hover { background: rgba(217,79,79,0.11) !important; }
+
+[data-theme="light"] .vor-row-delay-ho { background: rgba(212,146,43,0.06) !important; }
+[data-theme="light"] .vor-row-delay-ho:hover { background: rgba(212,146,43,0.10) !important; }
+[data-theme="dark"]  .vor-row-delay-ho { background: rgba(212,146,43,0.07) !important; }
+[data-theme="dark"]  .vor-row-delay-ho:hover { background: rgba(212,146,43,0.11) !important; }
+
+[data-theme="light"] .vor-row-delay-claim { background: rgba(155,93,229,0.05) !important; }
+[data-theme="light"] .vor-row-delay-claim:hover { background: rgba(155,93,229,0.09) !important; }
+[data-theme="dark"]  .vor-row-delay-claim { background: rgba(155,93,229,0.07) !important; }
+[data-theme="dark"]  .vor-row-delay-claim:hover { background: rgba(155,93,229,0.11) !important; }
+
+[data-theme="light"] .vor-row-complete { background: rgba(46,170,126,0.05) !important; }
+[data-theme="light"] .vor-row-complete:hover { background: rgba(46,170,126,0.09) !important; }
+[data-theme="dark"]  .vor-row-complete { background: rgba(46,170,126,0.07) !important; }
+[data-theme="dark"]  .vor-row-complete:hover { background: rgba(46,170,126,0.11) !important; }
+
+/* Left accent bar per status */
+.vor-row-delay-approval td:first-child { border-left: 3px solid var(--danger) !important; }
+.vor-row-delay-ho td:first-child       { border-left: 3px solid var(--warning) !important; }
+.vor-row-delay-claim td:first-child    { border-left: 3px solid #9b5de5 !important; }
+.vor-row-complete td:first-child       { border-left: 3px solid var(--accent3) !important; }
 
 .delay-flag{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:20px;font-family:var(--font-mono);font-size:0.6rem;font-weight:600;white-space:nowrap}
 .delay-flag.red{background:rgba(217,79,79,0.12);color:var(--danger);border:1px solid rgba(217,79,79,0.28)}
 .delay-flag.amber{background:rgba(212,146,43,0.12);color:var(--warning);border:1px solid rgba(212,146,43,0.28)}
 .delay-flag.purple{background:rgba(155,93,229,0.12);color:#9b5de5;border:1px solid rgba(155,93,229,0.28)}
 
-/* VOR KPI Cards — compact */
-.vor-kpi-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:12px}
-.vor-kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s;cursor:pointer}
+/* ══ Change #1: VOR KPI Cards — same compact style as KPI Dashboard ══ */
+.vor-kpi-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px}
+.vor-kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s;cursor:pointer;display:flex;flex-direction:column;gap:2px}
 .vor-kpi-card:hover{box-shadow:var(--shadow-sm)}
 .vor-kpi-card.active-filter{box-shadow:0 0 0 2px var(--kpi-color,var(--accent))}
-.vor-kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--kpi-color,var(--accent));border-radius:0 0 var(--radius) var(--radius)}
-.vor-kpi-icon{width:22px;height:22px;border-radius:5px;background:var(--kpi-bg,rgba(224,123,57,0.12));display:flex;align-items:center;justify-content:center;margin-bottom:6px;font-size:0.7rem;color:var(--kpi-color,var(--accent))}
-.vor-kpi-label{font-family:var(--font-mono);font-size:0.55rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;line-height:1.3}
-.vor-kpi-value{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
+.vor-kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--kpi-color,var(--accent));border-radius:0 0 var(--radius) var(--radius)}
+.vor-kpi-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.vor-kpi-icon{width:26px;height:26px;border-radius:6px;background:var(--kpi-bg,rgba(224,123,57,0.12));display:flex;align-items:center;justify-content:center;font-size:0.72rem;color:var(--kpi-color,var(--accent))}
+.vor-kpi-label{font-family:var(--font-mono);font-size:0.58rem;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;line-height:1.3}
+.vor-kpi-value{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1}
 .vor-kpi-hint{font-size:0.58rem;font-family:var(--font-mono);margin-top:3px;color:var(--text-dim);white-space:normal;line-height:1.3}
 
 @media(max-width:1400px){.vor-kpi-grid{grid-template-columns:repeat(4,1fr)}}
@@ -384,7 +409,7 @@ tr.saving td{opacity:0.55}
     <button class="btn-login" id="btn-login">Sign In</button>
     <div class="login-error" id="login-err"><i class="fas fa-circle-exclamation"></i> Invalid username or password</div>
     <div class="login-footer">Gulf Petrochemical Services LLC. © 2025 — All Rights Reserved</div>
-    <div class="login-version">v3.5.1</div>
+    <div class="login-version">v3.5.2</div>
   </div>
 </div>
 
@@ -581,7 +606,7 @@ tr.saving td{opacity:0.55}
       </div>
     </div>
 
-    <!-- DAY-WORKS & VOR TRACKER -->
+    <!-- DAY-WORKS & VOR TRACKER — Change #2: filters moved ABOVE cards -->
     <div id="tab-vor" class="tab-panel">
       <div class="page-header">
         <h1 class="page-title">Day-Works &amp; <span>VoR Tracker</span></h1>
@@ -592,10 +617,7 @@ tr.saving td{opacity:0.55}
         </div>
       </div>
 
-      <!-- KPI Dashboard Cards -->
-      <div class="vor-kpi-grid" id="vor-kpi-cards"></div>
-
-      <!-- Filters -->
+      <!-- Change #2: Filters ABOVE KPI cards -->
       <div class="filters">
         <div class="filter-group"><span class="filter-label"><i class="fas fa-search"></i> Search</span><input type="text" id="vf-search" class="f-input" placeholder="WI, requestor, scope…" oninput="vorFilterRender()"></div>
         <div class="filter-group"><span class="filter-label"><i class="fas fa-map-pin"></i> Site</span><select id="vf-site" class="f-input" onchange="vorFilterRender()"><option value="all">All Sites</option><option>Safha</option><option>Wadi Lathem</option></select></div>
@@ -604,13 +626,16 @@ tr.saving td{opacity:0.55}
         <div class="filter-group"><span class="filter-label"><i class="fas fa-file-invoice"></i> Claim</span><select id="vf-claim" class="f-input" onchange="vorFilterRender()"><option value="all">All Claim Status</option><option>Not Started</option><option>Under Preparation</option><option>Submitted</option><option>Certified</option><option>Closed</option></select></div>
       </div>
 
+      <!-- Change #1: KPI Cards BELOW filters, standardized design -->
+      <div class="vor-kpi-grid" id="vor-kpi-cards"></div>
+
       <!-- Delay Legend -->
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-        <span class="filter-label">Delay Indicators</span>
-        <span class="delay-flag red"><i class="fas fa-circle" style="font-size:7px"></i> Approval Overdue</span>
-        <span class="delay-flag amber"><i class="fas fa-circle" style="font-size:7px"></i> Awaiting HO Receipt</span>
-        <span class="delay-flag purple"><i class="fas fa-circle" style="font-size:7px"></i> Claim Not Started</span>
-        <span class="delay-flag" style="background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28)"><i class="fas fa-circle" style="font-size:7px"></i> Closed</span>
+        <span class="filter-label">Row Colour Key</span>
+        <span class="delay-flag red"><i class="fas fa-square" style="font-size:7px"></i> Approval Overdue</span>
+        <span class="delay-flag amber"><i class="fas fa-square" style="font-size:7px"></i> Awaiting HO Receipt</span>
+        <span class="delay-flag purple"><i class="fas fa-square" style="font-size:7px"></i> Claim Not Started</span>
+        <span class="delay-flag" style="background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28)"><i class="fas fa-square" style="font-size:7px"></i> Approved / Closed</span>
       </div>
 
       <div class="table-wrap">
@@ -685,40 +710,28 @@ function buildStatsBar(groups) {
 
 /* ══ DOJ / DATE HELPERS ══ */
 const DOJ_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-/* Convert any raw date string → YYYY-MM-DD (for <input type="date"> value) */
 function parseDOJ(raw) {
   if (!raw || raw === '—') return '';
   const s = String(raw).trim();
   let m;
-  // Already YYYY-MM-DD
   m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
   if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
-  // DD-MMM-YYYY
   m = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
   if (m) { const mi = DOJ_MONTHS.findIndex(x=>x.toLowerCase()===m[2].toLowerCase()); if(mi>=0) return `${m[3]}-${String(mi+1).padStart(2,'0')}-${m[1].padStart(2,'0')}`; }
-  // DD/MM/YYYY
   m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
-  // MM/DD/YYYY (fallback)
   m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
   if (m) { const yr = m[3].length===2?'20'+m[3]:m[3]; return `${yr}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`; }
   const p = new Date(s); if (!isNaN(p)) return `${p.getFullYear()}-${String(p.getMonth()+1).padStart(2,'0')}-${String(p.getDate()).padStart(2,'0')}`;
   return '';
 }
-
-/* YYYY-MM-DD → DD-MMM-YYYY display */
 function fmtDOJ(ymd) {
   if (!ymd) return '—';
   const m = ymd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return ymd;
   return `${m[3]}-${DOJ_MONTHS[parseInt(m[2],10)-1]}-${m[1]}`;
 }
-
-/* Convert any raw date (from Google Sheet) → YYYY-MM-DD for input[type=date] */
-function parseVorDate(raw) {
-  return parseDOJ(raw);
-}
+function parseVorDate(raw) { return parseDOJ(raw); }
 
 /* ══ AUTH ══ */
 function doLogin() {
@@ -952,6 +965,8 @@ function renderKPI(){
   const mpTotal=Object.values(dayStats).reduce((s,d)=>s+d.mp,0);
   const eqTotal=Object.values(dayStats).reduce((s,d)=>s+d.eq,0);
   const mpRatio=(mpTotal+eqTotal)>0?Math.round(mpTotal/(mpTotal+eqTotal)*100):0;
+
+  /* Change #1: standardized KPI card HTML */
   const kpiDefs=[
     {label:'Total Crew (Period)',value:totalCrew,icon:'fa-people-group',color:PALETTE[0],bg:'rgba(224,123,57,0.12)',sub:''},
     {label:'Avg Crew per Day',value:avgCrewDay,icon:'fa-chart-line',color:PALETTE[1],bg:'rgba(58,123,213,0.12)',sub:`Peak: ${maxCrewDay}`},
@@ -962,7 +977,16 @@ function renderKPI(){
     {label:'Active Areas',value:Object.keys(areaStats).length,icon:'fa-map-location-dot',color:PALETTE[6],bg:'rgba(23,184,196,0.12)',sub:''},
     {label:'Avg Projects/Foreman',value:totalFore>0?(totalProj/totalFore).toFixed(1):0,icon:'fa-diagram-project',color:PALETTE[7],bg:'rgba(163,177,138,0.12)',sub:''},
   ];
-  document.getElementById('kpi-cards').innerHTML=kpiDefs.map(k=>`<div class="kpi-card" style="--kpi-color:${k.color};--kpi-bg:${k.bg}"><div class="kpi-icon"><i class="fas ${k.icon}"></i></div><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div>${k.sub?`<div class="kpi-delta">${k.sub}</div>`:''}</div>`).join('');
+  document.getElementById('kpi-cards').innerHTML=kpiDefs.map(k=>`
+    <div class="kpi-card" style="--kpi-color:${k.color};--kpi-bg:${k.bg}">
+      <div class="kpi-card-header">
+        <div class="kpi-icon"><i class="fas ${k.icon}"></i></div>
+      </div>
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      ${k.sub?`<div class="kpi-delta">${k.sub}</div>`:''}
+    </div>`).join('');
+
   const sortedDays=days.map(d=>({d,dk:toKey(d)})).filter(x=>dayStats[x.dk]);
   const prodLabels=sortedDays.map(x=>fmtDisplay(x.d));
   const prodData=sortedDays.map(x=>dayStats[x.dk].crew.size);
@@ -1032,7 +1056,7 @@ async function fetchLogoBase64() {
   } catch (e) { return null; }
 }
 
-/* ══ PDF ══ */
+/* ══ PDF — Change #4: Logo renders properly in header ══ */
 async function downloadReportsPDF() {
   if (!lastRepGroups.length) { alert('No reports to export.'); return; }
   const overlay=document.getElementById('pdf-overlay'),progressTxt=document.getElementById('pdf-progress-text');
@@ -1049,37 +1073,65 @@ async function downloadReportsPDF() {
     const C={accent:[224,123,57],text:[26,34,54],sub:[90,104,128],dim:[160,172,190],surface:[244,246,249],surface2:[235,238,243],border:[210,215,224],white:[255,255,255],green:[46,170,126],blue:[58,123,213],line:[224,226,232]};
     const setFill=c=>pdf.setFillColor(...c),setDraw=c=>pdf.setDrawColor(...c),setTxtClr=c=>pdf.setTextColor(...c);
     const bold=()=>pdf.setFont('helvetica','bold'),normal=()=>pdf.setFont('helvetica','normal');
-    const LOGO_SIZE=36;
+
+    /* ── Change #4: Larger, properly-rendered logo in header ── */
+    const LOGO_SIZE = 42;
+
     function drawPageHeader(reportNo,wi,isContinued){
-      const headerH=72;
-      setFill(C.surface);pdf.rect(0,0,pageW,headerH,'F');
-      setFill(C.accent);pdf.rect(0,0,4,headerH,'F');
-      const logoX=M+4,logoY=(headerH-LOGO_SIZE)/2;
-      if(logoB64){
-        setFill([255,255,255]);setDraw(C.border);pdf.setLineWidth(0.5);
-        pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');
-        const pad=3;pdf.addImage(logoB64,'PNG',logoX+pad,logoY+pad,LOGO_SIZE-pad*2,LOGO_SIZE-pad*2);
+      const headerH = 76;
+      setFill(C.surface); pdf.rect(0,0,pageW,headerH,'F');
+      /* Left accent stripe */
+      setFill(C.accent); pdf.rect(0,0,4,headerH,'F');
+
+      /* Logo area */
+      const logoX = M + 4;
+      const logoY = (headerH - LOGO_SIZE) / 2;
+
+      if (logoB64) {
+        /* White rounded container with subtle border */
+        setFill([255,255,255]);
+        setDraw(C.border);
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(logoX, logoY, LOGO_SIZE, LOGO_SIZE, 5, 5, 'FD');
+        /* Draw logo image with 3px padding inside container */
+        const pad = 3;
+        pdf.addImage(logoB64, 'PNG', logoX + pad, logoY + pad, LOGO_SIZE - pad*2, LOGO_SIZE - pad*2, undefined, 'FAST');
       } else {
-        setFill(C.surface2);setDraw(C.border);pdf.setLineWidth(0.5);
-        pdf.roundedRect(logoX,logoY,LOGO_SIZE,LOGO_SIZE,4,4,'FD');
-        bold();pdf.setFontSize(9);setTxtClr(C.accent);
-        pdf.text('GPS',logoX+LOGO_SIZE/2,logoY+LOGO_SIZE/2+3,{align:'center'});
+        /* Fallback: orange initials block */
+        setFill(C.accent);
+        pdf.roundedRect(logoX, logoY, LOGO_SIZE, LOGO_SIZE, 5, 5, 'F');
+        bold(); pdf.setFontSize(13); setTxtClr(C.white);
+        pdf.text('GPS', logoX + LOGO_SIZE/2, logoY + LOGO_SIZE/2 + 4, {align:'center'});
       }
-      const textX=logoX+LOGO_SIZE+10;
-      bold();pdf.setFontSize(13);setTxtClr(C.text);pdf.text('Gulf Petrochemical Services',textX,28);
-      normal();pdf.setFontSize(7.5);setTxtClr(C.sub);pdf.text('OXY OMAN · CONTRACT #24000110790',textX,40);
-      if(isContinued){pdf.setFontSize(7);setTxtClr(C.dim);pdf.text(`Work Report #${reportNo}  (continued)`,textX,52);}
-      const badgeLabel=`Work Report #${reportNo}`;
-      bold();pdf.setFontSize(9);setTxtClr(C.white);
-      const bw=pdf.getTextWidth(badgeLabel)+22,bx=pageW-M-bw;
-      setFill(C.accent);pdf.roundedRect(bx,10,bw,19,3,3,'F');
-      pdf.text(badgeLabel,bx+bw/2,23,{align:'center'});
-      normal();pdf.setFontSize(7.5);setTxtClr(C.sub);
-      pdf.text(`WI: ${wi}`,pageW-M,40,{align:'right'});
-      pdf.text(`Date: ${dateStr}`,pageW-M,51,{align:'right'});
-      setDraw(C.border);pdf.setLineWidth(0.5);pdf.line(0,headerH,pageW,headerH);
-      return headerH+10;
+
+      /* Company name & meta right of logo */
+      const textX = logoX + LOGO_SIZE + 12;
+      bold(); pdf.setFontSize(13); setTxtClr(C.text);
+      pdf.text('Gulf Petrochemical Services', textX, 26);
+      normal(); pdf.setFontSize(7.5); setTxtClr(C.sub);
+      pdf.text('OXY OMAN · CONTRACT #24000110790', textX, 39);
+      if (isContinued) {
+        pdf.setFontSize(7); setTxtClr(C.dim);
+        pdf.text(`Work Report #${reportNo}  (continued)`, textX, 52);
+      }
+
+      /* Report badge top-right */
+      const badgeLabel = `Work Report #${reportNo}`;
+      bold(); pdf.setFontSize(9); setTxtClr(C.white);
+      const bw = pdf.getTextWidth(badgeLabel) + 22, bx = pageW - M - bw;
+      setFill(C.accent); pdf.roundedRect(bx, 10, bw, 20, 3, 3, 'F');
+      pdf.text(badgeLabel, bx + bw/2, 24, {align:'center'});
+
+      /* WI + date below badge */
+      normal(); pdf.setFontSize(7.5); setTxtClr(C.sub);
+      pdf.text(`WI: ${wi}`, pageW-M, 43, {align:'right'});
+      pdf.text(`Date: ${dateStr}`, pageW-M, 54, {align:'right'});
+
+      /* Divider */
+      setDraw(C.border); pdf.setLineWidth(0.5); pdf.line(0, headerH, pageW, headerH);
+      return headerH + 10;
     }
+
     function checkPage(y,needed,reportNo,wi){
       if(y+needed>pageH-24){pdf.addPage();drawPageFooter();y=drawPageHeader(reportNo,wi,true);}
       return y;
@@ -1226,7 +1278,7 @@ function renderResource(){
 }
 
 /* ══════════════════════════════════════════════════════
-   VOR / DAY-WORKS TRACKER MODULE (UPDATED)
+   VOR / DAY-WORKS TRACKER MODULE
 ══════════════════════════════════════════════════════ */
 
 const VOR_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyuSzAwICm1OFRcnC7TCJJewOzr8AxqXt0wVJkh2K1e0M87AX-eQ1C0dg4H_o_GJyKF/exec';
@@ -1237,10 +1289,6 @@ let vorNewCounter = 0;
 let vorKpiFilter = null;
 let vorLoading = false;
 
-/*
- * VOR_COLS — removed: hoDate, claimStatus
- * Keep: date, requestor, site, workType, wi, discipline, scope, qsDate, approval, approvalDate, remarks
- */
 const VOR_COLS = [
   { key:'date',         label:'Date',                   type:'date' },
   { key:'requestor',    label:'Requestor',              type:'text' },
@@ -1255,7 +1303,6 @@ const VOR_COLS = [
   { key:'remarks',      label:'Remarks',                type:'textarea', wide:true },
 ];
 
-/* Derived status (simplified — no claimStatus / hoDate) */
 function vorDeriveStatus(r) {
   if (r.approval === 'Approved') return 'closed';
   if (r.qsDate && r.approval !== 'Approved' && r.approval !== 'Rejected') {
@@ -1266,7 +1313,6 @@ function vorDeriveStatus(r) {
   return 'initiated';
 }
 
-/* Load all VoR rows */
 async function vorLoadData() {
   document.getElementById('vor-tbody').innerHTML =
     `<tr><td colspan="20" style="text-align:center;padding:30px">
@@ -1280,7 +1326,6 @@ async function vorLoadData() {
     const json = await res.json();
     if (json.status !== 'ok') throw new Error(json.message || 'Load failed');
 
-    /* Normalise dates from sheet into YYYY-MM-DD */
     vorAllRows = json.rows.map(r => ({
       ...r,
       _id      : String(r._row),
@@ -1303,7 +1348,7 @@ async function vorLoadData() {
   }
 }
 
-/* KPI cards */
+/* Change #1: standardized VOR KPI card HTML matching KPI Dashboard style */
 function vorUpdateKpiCards() {
   const rows = vorAllRows;
   const total       = rows.length;
@@ -1326,7 +1371,9 @@ function vorUpdateKpiCards() {
 
   document.getElementById('vor-kpi-cards').innerHTML = kpis.map(k => `
     <div class="vor-kpi-card${vorKpiFilter===k.filter?' active-filter':''}" style="--kpi-color:${k.color};--kpi-bg:${k.bg}" onclick="vorKpiClick('${k.filter||''}')">
-      <div class="vor-kpi-icon"><i class="fas ${k.icon}"></i></div>
+      <div class="vor-kpi-card-header">
+        <div class="vor-kpi-icon"><i class="fas ${k.icon}"></i></div>
+      </div>
       <div class="vor-kpi-label">${k.label}</div>
       <div class="vor-kpi-value">${k.value}</div>
       <div class="vor-kpi-hint">${k.hint}</div>
@@ -1339,19 +1386,16 @@ function vorKpiClick(filter) {
   vorFilterRender();
 }
 
-/* Filter */
 function vorFilterRender() {
   const q    = (document.getElementById('vf-search').value||'').toLowerCase().trim();
   const fSite = document.getElementById('vf-site').value;
   const fType = document.getElementById('vf-type').value;
   const fApp  = document.getElementById('vf-approval').value;
-  const fClaim= document.getElementById('vf-claim').value;
 
   vorFilteredRows = vorAllRows.filter(r => {
     if (fSite!=='all' && r.site!==fSite) return false;
     if (fType!=='all' && r.workType!==fType) return false;
     if (fApp!=='all' && r.approval!==fApp) return false;
-    // claimStatus filter kept in UI but field removed — skip silently
     if (q) {
       const hay = `${r.wi||''} ${r.requestor||''} ${r.scope||''} ${r.discipline||''} ${r.site||''} ${r.workType||''}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -1368,7 +1412,6 @@ function vorFilterRender() {
   vorRenderTable();
 }
 
-/* Build thead — no group labels, just plain column headers */
 function vorBuildThead() {
   document.getElementById('vor-thead').innerHTML =
     '<tr>' +
@@ -1378,7 +1421,7 @@ function vorBuildThead() {
     '</tr>';
 }
 
-/* Render table */
+/* Change #3: no inline text status labels in # cell — row bg handles it */
 function vorRenderTable() {
   vorBuildThead();
   document.getElementById('vor-badge').textContent = `${vorFilteredRows.length} record${vorFilteredRows.length!==1?'s':''}`;
@@ -1393,10 +1436,11 @@ function vorRenderTable() {
     vorFilteredRows.map((r, i) => vorRowHTML(r, i+1)).join('');
 }
 
-/* Row HTML */
 function vorRowHTML(r, idx) {
   const rid    = r._id;
   const status = vorDeriveStatus(r);
+
+  /* Change #3: row class for bg colouring — no label text in # cell */
   const rowClass =
     status==='closed'          ? 'vor-row-complete' :
     status==='delay-approval'  ? 'vor-row-delay-approval' :
@@ -1421,7 +1465,6 @@ function vorRowHTML(r, idx) {
       viewHtml = `<span title="${escHtml(val)}" style="cursor:default">${escHtml(short)||'—'}</span>`;
       editHtml = `<textarea class="inline-input cell-edit" id="ve-${col.key}-${rid}" style="min-width:160px;min-height:44px">${escHtml(val)}</textarea>`;
     } else if (col.type === 'date') {
-      /* val is already YYYY-MM-DD from parseVorDate */
       viewHtml = `<span class="mono">${val ? fmtDOJ(val) : '—'}</span>`;
       editHtml = `<input type="date" class="inline-input cell-edit" id="ve-${col.key}-${rid}" value="${escHtml(val)}" style="min-width:130px">`;
     } else {
@@ -1433,14 +1476,9 @@ function vorRowHTML(r, idx) {
     cells += `<td class="${tdClass}"><span class="cell-view">${viewHtml}</span>${editHtml}</td>`;
   });
 
-  /* Delay badge in # cell */
-  let delayBadge = '';
-  if      (status==='delay-approval') delayBadge=`<br><span class="delay-flag red" style="font-size:0.56rem"><i class="fas fa-circle" style="font-size:6px"></i> Overdue</span>`;
-  else if (status==='delay-ho')       delayBadge=`<br><span class="delay-flag amber" style="font-size:0.56rem"><i class="fas fa-circle" style="font-size:6px"></i> Await HO</span>`;
-  else if (status==='closed')         delayBadge=`<br><span class="delay-flag" style="background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28);font-size:0.56rem"><i class="fas fa-circle" style="font-size:6px"></i> Approved</span>`;
-
+  /* Change #3: just the row number — no status text badges cluttering the # column */
   return `<tr id="vor-row-${rid}" data-rowid="${rid}" class="${rowClass}">
-    <td class="mono" style="white-space:nowrap;min-width:36px">${idx}${delayBadge}</td>
+    <td class="mono" style="min-width:36px;font-weight:600">${idx}</td>
     ${cells}
     <td style="text-align:right;min-width:90px;white-space:nowrap">
       <div class="cell-actions">
@@ -1457,7 +1495,6 @@ function vorRowHTML(r, idx) {
   </tr>`;
 }
 
-/* Badge renderers */
 function vorSelectBadge(key, val) {
   if (!val) return '—';
   if (key === 'approval') {
@@ -1473,7 +1510,6 @@ function vorSelectBadge(key, val) {
   return `<span class="cat-def">${escHtml(val)}</span>`;
 }
 
-/* Edit / Cancel */
 function vorEditRow(rid) {
   const tr = document.getElementById('vor-row-'+rid);
   if (tr) tr.classList.add('editing');
@@ -1485,7 +1521,6 @@ function vorCancelEdit(rid) {
   if (tr) tr.classList.remove('editing');
 }
 
-/* Save */
 async function vorSaveRow(rid) {
   if (vorLoading) { campToast('Please wait — another save is in progress', 'info'); return; }
   const isNew = !vorAllRows.find(x => x._id === rid);
@@ -1495,7 +1530,6 @@ async function vorSaveRow(rid) {
 
   VOR_COLS.forEach(col => {
     const el = document.getElementById(`ve-${col.key}-${rid}`);
-    /* Date fields: store as DD-MMM-YYYY for the sheet, or keep as YYYY-MM-DD — match your sheet format */
     let v = el ? el.value.trim() : '';
     payload[col.key] = v;
   });
@@ -1528,7 +1562,6 @@ async function vorSaveRow(rid) {
   } finally { vorLoading = false; }
 }
 
-/* Delete */
 async function vorDeleteRow(rid) {
   if (String(rid).startsWith('vnew_')) {
     const tr = document.getElementById('vor-row-'+rid); if (tr) tr.remove(); return;
@@ -1550,7 +1583,6 @@ async function vorDeleteRow(rid) {
   } finally { vorLoading = false; }
 }
 
-/* Add new row */
 function vorAddRow() {
   vorNewCounter++;
   const rid = 'vnew_' + vorNewCounter;
@@ -1595,7 +1627,6 @@ function vorAddRow() {
   if (first) first.focus();
 }
 
-/* Excel export — removed hoDate / claimStatus columns */
 function vorExportExcel() {
   if (!vorAllRows.length) { alert('No VoR records to export.'); return; }
   const hdr = ['#','Date','Requestor','Site','Work Type','WI No.','Discipline','Work Scope','QS Submission Date','Client Approval','Approval Date','Remarks','Auto Status'];
@@ -1612,7 +1643,7 @@ function vorExportExcel() {
   XLSX.writeFile(wb,`GPS_VoR_DayWorks_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
-/* ══ CAMP MODULE (unchanged) ══ */
+/* ══ CAMP MODULE ══ */
 async function campLoadData() {
   document.getElementById('camp-tbody').innerHTML=`<tr><td colspan="10" style="text-align:center;padding:40px"><div class="spinner" style="margin:0 auto"></div></td></tr>`;
   try {
