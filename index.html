@@ -153,7 +153,7 @@ option{background:var(--surface2);color:var(--text)}
 .chart-wrap{position:relative}
 .chart-wrap.h200{height:200px}.chart-wrap.h220{height:220px}.chart-wrap.h240{height:240px}.chart-wrap.h260{height:260px}.chart-wrap.h280{height:280px}.chart-wrap.h320{height:320px}
 
-/* KPI cards — kept for reference, now replaced by stats-bar in the KPI tab */
+/* KPI cards */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;transition:background var(--transition),box-shadow 0.2s;display:flex;flex-direction:column;gap:2px}
 .kpi-card:hover{box-shadow:var(--shadow-sm)}
@@ -329,21 +329,26 @@ tr.saving td{opacity:0.55}
   white-space: normal;
 }
 
+/* ══ ROW COLOR CODING ══ */
+/* Approval Overdue — red left border */
 [data-theme="light"] .vor-row-delay-approval { background: rgba(217,79,79,0.05) !important; }
 [data-theme="light"] .vor-row-delay-approval:hover { background: rgba(217,79,79,0.09) !important; }
 [data-theme="dark"]  .vor-row-delay-approval { background: rgba(217,79,79,0.07) !important; }
 [data-theme="dark"]  .vor-row-delay-approval:hover { background: rgba(217,79,79,0.11) !important; }
 
+/* Rejected — amber/warning left border */
 [data-theme="light"] .vor-row-delay-ho { background: rgba(212,146,43,0.06) !important; }
 [data-theme="light"] .vor-row-delay-ho:hover { background: rgba(212,146,43,0.10) !important; }
 [data-theme="dark"]  .vor-row-delay-ho { background: rgba(212,146,43,0.07) !important; }
 [data-theme="dark"]  .vor-row-delay-ho:hover { background: rgba(212,146,43,0.11) !important; }
 
+/* Submitted / Pending claim — purple left border */
 [data-theme="light"] .vor-row-delay-claim { background: rgba(155,93,229,0.05) !important; }
 [data-theme="light"] .vor-row-delay-claim:hover { background: rgba(155,93,229,0.09) !important; }
 [data-theme="dark"]  .vor-row-delay-claim { background: rgba(155,93,229,0.07) !important; }
 [data-theme="dark"]  .vor-row-delay-claim:hover { background: rgba(155,93,229,0.11) !important; }
 
+/* Approved / Closed — green left border */
 [data-theme="light"] .vor-row-complete { background: rgba(46,170,126,0.05) !important; }
 [data-theme="light"] .vor-row-complete:hover { background: rgba(46,170,126,0.09) !important; }
 [data-theme="dark"]  .vor-row-complete { background: rgba(46,170,126,0.07) !important; }
@@ -397,7 +402,7 @@ tr.saving td{opacity:0.55}
     <button class="btn-login" id="btn-login">Sign In</button>
     <div class="login-error" id="login-err"><i class="fas fa-circle-exclamation"></i> Invalid username or password</div>
     <div class="login-footer">Gulf Petrochemical Services LLC. © 2025 — All Rights Reserved</div>
-    <div class="login-version">v3.5.2</div>
+    <div class="login-version">v3.5.3</div>
   </div>
 </div>
 
@@ -469,10 +474,8 @@ tr.saving td{opacity:0.55}
       </div>
       <div id="kpi-loading" class="loading"><div class="spinner"></div><div class="loading-text">Computing KPIs</div><div class="loading-sub">Deriving performance indicators…</div></div>
       <div id="kpi-content" style="display:none">
-        <!-- ══ KPI stats bar — same horizontal strip as Analytics ══ -->
         <div class="section-label">Key Performance Indicators</div>
         <div id="kpi-stats-bar"></div>
-
         <div class="section-label">Productivity Trends</div>
         <div class="chart-grid-2">
           <div class="chart-card"><div class="chart-card-title">Daily Productivity Index</div><div class="chart-card-sub">Unique active crew per day</div><div class="chart-wrap h240"><canvas id="ch-prod"></canvas></div></div>
@@ -611,21 +614,22 @@ tr.saving td{opacity:0.55}
       <div class="filters">
         <div class="filter-group"><span class="filter-label"><i class="fas fa-search"></i> Search</span><input type="text" id="vf-search" class="f-input" placeholder="WI, requestor, scope…" oninput="vorFilterRender()"></div>
         <div class="filter-group"><span class="filter-label"><i class="fas fa-map-pin"></i> Site</span><select id="vf-site" class="f-input" onchange="vorFilterRender()"><option value="all">All Sites</option><option>Safha</option><option>Wadi Lathem</option></select></div>
-        <div class="filter-group"><span class="filter-label"><i class="fas fa-folder"></i> Work Type</span><select id="vf-type" class="f-input" onchange="vorFilterRender()"><option value="all">All Types</option><option>Variation Order (VoR)</option><option>Day Work</option></select></div>
+        <!-- FIX 4: Work Type options updated — "Variation Order (VoR)" → "VoR" -->
+        <div class="filter-group"><span class="filter-label"><i class="fas fa-folder"></i> Work Type</span><select id="vf-type" class="f-input" onchange="vorFilterRender()"><option value="all">All Types</option><option>VoR</option><option>Day Work</option></select></div>
         <div class="filter-group"><span class="filter-label"><i class="fas fa-circle-check"></i> Approval</span><select id="vf-approval" class="f-input" onchange="vorFilterRender()"><option value="all">All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div>
         <div class="filter-group"><span class="filter-label"><i class="fas fa-file-invoice"></i> Claim</span><select id="vf-claim" class="f-input" onchange="vorFilterRender()"><option value="all">All Claim Status</option><option>Not Started</option><option>Under Preparation</option><option>Submitted</option><option>Certified</option><option>Closed</option></select></div>
       </div>
 
-      <!-- ══ VoR KPI strip — same horizontal stats-bar as Analytics ══ -->
+      <!-- ══ VoR KPI strip ══ -->
       <div id="vor-stats-bar"></div>
 
       <!-- Row colour legend -->
       <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
         <span class="filter-label">Row Colour Key</span>
-        <span class="delay-flag red"><i class="fas fa-square" style="font-size:7px"></i> Approval Overdue</span>
-        <span class="delay-flag amber"><i class="fas fa-square" style="font-size:7px"></i> Awaiting HO Receipt</span>
-        <span class="delay-flag purple"><i class="fas fa-square" style="font-size:7px"></i> Claim Not Started</span>
-        <span class="delay-flag" style="background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28)"><i class="fas fa-square" style="font-size:7px"></i> Approved / Closed</span>
+        <span class="delay-flag red"><i class="fas fa-square" style="font-size:7px"></i> Approval Overdue (&gt;14 days)</span>
+        <span class="delay-flag amber"><i class="fas fa-square" style="font-size:7px"></i> Rejected</span>
+        <span class="delay-flag purple"><i class="fas fa-square" style="font-size:7px"></i> Submitted / Pending Approval</span>
+        <span class="delay-flag" style="background:rgba(46,170,126,0.12);color:var(--accent3);border:1px solid rgba(46,170,126,0.28)"><i class="fas fa-square" style="font-size:7px"></i> Approved</span>
       </div>
 
       <div class="table-wrap">
@@ -698,6 +702,7 @@ Chart.defaults.font.size = 11;
 function buildStatsBar(groups) {
   const pill = (p) => {
     const clickable  = p.filter != null;
+    // FIX 1: active-pill check — treat 'all' as a real active state when vorKpiFilter === 'all'
     const isActive   = clickable && vorKpiFilter === p.filter;
     const extraClass = clickable ? ` clickable${isActive ? ' active-pill' : ''}` : '';
     const onClick    = clickable ? ` onclick="vorKpiClick('${p.filter}')"` : '';
@@ -939,7 +944,7 @@ function renderSummary(){
   document.getElementById('recent-body').innerHTML=Object.values(actByDay).sort((a,b)=>b.date-a.date).slice(0,12).map(d=>`<tr><td class="mono">${fmtDisplay(d.date)}</td><td>${d.foremen.size}</td><td>${d.crew.size}</td><td><span class="dot ${d.active?'dot-green':'dot-amber'}"></span>${d.active?'Active':'No Activity'}</td></tr>`).join('')||'<tr><td colspan="4" class="no-data">No data</td></tr>';
 }
 
-/* ══ KPI — now uses buildStatsBar for the horizontal strip ══ */
+/* ══ KPI ══ */
 function renderKPI(){
   if(!dataReady) return;
   const start=getDate('kpi-start'),end=getDate('kpi-end');
@@ -973,13 +978,12 @@ function renderKPI(){
   const eqTotal=Object.values(dayStats).reduce((s,d)=>s+d.eq,0);
   const mpRatio=(mpTotal+eqTotal)>0?Math.round(mpTotal/(mpTotal+eqTotal)*100):0;
 
-  /* ── KPI Dashboard: horizontal stats-bar strip (two grouped sections) ── */
   document.getElementById('kpi-stats-bar').innerHTML = buildStatsBar([
     {
       label: 'Workforce',
       pills: [
         { label:'Total Crew (Period)', value:totalCrew,               icon:'fa-people-group',       color:'sp-orange' },
-        { label:'Avg Crew / Day',      value:avgCrewDay,              icon:'fa-chart-line',          color:'sp-blue',  },
+        { label:'Avg Crew / Day',      value:avgCrewDay,              icon:'fa-chart-line',          color:'sp-blue'   },
         { label:'Peak Crew Day',       value:maxCrewDay,              icon:'fa-arrow-trend-up',      color:'sp-purple' },
         { label:'Foremen Deployed',    value:totalFore,               icon:'fa-hard-hat',            color:'sp-teal'   },
       ]
@@ -1250,30 +1254,42 @@ const VOR_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyuSzAwICm1OFRcn
 let vorAllRows = [];
 let vorFilteredRows = [];
 let vorNewCounter = 0;
-let vorKpiFilter = null;
+let vorKpiFilter = null;  // null = no filter; 'all' = show all (active state); other strings = specific filters
 let vorLoading = false;
 
+/* ── FIX 4: Work Type options — "Variation Order (VoR)" renamed to "VoR" ── */
 const VOR_COLS = [
-  { key:'date',         label:'Date',                   type:'date' },
-  { key:'requestor',    label:'Requestor',              type:'text' },
-  { key:'site',         label:'Site',                   type:'select', options:['Safha','Wadi Lathem'] },
-  { key:'workType',     label:'Work Type',              type:'select', options:['Variation Order (VoR)','Day Work'] },
-  { key:'wi',           label:'WI No.',                 type:'text' },
-  { key:'discipline',   label:'Discipline',             type:'select', options:['Civil','Mechanical','Piping','Electrical','Instrumentation','Telecom','Structural','Process','HSE','QA/QC'] },
-  { key:'scope',        label:'Work Scope',             type:'textarea', wide:true },
-  { key:'qsDate',       label:'QS Submission Date',     type:'date' },
-  { key:'approval',     label:'Client Approval',        type:'select', options:['Pending','Approved','Rejected'] },
-  { key:'approvalDate', label:'Approval Date',          type:'date' },
-  { key:'remarks',      label:'Remarks',                type:'textarea', wide:true },
+  { key:'date',         label:'Date',              type:'date' },
+  { key:'requestor',    label:'Requestor',         type:'text' },
+  { key:'site',         label:'Site',              type:'select', options:['Safha','Wadi Lathem'] },
+  { key:'workType',     label:'Work Type',         type:'select', options:['VoR','Day Work'] },
+  { key:'wi',           label:'WI No.',            type:'text' },
+  { key:'discipline',   label:'Discipline',        type:'select', options:['Civil','Mechanical','Piping','Electrical','Instrumentation','Telecom','Structural','Process','HSE','QA/QC'] },
+  { key:'scope',        label:'Work Scope',        type:'textarea', wide:true },
+  /* FIX 2: "QS Submission Date" → "Submission Date" */
+  { key:'qsDate',       label:'Submission Date',   type:'date' },
+  { key:'approval',     label:'Client Approval',   type:'select', options:['Pending','Approved','Rejected'] },
+  { key:'approvalDate', label:'Approval Date',     type:'date' },
+  { key:'remarks',      label:'Remarks',           type:'textarea', wide:true },
 ];
 
+/* ══ FIX 3: Comprehensive row status logic ══
+   Status mapping:
+   - 'closed'         → Approved (green row)
+   - 'rejected'       → Rejected (amber/warning row)
+   - 'delay-approval' → Submitted but >14 days without approval (red row)
+   - 'submitted'      → Submitted and within 14 days (purple row)
+   - 'initiated'      → No submission date yet (no special colour)
+*/
 function vorDeriveStatus(r) {
-  if (r.approval === 'Approved') return 'closed';
-  if (r.qsDate && r.approval !== 'Approved' && r.approval !== 'Rejected') {
+  const approval = (r.approval || '').trim();
+  if (approval === 'Approved') return 'closed';
+  if (approval === 'Rejected') return 'rejected';
+  if (r.qsDate) {
     const days = daysBetween(r.qsDate, today());
     if (days !== null && days > 14) return 'delay-approval';
+    return 'submitted';
   }
-  if (r.qsDate) return 'submitted';
   return 'initiated';
 }
 
@@ -1290,9 +1306,10 @@ async function vorLoadData() {
     if (json.status !== 'ok') throw new Error(json.message || 'Load failed');
     vorAllRows = json.rows.map(r => ({
       ...r,
-      _id      : String(r._row),
+      _id          : String(r._row),
       date         : parseVorDate(r.date         || r.Date         || ''),
-      qsDate       : parseVorDate(r.qsDate       || r['QS Submission Date'] || r.qsdate || ''),
+      /* FIX 2: Accept both old "QS Submission Date" key and new "Submission Date" from sheet */
+      qsDate       : parseVorDate(r.qsDate       || r['Submission Date'] || r['QS Submission Date'] || r.qsdate || ''),
       approvalDate : parseVorDate(r.approvalDate  || r['Client Approval Date'] || r.approvaldate || ''),
     }));
     vorKpiFilter = null;
@@ -1309,7 +1326,7 @@ async function vorLoadData() {
   }
 }
 
-/* ══ VoR: horizontal stats-bar strip — identical structure to Analytics ══ */
+/* ══ VoR: horizontal stats-bar strip with clickable KPI pills ══ */
 function vorUpdateKpiBar() {
   const rows = vorAllRows;
   const total       = rows.length;
@@ -1320,21 +1337,22 @@ function vorUpdateKpiBar() {
   const delay_appr  = rows.filter(r => vorDeriveStatus(r) === 'delay-approval').length;
   const submitted   = rows.filter(r => vorDeriveStatus(r) === 'submitted').length;
 
-  /* Each pill carries a `filter` key so buildStatsBar renders it as clickable */
+  /* FIX 1: "Total Requests" uses filter:'all' so clicking it shows all records
+     with a consistent active-pill highlight, same as other pills */
   document.getElementById('vor-stats-bar').innerHTML = buildStatsBar([
     {
       label: 'Overview',
       pills: [
-        { label:'Total Requests',        value:total,       icon:'fa-file-contract',        color:'sp-orange', filter:null        },
-        { label:'Approved',              value:approved,    icon:'fa-circle-check',         color:'sp-green',  filter:'approved'  },
-        { label:'Rejected',              value:rejected,    icon:'fa-circle-xmark',         color:'sp-danger', filter:'rejected'  },
+        { label:'Total Requests',        value:total,       icon:'fa-file-contract',        color:'sp-orange', filter:'all'         },
+        { label:'Approved',              value:approved,    icon:'fa-circle-check',         color:'sp-green',  filter:'approved'    },
+        { label:'Rejected',              value:rejected,    icon:'fa-circle-xmark',         color:'sp-danger', filter:'rejected'    },
       ]
     },
     {
       label: 'Pipeline',
       pills: [
-        { label:'Pending QS Submission', value:pending_qs, icon:'fa-paper-plane',          color:'sp-blue',   filter:'pending_qs'  },
-        { label:'Submitted to QS',       value:submitted,  icon:'fa-inbox',                color:'sp-teal',   filter:'submitted'   },
+        { label:'Pending Submission',    value:pending_qs, icon:'fa-paper-plane',          color:'sp-blue',   filter:'pending_qs'  },
+        { label:'Submitted',             value:submitted,  icon:'fa-inbox',                color:'sp-teal',   filter:'submitted'   },
         { label:'Awaiting Approval',     value:pending_ap, icon:'fa-clock',                color:'sp-warn',   filter:'pending_ap'  },
       ]
     },
@@ -1347,9 +1365,15 @@ function vorUpdateKpiBar() {
   ]);
 }
 
+/* FIX 1: Toggle logic — 'all' is a real filter state (shows everything, pill stays highlighted).
+   Clicking the same pill again clears the filter (null = no active pill). */
 function vorKpiClick(filter) {
-  /* toggle — clicking the active filter clears it */
-  vorKpiFilter = (vorKpiFilter === filter || filter === 'null' || filter === '') ? null : filter;
+  if (vorKpiFilter === filter) {
+    // clicking the already-active pill clears the filter
+    vorKpiFilter = null;
+  } else {
+    vorKpiFilter = filter;
+  }
   vorUpdateKpiBar();
   vorFilterRender();
 }
@@ -1368,12 +1392,14 @@ function vorFilterRender() {
       const hay = `${r.wi||''} ${r.requestor||''} ${r.scope||''} ${r.discipline||''} ${r.site||''} ${r.workType||''}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
-    if (vorKpiFilter === 'pending_qs')  { if (r.qsDate) return false; }
-    else if (vorKpiFilter === 'pending_ap') { if (!r.qsDate || r.approval !== 'Pending') return false; }
-    else if (vorKpiFilter === 'approved')   { if (r.approval !== 'Approved') return false; }
-    else if (vorKpiFilter === 'rejected')   { if (r.approval !== 'Rejected') return false; }
-    else if (vorKpiFilter === 'submitted')  { if (vorDeriveStatus(r) !== 'submitted') return false; }
-    else if (vorKpiFilter === 'delay_appr') { if (vorDeriveStatus(r) !== 'delay-approval') return false; }
+    /* FIX 1: 'all' filter means no KPI restriction — show every row that passes other filters */
+    if (vorKpiFilter === 'all')          { /* no restriction */ }
+    else if (vorKpiFilter === 'pending_qs')  { if (r.qsDate) return false; }
+    else if (vorKpiFilter === 'pending_ap')  { if (!r.qsDate || r.approval !== 'Pending') return false; }
+    else if (vorKpiFilter === 'approved')    { if (r.approval !== 'Approved') return false; }
+    else if (vorKpiFilter === 'rejected')    { if (r.approval !== 'Rejected') return false; }
+    else if (vorKpiFilter === 'submitted')   { if (vorDeriveStatus(r) !== 'submitted') return false; }
+    else if (vorKpiFilter === 'delay_appr')  { if (vorDeriveStatus(r) !== 'delay-approval') return false; }
     return true;
   });
 
@@ -1404,10 +1430,19 @@ function vorRenderTable() {
 function vorRowHTML(r, idx) {
   const rid    = r._id;
   const status = vorDeriveStatus(r);
+
+  /* FIX 3: Comprehensive row class mapping
+     closed          → vor-row-complete  (green)
+     delay-approval  → vor-row-delay-approval (red)
+     rejected        → vor-row-delay-ho  (amber)
+     submitted       → vor-row-delay-claim (purple)
+     initiated       → no class (default background)
+  */
   const rowClass =
-    status==='closed'          ? 'vor-row-complete' :
-    status==='delay-approval'  ? 'vor-row-delay-approval' :
-    status==='delay-ho'        ? 'vor-row-delay-ho' : '';
+    status === 'closed'         ? 'vor-row-complete' :
+    status === 'delay-approval' ? 'vor-row-delay-approval' :
+    status === 'rejected'       ? 'vor-row-delay-ho' :
+    status === 'submitted'      ? 'vor-row-delay-claim' : '';
 
   let cells = '';
   VOR_COLS.forEach(col => {
@@ -1461,7 +1496,8 @@ function vorSelectBadge(key, val) {
     return `<span class="status-pill ${m[val]||'s-def'}">${escHtml(val)}</span>`;
   }
   if (key === 'workType') {
-    return val==='Variation Order (VoR)'
+    /* FIX 4: badge for 'VoR' (was 'Variation Order (VoR)') */
+    return val === 'VoR'
       ? `<span class="nat-exp">${escHtml(val)}</span>`
       : `<span class="nat-nat">${escHtml(val)}</span>`;
   }
@@ -1545,12 +1581,13 @@ function vorAddRow() {
   const first=document.querySelector(`#vor-row-${rid} .inline-input`); if(first)first.focus();
 }
 
+/* FIX 2: Export uses "Submission Date" column header */
 function vorExportExcel() {
   if (!vorAllRows.length) { alert('No VoR records to export.'); return; }
-  const hdr=['#','Date','Requestor','Site','Work Type','WI No.','Discipline','Work Scope','QS Submission Date','Client Approval','Approval Date','Remarks','Auto Status'];
+  const hdr=['#','Date','Requestor','Site','Work Type','WI No.','Discipline','Work Scope','Submission Date','Client Approval','Approval Date','Remarks','Auto Status'];
   const rows=vorAllRows.map((r,i)=>[i+1,fmtDOJ(r.date),r.requestor,r.site,r.workType,r.wi,r.discipline,r.scope,fmtDOJ(r.qsDate),r.approval,fmtDOJ(r.approvalDate),r.remarks,vorDeriveStatus(r)]);
   const ws=XLSX.utils.aoa_to_sheet([hdr,...rows]);
-  ws['!cols']=[4,12,16,10,18,12,14,40,16,14,14,30,14].map(w=>({wch:w}));
+  ws['!cols']=[4,12,16,10,10,12,14,40,16,14,14,30,14].map(w=>({wch:w}));
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'VoR & Day-Works');
   XLSX.writeFile(wb,`GPS_VoR_DayWorks_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
